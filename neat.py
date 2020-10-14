@@ -21,3 +21,7 @@ def run(*args, **kwargs) -> None:
     """
     print("hello world")
     return None
+
+
+if __name__ == "__main__":
+    cli()
