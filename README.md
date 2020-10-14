@@ -11,3 +11,5 @@ This pipeline has [KGX](https://github.com/biolink/kgx) and [Embiggen](https://g
 
 The pipeline is driven by a YAML file, `neat.yaml`, which contains all parameters needed to complete the pipeline.
 This includes hyperparameters for machine learning and also things like files/paths to output results.
+
+[![NEAT](http://img.youtube.com/vi/Hm3JodBR-vs/0.jpg)](https://www.youtube.com/watch?v=Hm3JodBR-vs)
