@@ -1,0 +1,38 @@
+dist: xenial
+git:
+  depth: false
+language: python
+python:
+- '3.7'
+before_install:
+- pip install --upgrade pytest
+- pip install --upgrade mypy
+- pip install --upgrade pylint
+- pip install yamllint
+install:
+- pip install .[test]
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
+after_script:
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
+script:
+- rm -rf .coverage
+- coverage erase
+- pytest --cov=neat --cov-report xml:coverage.xml
+- coverage combine --append || true
+- coverage report
+- coverage xml
+- python -m pylint --errors-only --exit-zero neat
+- mypy --strict-optional kg_covid_19
+- yamllint -d relaxed neat.yaml
+- 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then sonar-scanner; fi' # sonar only on non-PRs
+
+after_success:
+  - coveralls
+  - python-codacy-coverage -r coverage.xml
+env:
+  global:
+    - secure: a6MXb99FoMZCJCw0H6Kc8PLey+hBURvql9jm8TDmSlVBL8YxNmdOOZXclKJLqz4drrbESHuwVHCrQNNjWx2iEPAMRSkAevyWOvnOebBEz1Pil0rj8X0BifghKoGRznw9UN35YdTP24uANz0irL3Jl6upZs7sVCK7wrnQFhUwX8rHzZ+5hoP/UxI+pLgHzgiJtqzCfb5TIXNlkYMhvWDCFIpNq51uwsJrvjI8qDXO5zhuWXI7DVcaINUg4efei2MVQyz6e77e6vGNxR6o07Z5FB7rikiKgfa60myZzGbW27OM89iyMjOGwLp8mjxxo9ZRNqxeW6mPrrt6HxE1OFK/p7BSxKMarKYaHDK8TBQGc1/H+GjDGW/MQzjxL59FANBWhoDOoSxnrwTDzRVH1uNiodgnk7XGVAWxFhjWJ1atEsN5p8PKmDaRiUJgeVJ5+yHUvnkyS25jW9oyWK0aWjYEWJImZ+kUCTO7eozbHVqPMK7/VKDyaMKX9e7UiZRtLvJ4KCkf0c08vOmCC6Z0oeQdcz7rmzKL9qPEjEOejgVGTjc5o8/cKFSQwxVgzyZCBR9TLf33jc/CbQlh5umyj0OEIY23I11nLyHxUFtamYCZOAygVhUp2TZnbKEsOTrGpB9D0CI///S7S2fgIsRSs29y9R6etmJwc9tTcxCdM9Q6Cxw=
+    - secure: R1sKwcgHKmif8AtGrhGRN2bbb/o5PZ0zx4SRzNAkmUdpmazn0Cki6abfFuM+/1oPmlm+siaWP0qHtWBZb5KJ0xFKdlsZP4K9poePwszkr8CrGy9RxYtyuEGg0MkHwx9x53XeIT6PFV1JHyF82R8HXPp+BGiNwNp1KT3Apvkjs8tmeDLvnZ+yWFqKKwP0Vc5L+b6LmfZEgJjmYPkEPX2Tu/8KcvfXuUZ8wFiPYYrSU1J59IGfiiRBigQFHfgEt8pBvcRStQqN8Ii9m/tUCI/BLat8yt2zpDv2eQeIBXaV597ZNpSTCaFAGyirDq9psoBaEkU5srTTIF452WeeIki7/ugdWZeyw9fTpro3CS6z+Fj9o6EotJEx4gXkHFy75QT887bxY+FPqeN5vYnFKx3/zKtuHiFJvIPK/z63GMWXaSfxozA2Au5LzAZ2q247Wvwf6Bv3jOCA3rkE19hlhIt9meCUU6w+SABLSeG8Pqfh/cmn6MCRp9gJvHLpwpPodTGqmpvXplooHM9mXsn2J/jsnP2m80/25nw8Fq5fCs11lCuYRHhOxWxqXZlkpie0q3h1JB1eftwWWTAwDvo33iqr7e0YQmR8CACtj6m/cMJgSuVuDMj/j400TYlnqob8p7M60ofovoX0xfWAMNX9FoLGuIB1lHWTHGPI8ZpcY5RHWBw=
