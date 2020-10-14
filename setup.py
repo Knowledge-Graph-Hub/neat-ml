@@ -63,7 +63,7 @@ setup(
         'tqdm',
         'click',
         'pyyaml',
-        'embiggen'
+        'embiggen',
         'ensmallen_graph'
     ],
     extras_require=extras,
