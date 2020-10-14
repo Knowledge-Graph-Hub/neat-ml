@@ -1,6 +1,8 @@
 import click
 import yaml
 
+from neat.embeddings import make_embeddings
+
 
 @click.group()
 def cli():
@@ -21,6 +23,10 @@ def run(yaml_file) -> None:
 
     """
     yaml_args = parse_yaml(yaml_file)
+
+    # make embeddings if yaml se
+    if 'embeddings' in yaml_args:
+        make_embeddings(yaml_args)
     return None
 
 
