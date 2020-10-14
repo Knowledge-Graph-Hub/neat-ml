@@ -1,14 +1,13 @@
 ---
 embeddings:
-  model: "SkipGram"  # or CBOW
-  graph:
-    edge_file:  tests/resources/test_graphs/edges.tsv
-    node_file:  tests/resources/test_graphs/nodes.tsv
-  a:
-    a1:
-      a2:
-        a3: 0
-        b3: 0
-        c3: 0
+  ensmallen_params:
+    edge_path:  tests/resources/test_graphs/edges.tsv
+    node_path:  tests/resources/test_graphs/nodes.tsv
+    sources_column: 'subject'
+    destinations_column: 'object'
+    directed: False
+    nodes_column: 'id'
+    node_types_column: 'category'
+    default_node_type: 'biolink:NamedThing'
 classifier:
   foo: "bar"
