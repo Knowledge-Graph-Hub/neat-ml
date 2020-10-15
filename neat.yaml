@@ -1,4 +1,6 @@
 ---
+name: ""
+description: ""
 embeddings:
   embiggen_params:
     epochs: 5 # typically more than this
@@ -23,9 +25,6 @@ embeddings:
     directed: False
     verbose: True
     skip_self_loops: False
-
-    ### node things:
-    node_path:  tests/resources/test_graphs/nodes.tsv
     nodes_column: 'id'
     node_types_column: 'category'
     default_node_type: 'biolink:NamedThing'
@@ -36,29 +35,31 @@ embeddings:
     # node_header: optional str
     # node_rows_to_skip: int = 0
     # node_separator: str = "\t"
-
-    ### edge things:
-    edge_path:  tests/resources/test_graphs/edges.tsv
     sources_column: 'subject'
     destinations_column: 'object'
     edge_types_column: 'weight'  # fix this
-    default_edge_type: 'biolink:Association'
+    default_edge_type: 'biolink:related_to'
     ignore_duplicated_edges: True
+    node_path: tests/resources/test_graphs/nodes.tsv 
+    edge_path: tests/resources/test_graphs/edges.tsv
     # edge_header: str
     # edge_rows_to_skip: int = 0,
     # sources_column_number: int = 0
     # destinations_column_number: int = 1
     # edge_types_column_number: int = None
     # edge_separator: str = "\t"
-
     ### weight stuff
     weights_column: 'weight'
     default_weight: 1
     # weights_column_number: int = None
 
-#  validation_graph:
-    # validation graph is used for the classifier use-case, and also used for early
-    # stopping in the embedding step
+  graph_incl_holdouts:  
+    # this is the entire graph - training plus holdouts. This is optional
+    # and only used for early will stopping. In practice this shorten runtime
+    # properties specific to the validation graph can 
+    # be specified as overrides
+    node_path: tests/resources/test_graphs/nodes.tsv 
+    edge_path: tests/resources/test_graphs/edges.tsv
 
 
 classifier:
