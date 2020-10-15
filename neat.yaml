@@ -1,13 +1,46 @@
 ---
 embeddings:
-  ensmallen_params:
-    edge_path:  tests/resources/test_graphs/edges.tsv
-    node_path:  tests/resources/test_graphs/nodes.tsv
-    sources_column: 'subject'
-    destinations_column: 'object'
+  graph:
     directed: False
+    verbose: True
+    skip_self_loops: False
+
+    ### node things:
+    node_path:  tests/resources/test_graphs/nodes.tsv
     nodes_column: 'id'
     node_types_column: 'category'
     default_node_type: 'biolink:NamedThing'
+    ignore_duplicated_nodes: True
+    # other parameters:
+    # nodes_column_number: int = None
+    # node_types_column_number: int = None,
+    # node_header: optional str
+    # node_rows_to_skip: int = 0
+    # node_separator: str = "\t"
+
+    ### edge things:
+    edge_path:  tests/resources/test_graphs/edges.tsv
+    sources_column: 'subject'
+    destinations_column: 'object'
+    edge_types_column: 'weight'  # fix this
+    default_edge_type: 'biolink:Association'
+    ignore_duplicated_edges: True
+    # edge_header: str
+    # edge_rows_to_skip: int = 0,
+    # sources_column_number: int = 0
+    # destinations_column_number: int = 1
+    # edge_types_column_number: int = None
+    # edge_separator: str = "\t"
+
+    ### weight stuff
+    weights_column: 'weight'
+    default_weight: 1
+    # weights_column_number: int = None
+
+#  validation_graph:
+    # validation graph is used for the classifier use-case, and also used for early
+    # stopping in the embedding step
+
+
 classifier:
   foo: "bar"
