@@ -41,14 +41,12 @@ extras = {
 setup(
     name='neat',
     version=__version__,
-    description='embed all the things',
+    description='Neural-network Embedding All the Things',
     long_description=long_description,
     url='https://github.com/Knowledge-Graph-Hub/NEAT',
     author='deepak.unni3@lbl.gov, justaddcoffee+github@gmail.com',
     author_email='Deepak Unni, Justin Reese',
     python_requires='>=3.7',
-
-    # choose your license
     license='BSD-3',
     include_package_data=True,
     classifiers=[
@@ -57,8 +55,10 @@ setup(
         'Programming Language :: Python :: 3'
     ],
     packages=find_packages(exclude=['contrib', 'docs', 'tests*']),
+    entry_points={
+        'console_scripts': ['neat=neat.cli:cli']
+    },
     tests_require=test_deps,
-    # add package dependencies
     install_requires=[
         'tqdm',
         'click',
