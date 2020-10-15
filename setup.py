@@ -64,7 +64,8 @@ setup(
         'click',
         'pyyaml',
         'embiggen',
-        'ensmallen_graph'
+        'ensmallen_graph',
+        'numpy<1.19.0'
     ],
     extras_require=extras,
 )
