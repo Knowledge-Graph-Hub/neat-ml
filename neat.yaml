@@ -1,7 +1,7 @@
 ---
 embeddings:
   embiggen_params:
-    epochs: 10 # typicall more than this
+    epochs: 5 # typically more than this
     seq_params:  # these params are passed to Node2VecSequence()
       walk_length: 100
       batch_size: 512
