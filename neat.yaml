@@ -1,5 +1,18 @@
 ---
 embeddings:
+  embiggen_params:
+    node2vec_params:
+      walk_length: 100
+      batch_size: 512
+      window_size: 4
+      return_weight: 1.0  # 1/p
+      explore_weight: 1.0  # 1/q
+    # iteration: 20
+    # embedding_size: 100
+    # negatives_samples: 30
+    # patience: 5
+    # delta: 0.0001
+    # epochs: 10  # typically much higher than 10
   graph:
     directed: False
     verbose: True

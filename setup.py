@@ -63,9 +63,11 @@ setup(
         'tqdm',
         'click',
         'pyyaml',
-        'embiggen',
+        'embiggen',  # currently this needs to be installed from github master, not pypi
         'ensmallen_graph',
-        'numpy<1.19.0'
+        'numpy<1.19.0',
+        'matplotlib',
+        'sanitize_ml_labels'
     ],
     extras_require=extras,
 )
