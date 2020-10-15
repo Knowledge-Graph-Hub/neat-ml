@@ -1,18 +1,24 @@
 ---
 embeddings:
   embiggen_params:
-    node2vec_params:
+    epochs: 10 # typicall more than this
+    seq_params:  # these params are passed to Node2VecSequence()
       walk_length: 100
       batch_size: 512
       window_size: 4
       return_weight: 1.0  # 1/p
       explore_weight: 1.0  # 1/q
-    # iteration: 20
-    # embedding_size: 100
-    # negatives_samples: 30
-    # patience: 5
-    # delta: 0.0001
-    # epochs: 10  # typically much higher than 10
+      iterations: 20
+    model: skipgram  # or CBOW
+    node2vec_params:  # these params are passed to SkipGram() or CBOW()
+      embedding_size: 100
+      negative_samples: 30
+    early_stopping:  # optional
+      patience: 5
+      delta: 0.0001
+      restore_best_weights: True
+    optimizer:  # hard-coded to Nadam for now
+      learning_rate: 0.1
   graph:
     directed: False
     verbose: True

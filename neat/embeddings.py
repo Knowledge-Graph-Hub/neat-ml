@@ -1,13 +1,36 @@
-import os
+import re
 
 from ensmallen_graph import EnsmallenGraph
-from embiggen import Node2VecSequence
-import tempfile
+from embiggen import Node2VecSequence, SkipGram
+from tensorflow.keras.optimizers import Nadam
+from tensorflow.keras.callbacks import EarlyStopping
 
 
 def make_embeddings(config: dict) -> None:
     graph = EnsmallenGraph.from_unsorted_csv(**config['graph'])
-    graph_sequence = Node2VecSequence(graph, **config['embiggen_params']['node2vec_params'])
+    graph_sequence = Node2VecSequence(graph, **config['embiggen_params']['seq_params'])
+
+    callbacks = []
+    if 'early_stopping' in config['embiggen_params']['seq_params']:
+        es = EarlyStopping(**config['embiggen_params']['seq_params']['early_stopping'])
+        callbacks = [es]
+
+    if re.search('skipgram', config['embiggen_params']['model']):
+        lr = Nadam(config['embiggen_params']['optimizer']['learning_rate'])
+        model = SkipGram(
+            vocabulary_size=graph.get_nodes_number(),
+            optimizer=lr,
+            **config['embiggen_params']['node2vec_params']
+        )
+        model.summary()
+
+        history = model.fit(
+            graph_sequence,
+            steps_per_epoch=graph_sequence.steps_per_epoch,
+            callbacks=callbacks,
+            epochs=config['embiggen_params']['epochs']
+        )
+
     return None
 
 
