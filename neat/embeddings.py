@@ -40,6 +40,7 @@ def make_embeddings(config: dict) -> None:
     elif re.search('CBOW', config['embiggen_params']['model'], re.IGNORECASE):
         model = CBOW(vocabulary_size=graph.get_nodes_number(), optimizer=lr,
                      **config['embiggen_params']['node2vec_params'])
+    ## TODO: deal with GloVe
     model.summary()
 
     history = model.fit(graph_sequence, **fit_args)
