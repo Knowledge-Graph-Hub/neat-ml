@@ -6,6 +6,10 @@ from tensorflow.keras.optimizers import Nadam
 from tensorflow.keras.callbacks import EarlyStopping
 import copy
 
+def get_output_dir(config):
+    output_dir = config['output_directory'] if 'output_directory' in config else 'output_data'
+
+
 def make_embeddings(config: dict) -> None:
     # load main graph
     graph = EnsmallenGraph.from_unsorted_csv(**config['graph'])
@@ -46,6 +50,16 @@ def make_embeddings(config: dict) -> None:
     history = model.fit(graph_sequence, **fit_args)
     return None
 
+def make_model(classifier_config: dict) -> object:
+    """Take the classifier arg parsed from YAML and return an (uncompiled) tensorflow model
+    """
+    pass
+
+def compile_model(tensorflow_model: obj, config: dict) -> None:
+    # tensorflow_model.compile()
+    pass
 
 def make_classifier(config: dict) -> None:
-    pass
+    """Train classifier
+    """
+    make_model(config)
