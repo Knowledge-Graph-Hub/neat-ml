@@ -32,6 +32,12 @@ def run(config: str) -> None:
     # generate embeddings if config has 'embeddings' block
     if 'embeddings' in neat_config:
         make_embeddings(neat_config['embeddings'])
+
+    if 'classifier' in neat_config:
+        for classifier in neat_config['classifier']:
+            model = make_classifier(classifier)
+            train_data, validation_data = make_data(neat_config)  # this generates pos/neg train/validation data
+            model_fit(model, train_data, validation_data, neat_config['classifier'])
     return None
 
 

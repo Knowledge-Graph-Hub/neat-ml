@@ -3,6 +3,8 @@ name: ""
 description: ""
 output_directory: output_data
 embeddings:
+  embedding_file_name: embeddings.npy
+  model_file_name: model.h5
   embiggen_params:
     epochs: 5 # typically more than this
     seq_params:  # these params are passed to Node2VecSequence()
@@ -93,7 +95,7 @@ classifier:
     model_compile:
       loss: binary_crossentropy
       optimizer: nadam
-      metrics:
+      metrics:  # these can be tensorflow objects or a string that tensorflow understands, e.g. 'accuracy' 
         - type: tensorflow.keras.metrics.AUC
           parameters:
             curve: PR
@@ -108,6 +110,7 @@ classifier:
         - type: tensorflow.keras.metrics.Precision
           parameters:
             name: Precision
+        - type: accuracy
     model_fit:
       parameters:
         batch_size: 2**12
@@ -115,7 +118,7 @@ classifier:
         callbacks:
           - type: tensorflow.keras.callbacks.EarlyStopping
             parameters:
-              label: "val_loss"
+              label: val_loss
               patience: 5
               min_delta: 0.001  # min improvement to be considered progres
           - type: tensorflow.keras.callbacks.ReduceLROnPlateau
