@@ -21,7 +21,7 @@ def make_embeddings(config: dict) -> None:
     """Given a config dict, make embeddings. Outputs embedding file and model file
     """
     # load main graph
-    graph = load_graph(**config['graph'])
+    graph = EnsmallenGraph.from_unsorted_csv(**config['graph'])
     graph_sequence = Node2VecSequence(graph, **config['embiggen_params']['seq_params'])
 
     fit_args = {
