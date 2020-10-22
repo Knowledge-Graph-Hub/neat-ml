@@ -2,7 +2,8 @@ import os
 import click
 import yaml
 
-from neat.embeddings import make_embeddings, make_classifier
+from neat.embeddings import make_embeddings
+from neat.classifier import make_classifier, make_data, model_fit
 
 
 def parse_yaml(file: str) -> object:
@@ -33,13 +34,13 @@ def run(config: str) -> None:
     # generate embeddings if config has 'embeddings' block
     if 'embeddings' in neat_config:
         if not os.path.exists(neat_config['embeddings']['embedding_file_name']):
-            make_embeddings(neat_config['embeddings'])
+            make_embeddings(neat_config)
 
     if 'classifier' in neat_config:
         for classifier in neat_config['classifier']:
             model = make_classifier(classifier)
-            embedding_model, method, train_data, validation_data = make_data(neat_config)  # this generates pos/neg train/validation data
-            model_fit(model, train_data, validation_data, neat_config['classifier'])
+            train_data, validation_data = make_data(neat_config)
+            model_fit(model, train_data, validation_data, neat_config)
     return None
 
 
