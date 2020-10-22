@@ -2,7 +2,7 @@ import re
 
 import numpy as np
 from ensmallen_graph import EnsmallenGraph
-from embiggen import Node2VecSequence, SkipGram, CBOW, EdgeTransformer, GraphTransformer
+from embiggen import Node2VecSequence, SkipGram, CBOW
 from tensorflow.keras.optimizers import Nadam
 from tensorflow.keras.callbacks import EarlyStopping
 import copy

@@ -4,7 +4,7 @@ from embiggen import GraphTransformer, EdgeTransformer
 
 
 def make_classifier(classifier_config):
-    if classifier_config['type'] in 'neural network':
+    if 'neural network' in classifier_config['type']:
         model = make_neural_net_model(classifier_config['model'])
         model_compile_parameters = classifier_config['model_compile']
         metrics = model_compile_parameters['metrics'] if 'metrics' in model_compile_parameters else None
