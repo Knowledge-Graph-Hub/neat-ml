@@ -11,8 +11,8 @@ import os
 
 def get_output_dir(config):
     output_dir = config['output_directory'] if 'output_directory' in config else 'output_data' 
-    if not os.path(output_dir):
-        os.makedirs(output_dir, exist_ok=true)
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
     return output_dir
 
 
@@ -54,6 +54,6 @@ def make_embeddings(config: dict) -> None:
     ## TODO: deal with GloVe
     history = model.fit(graph_sequence, **fit_args)
     np.save(os.path.join(get_output_dir(config), config['embeddings']['embedding_file_name']), model.embedding)
-    model.save_weights(os.path.join(get_output_dir(config), config['embeddings']['weights_file']))
+    model.save_weights(os.path.join(get_output_dir(config), config['embeddings']['model_file_name']))
     return None
 
