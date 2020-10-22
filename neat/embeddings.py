@@ -1,3 +1,4 @@
+import importlib
 import re
 
 import numpy as np
@@ -6,16 +7,12 @@ from embiggen import Node2VecSequence, SkipGram, CBOW
 from tensorflow.keras.optimizers import Nadam
 from tensorflow.keras.callbacks import EarlyStopping
 import copy
+import os
+
 
 def get_output_dir(config):
     output_dir = config['output_directory'] if 'output_directory' in config else 'output_data'
 
-
-def load_graph(config_graph: dict) -> EnsmallenGraph:
-    """Using a dict (parsed from a block of yaml describing how to load a graph), load
-    graph using ensmallen_graph and return an EnsmallenGraph object
-    """
-    return EnsmallenGraph.from_unsorted_csv(**config)
 
 def make_embeddings(config: dict) -> None:
     """Given a config dict, make embeddings. Outputs embedding file and model file
@@ -40,7 +37,6 @@ def make_embeddings(config: dict) -> None:
         # also need to add these to be passed to model.fit()
         fit_args['validation_data']=gih_sequence
         fit_args['validation_steps']=gih_sequence.steps_per_epoch
-
 
     if 'early_stopping' in config['embiggen_params']['seq_params']:
         es = EarlyStopping(**config['embiggen_params']['seq_params']['early_stopping'])
@@ -87,6 +83,7 @@ def make_classifier(classifier_config):
         model = make_model(classifier_config['model'])
     return model
 
+
 def model_fit(model, train_data, validation_data, parameters):
     """Takes a model, generated from make_model(), and calls .fit()
 
@@ -114,8 +111,9 @@ def make_model(model_config: dict) -> object:
     model_class = dynamically_import_class(model_type)
     model_instance = model_class()
 
+
 def make_neural_net_model(model_config: dict) -> object:
-    """Take the model configuration for a neural net classifier 
+    """Take the model configuration for a neural net classifier
     from YAML and return an (uncompiled) tensorflow model
     """
     model_type = model_config['type']
@@ -133,9 +131,11 @@ def make_neural_net_model(model_config: dict) -> object:
         model_instance.add(l)
     return model_instance
 
+
 def make_data(embedding_file):
     embedding_model, method, train, valid = task_generator(pos_training, pos_validation, neg_training, neg_validation)
     return embedding_model, method, train, valid
+
 
 def task_generator(pos_training:EnsmallenGraph, pos_validation:EnsmallenGraph, neg_training:EnsmallenGraph, neg_validation:EnsmallenGraph, train_percentage:float=0.80, seed:int=42):
     """Create new generator of tasks.
@@ -188,9 +188,11 @@ def task_generator(pos_training:EnsmallenGraph, pos_validation:EnsmallenGraph, n
             valid_labels = valid_labels[valid_indices]
             yield model_name, method, (train_edges, train_labels), (valid_edges, valid_labels)
 
+
 def dynamically_import_class(reference):
     klass = my_import(reference)
     return klass
+
 
 def dynamically_import_function(reference):
     module_name = '.'.join(reference.split('.')[0:-1])
@@ -198,12 +200,14 @@ def dynamically_import_function(reference):
     f = getattr(importlib.import_module(module_name), function_name)
     return f
 
+
 def my_import(name):
     components = name.split('.')
     mod = __import__(components[0])
     for comp in components[1:]:
         mod = getattr(mod, comp)
     return mod
+
 
 def compile_model(tensorflow_model: object, config: dict) -> None:
     """Take output of make_model (a tensorflow model) and compile it
