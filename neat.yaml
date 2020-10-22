@@ -40,18 +40,20 @@ graph_data:
   # classifier-specific graphs:
   #
   # (when making a classifier, positive training graph is assumed to be 'graph' above)
+  # all params below override those in 'graph' above
   pos_validation_graph:
-    node_path: tests/resources/test_graphs/nodes.tsv
-    edge_path: tests/resources/test_graphs/edges.tsv
+    node_path: tests/resources/test_graphs/pos_valid_nodes.tsv
+    edge_path: tests/resources/test_graphs/pos_valid_edges.tsv
   neg_training_graph:
-    edge_path: tests/resources/test_graphs/edges.tsv
+    edge_path: tests/resources/test_graphs/neg_train_edges.tsv
   neg_validation_graph:
-    edge_path: tests/resources/test_graphs/edges.tsv
+    edge_path: tests/resources/test_graphs/neg_valid_edges.tsv
 
 embeddings:
   resume: True
-  embedding_file_name: SkipGram_80_20_kg_covid_19_20201001_training_test_epoch_500_delta_0.0001_embedding.npy
+  embedding_file_name: SkipGram.npy
   model_file_name: model.h5
+  use_pos_valid_for_early_stopping: True # if True, must specify pos_validation_graph above
   embiggen_params:
     epochs: 5 # typically more than this
     seq_params:  # these params are passed to Node2VecSequence()
