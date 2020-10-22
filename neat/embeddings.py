@@ -103,7 +103,7 @@ def model_fit(model, train_data, validation_data, parameters):
             c_instance(**callback['parameters'])
             callback_list.append(c_instance)
     del parameters['callbacks']
-    model.fit(*data, validation_data=validation_data, **parameters, callbacks=callback_list)
+    model.fit(*train_data, validation_data=validation_data, **parameters, callbacks=callback_list)
 
 
 def make_model(model_config: dict) -> object:
@@ -124,7 +124,7 @@ def make_neural_net_model(model_config: dict) -> object:
     model_layers = []
     for layer in model_config['layers']:
         layer_type = layer['type']
-        layer_class - dynamically_import_class(layer_type)
+        layer_class = dynamically_import_class(layer_type)
         parameters = layer['parameters']
         layer_instance = layer_class(**parameters)
         model_layers.append(layer_instance)
@@ -133,6 +133,60 @@ def make_neural_net_model(model_config: dict) -> object:
         model_instance.add(l)
     return model_instance
 
+def make_data(embedding_file):
+    embedding_model, method, train, valid = task_generator(pos_training, pos_validation, neg_training, neg_validation)
+    return embedding_model, method, train, valid
+
+def task_generator(pos_training:EnsmallenGraph, pos_validation:EnsmallenGraph, neg_training:EnsmallenGraph, neg_validation:EnsmallenGraph, train_percentage:float=0.80, seed:int=42):
+    """Create new generator of tasks.
+
+    Parameters
+    ----------
+    pos_training:EnsmallenGraph,
+        The positive edges of the training graph.
+    pos_validation:EnsmallenGraph,
+        The positive edges of the validation graph.
+    neg_training:EnsmallenGraph,
+        The negative edges of the training graph.
+    neg_validation:EnsmallenGraph,
+        The negative edges of the validation graph.
+    train_percentage:float=0.8,
+    seed:int=42
+
+    """
+    for path in tqdm(glob(os.path.join(embedding_data_dir, "*embedding.npy")), desc="Embedding"):
+        model_name = os.path.basename(path).split("_")[0]
+        embedding = np.load(path, allow_pickle=True)
+        for method in tqdm(EdgeTransformer.methods, desc="Methods", leave=False):
+
+            # create graph transformer object to convert graphs into edge embeddings
+            transformer = GraphTransformer(method)
+            transformer.fit(embedding) # pass node embeddings to be used to create edge embeddings
+            train_edges = np.vstack([ # computing edge embeddings for training graph
+                transformer.transform(graph)
+                for graph in (pos_training, neg_training)
+            ])
+            valid_edges = np.vstack([ # computing edge embeddings for validation graph
+                transformer.transform(graph)
+                for graph in (pos_validation, neg_validation)
+            ])
+            train_labels = np.concatenate([ # make labels for training graph
+                np.ones(pos_training.get_edges_number()),
+                np.zeros(neg_training.get_edges_number())
+            ])
+            valid_labels = np.concatenate([ # make labels for validation graph
+                np.ones(pos_validation.get_edges_number()),
+                np.zeros(neg_validation.get_edges_number())
+            ])
+            train_indices = np.arange(0, train_labels.size)
+            valid_indices = np.arange(0, valid_labels.size)
+            np.random.shuffle(train_indices) # shuffle to prevent bias caused by ordering of edge labels
+            np.random.shuffle(valid_indices) # ``   ``
+            train_edges = train_edges[train_indices]
+            train_labels = train_labels[train_indices]
+            valid_edges = valid_edges[valid_indices]
+            valid_labels = valid_labels[valid_indices]
+            yield model_name, method, (train_edges, train_labels), (valid_edges, valid_labels)
 
 def dynamically_import_class(reference):
     klass = my_import(reference)
@@ -143,6 +197,13 @@ def dynamically_import_function(reference):
     function_name = reference.split('.')[-1]
     f = getattr(importlib.import_module(module_name), function_name)
     return f
+
+def my_import(name):
+    components = name.split('.')
+    mod = __import__(components[0])
+    for comp in components[1:]:
+        mod = getattr(mod, comp)
+    return mod
 
 def compile_model(tensorflow_model: object, config: dict) -> None:
     """Take output of make_model (a tensorflow model) and compile it

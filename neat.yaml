@@ -3,7 +3,8 @@ name: ""
 description: ""
 output_directory: output_data
 embeddings:
-  embedding_file_name: embeddings.npy
+  resume: True
+  embedding_file_name: SkipGram_80_20_kg_covid_19_20201001_training_test_epoch_500_delta_0.0001_embedding.npy
   model_file_name: model.h5
   embiggen_params:
     epochs: 5 # typically more than this
@@ -71,7 +72,7 @@ classifier:
       layers:
         - type: tensorflow.keras.layers.Input
           parameters:
-            - input_shape: 100   # must match embedding_size up above
+            input_shape: 100   # must match embedding_size up above
         - type: tensorflow.keras.layers.Dense
           parameters:
             neurons: 128
