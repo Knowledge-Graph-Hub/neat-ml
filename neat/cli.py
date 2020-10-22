@@ -2,7 +2,7 @@ import os
 import click
 import yaml
 
-from neat.embeddings import make_embeddings
+from neat.embeddings import make_embeddings, get_output_dir
 from neat.classifier import make_classifier, make_data, model_fit
 
 
@@ -33,7 +33,9 @@ def run(config: str) -> None:
 
     # generate embeddings if config has 'embeddings' block
     if 'embeddings' in neat_config:
-        if not os.path.exists(neat_config['embeddings']['embedding_file_name']):
+        if not os.path.exists(
+                os.path.join(get_output_dir(neat_config),
+                             neat_config['embeddings']['embedding_file_name'])):
             make_embeddings(neat_config)
 
     if 'classifier' in neat_config:
