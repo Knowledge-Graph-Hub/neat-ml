@@ -10,7 +10,9 @@ import os
 
 
 def get_output_dir(config):
-    output_dir = config['output_directory'] if 'output_directory' in config else 'output_data'
+    output_dir = config['output_directory'] if 'output_directory' in config else 'output_data' 
+    if not os.path(output_dir):
+        os.makedirs(output_dir, exist_ok=true)
     return output_dir
 
 
@@ -51,7 +53,7 @@ def make_embeddings(config: dict) -> None:
                      **config['embeddings']['embiggen_params']['node2vec_params'])
     ## TODO: deal with GloVe
     history = model.fit(graph_sequence, **fit_args)
-    np.save(os.path.join(get_output_dir(config), config['embeddings']['embiggen_params']['embedding_file_name']), model.embedding)
-    model.save_weights(os.path.join(get_output_dir(config), config['embeddings']['embiggen_params']['weights_file']))
+    np.save(os.path.join(get_output_dir(config), config['embeddings']['embedding_file_name']), model.embedding)
+    model.save_weights(os.path.join(get_output_dir(config), config['embeddings']['weights_file']))
     return None
 
