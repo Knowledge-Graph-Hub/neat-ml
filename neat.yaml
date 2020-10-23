@@ -20,7 +20,7 @@ graph_data:
     # node_separator: str = "\t"
     sources_column: 'subject'
     destinations_column: 'object'
-    edge_types_column: 'weight'  # fix this
+    # edge_types_column: 'weight'  # fix this
     default_edge_type: 'biolink:related_to'
     ignore_duplicated_edges: True
     node_path: tests/resources/test_graphs/pos_train_nodes.tsv
@@ -32,8 +32,8 @@ graph_data:
     # edge_types_column_number: int = None
     # edge_separator: str = "\t"
     ### weight stuff
-    weights_column: 'weight'
-    default_weight: 1
+    # weights_column: 'weight'
+    # default_weight: 1
     # weights_column_number: int = None
 
   #
@@ -41,17 +41,17 @@ graph_data:
   #
   # (when making a classifier, positive training graph is assumed to be 'graph' above)
   # all params below override those in 'graph' above
-  pos_validation_graph:
+  pos_validation:
     edge_path: tests/resources/test_graphs/pos_valid_edges.tsv
-  neg_training_graph:
+  neg_training:
     edge_path: tests/resources/test_graphs/neg_train_edges.tsv
-  neg_validation_graph:
+  neg_validation:
     edge_path: tests/resources/test_graphs/neg_train_edges.tsv
 
 embeddings:
   resume: True
   embedding_file_name: SkipGram.npy
-  model_file_name: model.h5
+  model_file_name: embedding_model.h5
   use_pos_valid_for_early_stopping: True # if True, must specify pos_validation_graph above
   embiggen_params:
     epochs: 1 # typically more than this

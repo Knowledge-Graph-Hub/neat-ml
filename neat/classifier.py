@@ -1,8 +1,11 @@
+import copy
 import importlib
 import os
 
 import numpy as np
 from embiggen import GraphTransformer, EdgeTransformer
+from ensmallen_graph import EnsmallenGraph
+
 from neat.embeddings import get_output_dir
 
 
@@ -87,24 +90,31 @@ def make_data(config):
     embedding = np.load(
         os.path.join(get_output_dir(config), config['embeddings']['embedding_file_name']))
 
+    # load graphs
+    graphs = {'pos_training': EnsmallenGraph.from_unsorted_csv(**config['graph_data']['graph'])}
+    for this_graph in ['pos_validation', 'neg_training', 'neg_validation']:
+        these_params = copy.deepcopy(config['graph_data']['graph'])
+        these_params.update(config['graph_data'][this_graph])
+        graphs[this_graph] = EnsmallenGraph.from_unsorted_csv(**these_params)
+
     # create graph transformer object to convert graphs into edge embeddings
     transformer = GraphTransformer(config['classifier']['edge_method'])
     transformer.fit(embedding)  # pass node embeddings to be used to create edge embeddings
     train_edges = np.vstack([  # computing edge embeddings for training graph
         transformer.transform(graph)
-        for graph in (pos_training, neg_training)
+        for graph in (graphs['pos_training'], graphs['neg_training'])
     ])
     valid_edges = np.vstack([ # computing edge embeddings for validation graph
         transformer.transform(graph)
-        for graph in (pos_validation, neg_validation)
+        for graph in (graphs['pos_validation'], graphs['neg_validation'])
     ])
     train_labels = np.concatenate([ # make labels for training graph
-        np.ones(pos_training.get_edges_number()),
-        np.zeros(neg_training.get_edges_number())
+        np.ones(graphs['pos_training'].get_edges_number()),
+        np.zeros(graphs['neg_training'].get_edges_number())
     ])
     valid_labels = np.concatenate([ # make labels for validation graph
-        np.ones(pos_validation.get_edges_number()),
-        np.zeros(neg_validation.get_edges_number())
+        np.ones(graphs['pos_validation'].get_edges_number()),
+        np.zeros(graphs['neg_validation'].get_edges_number())
     ])
     train_indices = np.arange(0, train_labels.size)
     valid_indices = np.arange(0, valid_labels.size)
