@@ -67,7 +67,8 @@ setup(
         'ensmallen_graph',
         'numpy<1.19.0',
         'matplotlib',
-        'sanitize_ml_labels'
+        'sanitize_ml_labels',
+        'sklearn'
     ],
     extras_require=extras,
 )
