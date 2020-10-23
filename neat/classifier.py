@@ -16,7 +16,7 @@ def make_classifier(classifier_config):
                 m_instance = m_class(**m_parameters)
                 metrics_class_list.append(m_instance)
             else:
-                metrics_class_list[m['type']]
+                metrics_class_list.append([m['type']])
         model.compile(
             loss = model_compile_parameters['loss'],
             optimizer = model_compile_parameters['optimizer'],

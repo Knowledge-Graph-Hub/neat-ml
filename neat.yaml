@@ -83,26 +83,27 @@ classifier:
         layers:
           - type: tensorflow.keras.layers.Input
             parameters:
-              input_shape: 100   # must match embedding_size up above
+              shape: 100   # must match embedding_size up above
           - type: tensorflow.keras.layers.Dense
             parameters:
-              neurons: 128
+              units: 128
               activation: relu
           - type: tensorflow.keras.layers.Dense
             parameters:
-              neurons: 32
+              units: 32
               activation: relu
-              activity_regularizer: tensorflow.keras.regularizers.l1_l2(l1=1e-5, l2=1e-4)
+              # TODO: fix this:
+              # activity_regularizer: tensorflow.keras.regularizers.l1_l2(l1=1e-5, l2=1e-4)
           - type: tensorflow.keras.layers.Dropout
             parameters:
               rate: 0.5
           - type: tensorflow.keras.layers.Dense
             parameters:
-              neurons: 16
+              units: 16
               activation: relu
           - type: tensorflow.keras.layers.Dense
             parameters:
-              neurons: 1
+              units: 1
               activation: sigmoid
       model_compile:
         loss: binary_crossentropy
