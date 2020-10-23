@@ -3,10 +3,15 @@ import importlib
 import os
 
 import numpy as np
+import tensorflow
 from embiggen import GraphTransformer, EdgeTransformer
 from ensmallen_graph import EnsmallenGraph
 
 from neat.embeddings import get_output_dir
+
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
 
 
 def make_classifier(classifier_config):
@@ -51,8 +56,11 @@ def model_fit(model, train_data, validation_data, parameters):
             c_params = callback['parameters'] if 'parameters' in callback else {}
             c_instance = c_class(**c_params)
             callback_list.append(c_instance)
-    del parameters['callbacks']
-    model.fit(*train_data, validation_data=validation_data, **parameters, callbacks=callback_list)
+        del parameters['callbacks']
+    if isinstance(model, tensorflow.python.keras.engine.sequential.Sequential):
+        model.fit(*train_data, validation_data=validation_data, **parameters, callbacks=callback_list)
+    else:
+        model.fit(*train_data, **parameters)
 
 
 def make_model(model_config: dict) -> object:
