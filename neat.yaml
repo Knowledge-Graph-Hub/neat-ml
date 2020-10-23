@@ -126,7 +126,7 @@ classifier:
       model_fit:
         parameters:
           batch_size: 4096
-          epochs: 1000
+          epochs: 5  # typically much higher
           callbacks:
             - type: tensorflow.keras.callbacks.EarlyStopping
               parameters:
