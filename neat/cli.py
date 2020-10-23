@@ -4,7 +4,7 @@ import yaml
 
 from neat.embeddings import make_embeddings, get_output_dir
 from neat.classifier import make_classifier, make_data, model_fit
-
+from tqdm import tqdm
 
 def parse_yaml(file: str) -> object:
     with open(file, 'r') as stream:
@@ -39,14 +39,10 @@ def run(config: str) -> None:
             make_embeddings(neat_config)
 
     if 'classifier' in neat_config:
-        for classifier in neat_config['classifier']['classifiers']:
+        for classifier in tqdm(neat_config['classifier']['classifiers']):
             model = make_classifier(classifier)
             train_data, validation_data = make_data(neat_config)
-            try:
-                c_params = classifier['model_fit']['parameters']
-            except KeyError:
-                c_params = {}
-            model_fit(model, train_data, validation_data, c_params)
+            model_fit(neat_config, model, train_data, validation_data, classifier)
     return None
 
 

@@ -16,7 +16,7 @@ from sklearn.linear_model import LogisticRegression
 
 def make_classifier(classifier_config):
     if 'neural network' in classifier_config['type']:
-        model = make_neural_net_model(classifier_config['model'])
+        model = make_neural_net_model(classifier_config, classifier_config['model'])
         model_compile_parameters = classifier_config['model_compile']
         metrics = model_compile_parameters['metrics'] if 'metrics' in model_compile_parameters else None
         metrics_class_list = []
@@ -34,36 +34,42 @@ def make_classifier(classifier_config):
             metrics = metrics_class_list
         )
     elif classifier_config['type'] in 'Decision Tree':
-        model = make_model(classifier_config['model'])
+        model = make_model(classifier_config, classifier_config['model'])
     elif classifier_config['type'] in 'Random Forest':
-        model = make_model(classifier_config['model'])
+        model = make_model(classifier_config, classifier_config['model'])
     elif classifier_config['type'] in 'Logistic Regression':
-        model = make_model(classifier_config['model'])
+        model = make_model(classifier_config, classifier_config['model'])
     return model
 
 
-def model_fit(model, train_data, validation_data, parameters):
+def model_fit(config, model, train_data, validation_data, classifier):
     """Takes a model, generated from make_model(), and calls .fit()
-
+    config: the config of the parent. Here it is the configuration for the model.
     model: output of make_model()
     data: thing that generates training and validation data
     parameters: from parsed YAML file
     """
+    try:
+        classifier_params = classifier['model_fit']['parameters']
+    except KeyError:
+        classifier_params = {}
+
     callback_list = []
-    if 'callbacks' in parameters:
-        for callback in parameters['callbacks']:
+    if 'callbacks' in classifier_params:
+        for callback in classifier_params['callbacks']:
             c_class = dynamically_import_class(callback['type'])
             c_params = callback['parameters'] if 'parameters' in callback else {}
             c_instance = c_class(**c_params)
             callback_list.append(c_instance)
-        del parameters['callbacks']
+        del classifier_params['callbacks']
     if isinstance(model, tensorflow.python.keras.engine.sequential.Sequential):
-        model.fit(*train_data, validation_data=validation_data, **parameters, callbacks=callback_list)
+        model.fit(*train_data, validation_data=validation_data, **classifier_params, callbacks=callback_list)
     else:
-        model.fit(*train_data, **parameters)
+        model.fit(*train_data, **classifier_params)
+    model.save(os.path.join(get_output_dir(config), classifier['model']['outfile']))
 
 
-def make_model(model_config: dict) -> object:
+def make_model(config, model_config: dict) -> object:
     """Make a decision tree, random forest or logistic regression model
     For neural network, use make_neural_net_model() instead
     """
@@ -73,7 +79,7 @@ def make_model(model_config: dict) -> object:
     return model_instance
 
 
-def make_neural_net_model(model_config: dict) -> object:
+def make_neural_net_model(config, model_config: dict) -> object:
     """Take the model configuration for a neural net classifier
     from YAML and return an (uncompiled) tensorflow model
     """
