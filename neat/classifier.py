@@ -1,6 +1,9 @@
 import importlib
-import pandas as np
+import os
+
+import numpy as np
 from embiggen import GraphTransformer, EdgeTransformer
+from neat.embeddings import get_output_dir
 
 
 def make_classifier(classifier_config):
@@ -81,7 +84,9 @@ def make_neural_net_model(model_config: dict) -> object:
 
 
 def make_data(config):
-    embedding = np.load(config['embedding_file_name'], allow_pickle=True)
+    embedding = np.load(
+        os.path.join(get_output_dir(config), config['embeddings']['embedding_file_name']),
+        allow_pickle=True)
 
     # create graph transformer object to convert graphs into edge embeddings
     transformer = GraphTransformer(config['classifier']['edge_method'])
