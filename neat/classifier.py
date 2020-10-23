@@ -14,7 +14,17 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 
 
-def make_classifier(classifier_config):
+def make_classifier(classifier_config: dict) -> object:
+    """Make a model for a classifier based on a given
+    set of configurations.
+
+    Args:
+        classifier_config: The config corresponding to 'classifiers'
+
+    Returns:
+        model: The compiled model
+
+    """
     if 'neural network' in classifier_config['type']:
         model = make_neural_net_model(classifier_config, classifier_config['model'])
         model_compile_parameters = classifier_config['model_compile']
@@ -42,12 +52,18 @@ def make_classifier(classifier_config):
     return model
 
 
-def model_fit(config, model, train_data, validation_data, classifier):
+def model_fit(config, model, train_data, validation_data, classifier) -> object:
     """Takes a model, generated from make_model(), and calls .fit()
-    config: the config of the parent. Here it is the configuration for the model.
-    model: output of make_model()
-    data: thing that generates training and validation data
-    parameters: from parsed YAML file
+
+    Args:
+        config: the config of the parent
+        model: output of make_model()
+        data: thing that generates training and validation data
+        classifier: classifier config from parsed YAML file
+
+    Returns:
+        The model object
+
     """
     try:
         classifier_params = classifier['model_fit']['parameters']
@@ -72,6 +88,14 @@ def model_fit(config, model, train_data, validation_data, classifier):
 def make_model(config, model_config: dict) -> object:
     """Make a decision tree, random forest or logistic regression model
     For neural network, use make_neural_net_model() instead
+
+    Args:
+        config: the classifier config
+        model_config: the model config
+
+    Returns:
+        The model
+
     """
     model_type = model_config['type']
     model_class = dynamically_import_class(model_type)
@@ -82,6 +106,14 @@ def make_model(config, model_config: dict) -> object:
 def make_neural_net_model(config, model_config: dict) -> object:
     """Take the model configuration for a neural net classifier
     from YAML and return an (uncompiled) tensorflow model
+
+    Args:
+        config: the classifier config
+        model_config: the model config
+
+    Returns:
+        The model
+
     """
     model_type = model_config['type']
     model_class = dynamically_import_class(model_type)
@@ -99,7 +131,16 @@ def make_neural_net_model(config, model_config: dict) -> object:
     return model_instance
 
 
-def make_data(config):
+def make_data(config) -> Tuple[Tuple, Tuple]:
+    """Prepare data for training and validation.
+
+    Args:
+        config: the config
+
+    Returns:
+        A tuple of tuples
+
+    """
     embedding = np.load(
         os.path.join(get_output_dir(config), config['embeddings']['embedding_file_name']))
 
@@ -140,12 +181,30 @@ def make_data(config):
     return (train_edges, train_labels), (valid_edges, valid_labels)
 
 
-def dynamically_import_class(reference):
+def dynamically_import_class(reference) -> object:
+    """Dynamically import a class based on its reference.
+
+    Args:
+        reference: The reference or path for the class to be imported.
+
+    Returns:
+        The imported class
+
+    """
     klass = my_import(reference)
     return klass
 
 
-def dynamically_import_function(reference):
+def dynamically_import_function(reference) -> object:
+    """Dynamically import a function based on its reference.
+
+    Args:
+        reference: The reference or path for the function to be imported.
+
+    Returns:
+        The imported function
+
+    """
     module_name = '.'.join(reference.split('.')[0:-1])
     function_name = reference.split('.')[-1]
     f = getattr(importlib.import_module(module_name), function_name)
@@ -161,6 +220,15 @@ def my_import(name):
 
 
 def compile_model(tensorflow_model: object, config: dict) -> None:
-    """Take output of make_model (a tensorflow model) and compile it
+    """Take output of make_model (a tensorflow model) and compile 
+    the model with given arguments.
+
+    Args:
+        tensorflow_model: The tensorflow model instance
+        config: the config
+
+    Returns:
+        None.
+
     """
     tensorflow_model.compile()

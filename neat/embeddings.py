@@ -9,7 +9,16 @@ import copy
 import os
 
 
-def get_output_dir(config):
+def get_output_dir(config: dict):
+    """Get output directory from config.
+
+    Args:
+        config: The config object
+
+    Returns:
+        The output directory
+
+    """
     output_dir = config['output_directory'] if 'output_directory' in config else 'output_data' 
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
@@ -18,6 +27,13 @@ def get_output_dir(config):
 
 def make_embeddings(config: dict) -> None:
     """Given a config dict, make embeddings. Outputs embedding file and model file
+
+    Args:
+        config: The config object
+
+    Returns:
+        None.
+
     """
     # load main graph
     graph = EnsmallenGraph.from_unsorted_csv(**config['graph_data']['graph'])

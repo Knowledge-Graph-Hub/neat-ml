@@ -8,7 +8,7 @@ from tqdm import tqdm
 
 def parse_yaml(file: str) -> object:
     with open(file, 'r') as stream:
-        return yaml.safe_load(stream)
+        return yaml.load(stream, Loader=yaml.FullLoader)
 
 
 @click.group()
