@@ -4,3 +4,4 @@ __pycache__
 build/
 dist/
 neat.egg-info/
+output_data
