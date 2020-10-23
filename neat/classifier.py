@@ -3,7 +3,6 @@ import importlib
 import os
 
 import numpy as np
-import tensorflow
 from embiggen import GraphTransformer, EdgeTransformer
 from ensmallen_graph import EnsmallenGraph
 
