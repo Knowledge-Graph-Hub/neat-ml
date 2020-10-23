@@ -3,6 +3,7 @@ import importlib
 import os
 
 import numpy as np
+import tensorflow
 from embiggen import GraphTransformer, EdgeTransformer
 from ensmallen_graph import EnsmallenGraph
 
@@ -44,13 +45,12 @@ def model_fit(model, train_data, validation_data, parameters):
     data: thing that generates training and validation data
     parameters: from parsed YAML file
     """
-    if 'model_fit' in parameters:
-        pass
     callback_list = []
     if 'callbacks' in parameters:
         for callback in parameters['callbacks']:
             c_class = dynamically_import_class(callback['type'])
-            c_instance(**callback['parameters'])
+            c_params = callback['parameters'] if 'parameters' in callback else {}
+            c_instance = c_class(**c_params)
             callback_list.append(c_instance)
     del parameters['callbacks']
     model.fit(*train_data, validation_data=validation_data, **parameters, callbacks=callback_list)

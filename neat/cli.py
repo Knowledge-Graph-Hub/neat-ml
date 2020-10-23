@@ -42,7 +42,7 @@ def run(config: str) -> None:
         for classifier in neat_config['classifier']['classifiers']:
             model = make_classifier(classifier)
             train_data, validation_data = make_data(neat_config)
-            model_fit(model, train_data, validation_data, neat_config)
+            model_fit(model, train_data, validation_data, classifier['model_fit']['parameters'])
     return None
 
 
