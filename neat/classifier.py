@@ -85,8 +85,7 @@ def make_neural_net_model(model_config: dict) -> object:
 
 def make_data(config):
     embedding = np.load(
-        os.path.join(get_output_dir(config), config['embeddings']['embedding_file_name']),
-        allow_pickle=True)
+        os.path.join(get_output_dir(config), config['embeddings']['embedding_file_name']))
 
     # create graph transformer object to convert graphs into edge embeddings
     transformer = GraphTransformer(config['classifier']['edge_method'])
