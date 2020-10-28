@@ -84,7 +84,8 @@ def model_fit(config, model, train_data, validation_data, classifier) -> object:
         model.save(os.path.join(get_output_dir(config), classifier['model']['outfile']))
     else:
         model.fit(*train_data, **classifier_params)
-        pickle.dump(model, os.path.join(get_output_dir(config), classifier['model']['outfile']))
+        with open(os.path.join(get_output_dir(config), classifier['model']['outfile']), 'wb') as f:
+            pickle.dump(model, f)
 
 
 def make_model(config, model_config: dict) -> object:
