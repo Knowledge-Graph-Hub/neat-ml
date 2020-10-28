@@ -13,7 +13,7 @@ from neat.embeddings import get_output_dir
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
-
+import pickle
 
 def make_classifier(classifier_config: dict) -> object:
     """Make a model for a classifier based on a given
@@ -81,9 +81,10 @@ def model_fit(config, model, train_data, validation_data, classifier) -> object:
         del classifier_params['callbacks']
     if isinstance(model, tensorflow.python.keras.engine.sequential.Sequential):
         model.fit(*train_data, validation_data=validation_data, **classifier_params, callbacks=callback_list)
+        model.save(os.path.join(get_output_dir(config), classifier['model']['outfile']))
     else:
         model.fit(*train_data, **classifier_params)
-    model.save(os.path.join(get_output_dir(config), classifier['model']['outfile']))
+        pickle.dump(model, os.path.join(get_output_dir(config), classifier['model']['outfile']))
 
 
 def make_model(config, model_config: dict) -> object:
