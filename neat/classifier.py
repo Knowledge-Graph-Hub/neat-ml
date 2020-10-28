@@ -1,6 +1,7 @@
 import copy
 import importlib
 import os
+from typing import Tuple
 
 import numpy as np
 import tensorflow
@@ -220,7 +221,7 @@ def my_import(name):
 
 
 def compile_model(tensorflow_model: object, config: dict) -> None:
-    """Take output of make_model (a tensorflow model) and compile 
+    """Take output of make_model (a tensorflow model) and compile
     the model with given arguments.
 
     Args:
