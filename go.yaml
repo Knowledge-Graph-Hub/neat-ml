@@ -54,7 +54,7 @@ embeddings:
   model_file_name: embedding_model.h5
   use_pos_valid_for_early_stopping: True # if True, must specify pos_validation_graph above
   embiggen_params:
-    epochs: 1 # typically more than this
+    epochs: 100 # typically more than this
     seq_params:  # these params are passed to Node2VecSequence()
       walk_length: 100
       batch_size: 512
