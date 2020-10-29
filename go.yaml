@@ -72,6 +72,13 @@ embeddings:
       restore_best_weights: True
     optimizer:  # hard-coded to Nadam for now
       learning_rate: 0.1
+    tsne:
+      n: 230 # how many processors to use
+      tsne_file_name: go_tsne.png
+      node_property_for_color: category
+      scatter_params:
+        marker: '.'
+
 
 # classifier:
 #   edge_method: average # one of EdgeTransformer.methods: hadamard, average, weightedL1, weightedL2

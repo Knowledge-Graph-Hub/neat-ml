@@ -1,10 +1,13 @@
 import re
 
 import numpy as np
+import pandas as pd
 from ensmallen_graph import EnsmallenGraph
 from embiggen import Node2VecSequence, SkipGram, CBOW
 from tensorflow.keras.optimizers import Nadam
 from tensorflow.keras.callbacks import EarlyStopping
+from MulticoreTSNE import MulticoreTSNE as TSNE
+from matplotlib import pyplot as plt
 import copy
 import os
 
@@ -19,7 +22,7 @@ def get_output_dir(config: dict):
         The output directory
 
     """
-    output_dir = config['output_directory'] if 'output_directory' in config else 'output_data' 
+    output_dir = config['output_directory'] if 'output_directory' in config else 'output_data'
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     return output_dir
@@ -72,4 +75,20 @@ def make_embeddings(config: dict) -> None:
     np.save(os.path.join(get_output_dir(config), config['embeddings']['embedding_file_name']), model.embedding)
     model.save_weights(os.path.join(get_output_dir(config), config['embeddings']['model_file_name']))
     return None
+
+
+def make_tsne(config: dict) -> None:
+    node_embeddings = np.load(config['embeddings']['embedding_file_name'])
+    tsne_embeddings = TSNE(n_jobs=config['embeddings']['n']).fit_transform(node_embeddings.data)
+    x = tsne_embeddings[:, 0]
+    y = tsne_embeddings[:, 1]
+    if 'node_property_for_color' in config['embeddings']:
+        nodes = pd.read_csv(config['graph_data']['graph']['node_path'], sep='\t')
+        colors = nodes[[config['embeddings']['node_property_for_color']]]
+    else:
+        colors = None
+
+    plt.scatter(x, y, c=colors, cmap=plt.cm.get_cmap("jet", 100), **config['embeddings']['scatter_params'])
+    plt.colorbar(ticks=range(100))
+    plt.savefig(config['embeddings']['tsne_file_name'])
 

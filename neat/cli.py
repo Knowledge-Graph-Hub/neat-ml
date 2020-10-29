@@ -37,12 +37,16 @@ def run(config: str) -> None:
                 os.path.join(get_output_dir(neat_config),
                              neat_config['embeddings']['embedding_file_name'])):
             make_embeddings(neat_config)
+            if 'tsne' in neat_config['embeddings']:
+                make_tsne(neat_config)
+
 
     if 'classifier' in neat_config:
         for classifier in tqdm(neat_config['classifier']['classifiers']):
             model = make_classifier(classifier)
             train_data, validation_data = make_data(neat_config)
             model_fit(neat_config, model, train_data, validation_data, classifier)
+
     return None
 
 
