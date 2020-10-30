@@ -53,6 +53,12 @@ embeddings:
   embedding_file_name: SkipGram.npy
   model_file_name: embedding_model.h5
   use_pos_valid_for_early_stopping: True # if True, must specify pos_validation_graph above
+  tsne:  # comment this out if you don't want a TSNE plot
+    n: 230 # how many processors to use
+    tsne_file_name: go_tsne.png
+    node_property_for_color: category
+    scatter_params:
+      marker: '.'
   embiggen_params:
     epochs: 100 # typically more than this
     seq_params:  # these params are passed to Node2VecSequence()
@@ -72,12 +78,6 @@ embeddings:
       restore_best_weights: True
     optimizer:  # hard-coded to Nadam for now
       learning_rate: 0.1
-    tsne:
-      n: 230 # how many processors to use
-      tsne_file_name: go_tsne.png
-      node_property_for_color: category
-      scatter_params:
-        marker: '.'
 
 
 # classifier:
