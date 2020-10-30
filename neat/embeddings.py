@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 from ensmallen_graph import EnsmallenGraph
 from embiggen import Node2VecSequence, SkipGram, CBOW
+from matplotlib.pyplot import viridis
 from tensorflow.keras.optimizers import Nadam
 from tensorflow.keras.callbacks import EarlyStopping
 from MulticoreTSNE import MulticoreTSNE as TSNE
@@ -81,7 +82,9 @@ def make_tsne(config: dict) -> None:
     # fail early here while debugging:
     if 'node_property_for_color' in config['embeddings']['tsne']:
         nodes = pd.read_csv(config['graph_data']['graph']['node_path'], sep='\t')
-        colors = nodes[[config['embeddings']['tsne']['node_property_for_color']]]
+        categories = nodes[[config['embeddings']['tsne']['node_property_for_color']]]
+        num_categories = len(set(categories))
+        colors = [viridis(float(i) / num_categories) for i in categories]
     else:
         colors = None
 
@@ -90,7 +93,7 @@ def make_tsne(config: dict) -> None:
     x = tsne_embeddings[:, 0]
     y = tsne_embeddings[:, 1]
 
-    plt.scatter(x, y, c=colors, cmap=plt.cm.get_cmap("jet", 100), **config['embeddings']['tsne']['scatter_params'])
+    plt.scatter(x, y, c=colors, **config['embeddings']['tsne']['scatter_params'])
     plt.colorbar(ticks=range(100))
     plt.savefig(os.path.join(get_output_dir(config), config['embeddings']['tsne']['tsne_file_name']))
 
