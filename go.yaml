@@ -59,6 +59,7 @@ embeddings:
     node_property_for_color: category
     scatter_params:
       marker: '.'
+      s: 2
   embiggen_params:
     epochs: 100 # typically more than this
     seq_params:  # these params are passed to Node2VecSequence()
