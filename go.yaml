@@ -58,7 +58,7 @@ embeddings:
     tsne_file_name: go_tsne.png
     node_property_for_color: category
     scatter_params:
-      marker: '.'
+      marker: 'o'
       s: 2
   embiggen_params:
     epochs: 100 # typically more than this
