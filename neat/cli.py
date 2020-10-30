@@ -2,9 +2,10 @@ import os
 import click
 import yaml
 
-from neat.embeddings import make_embeddings, get_output_dir
+from neat.embeddings import make_embeddings, get_output_dir, make_tsne
 from neat.classifier import make_classifier, make_data, model_fit
 from tqdm import tqdm
+
 
 def parse_yaml(file: str) -> object:
     with open(file, 'r') as stream:
