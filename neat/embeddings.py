@@ -86,17 +86,19 @@ def make_tsne(config: dict) -> None:
         category_names = list(set(categories))
         colors = [category_names.index(i) for i in categories]
         cmap = plt.cm.get_cmap('jet', len(category_names))
+        ticks = list(range(len(category_names)))
     else:
+        category_names = None
         colors = None
         cmap = None
+        ticks = None
 
     node_embeddings = np.load(os.path.join(get_output_dir(config), config['embeddings']['embedding_file_name']))
     tsne_embeddings = TSNE(n_jobs=config['embeddings']['tsne']['n']).fit_transform(node_embeddings.data)
     x = tsne_embeddings[:, 0]
     y = tsne_embeddings[:, 1]
-
     plt.scatter(x, y, c=colors, cmap=cmap, **config['embeddings']['tsne']['scatter_params'])
     formatter = plt.FuncFormatter(lambda val, loc: category_names[val])
-    plt.colorbar(ticks=colors, format=formatter)
+    plt.colorbar(ticks=ticks, format=formatter)
     plt.savefig(os.path.join(get_output_dir(config), config['embeddings']['tsne']['tsne_file_name']))
 
