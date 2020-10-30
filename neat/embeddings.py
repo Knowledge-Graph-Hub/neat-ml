@@ -90,5 +90,5 @@ def make_tsne(config: dict) -> None:
 
     plt.scatter(x, y, c=colors, cmap=plt.cm.get_cmap("jet", 100), **config['embeddings']['tsne']['scatter_params'])
     plt.colorbar(ticks=range(100))
-    plt.savefig(config['embeddings']['tsne']['tsne_file_name'])
+    plt.savefig(os.path.join(get_output_dir(config), config['embeddings']['tsne']['tsne_file_name']))
 
