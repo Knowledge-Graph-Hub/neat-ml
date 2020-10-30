@@ -84,6 +84,7 @@ def make_tsne(config: dict) -> None:
         nodes = pd.read_csv(config['graph_data']['graph']['node_path'], sep='\t')
         categories = nodes[config['embeddings']['tsne']['node_property_for_color']]
         category_names = list(set(categories))
+        category_names.sort()
         colors = [category_names.index(i) for i in categories]
         cmap = plt.cm.get_cmap('jet', len(category_names))
         ticks = list(range(len(category_names)))
