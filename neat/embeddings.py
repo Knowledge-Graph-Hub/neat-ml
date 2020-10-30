@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from ensmallen_graph import EnsmallenGraph
 from embiggen import Node2VecSequence, SkipGram, CBOW
-from matplotlib.pyplot import viridis
+from matplotlib.pyplot import jet
 from tensorflow.keras.optimizers import Nadam
 from tensorflow.keras.callbacks import EarlyStopping
 from MulticoreTSNE import MulticoreTSNE as TSNE
@@ -82,18 +82,23 @@ def make_tsne(config: dict) -> None:
     # fail early here while debugging:
     if 'node_property_for_color' in config['embeddings']['tsne']:
         nodes = pd.read_csv(config['graph_data']['graph']['node_path'], sep='\t')
-        categories = nodes[[config['embeddings']['tsne']['node_property_for_color']]]
-        num_categories = len(set(categories))
-        colors = [viridis(float(i) / num_categories) for i in categories]
+        categories = nodes[config['embeddings']['tsne']['node_property_for_color']]
+        category_names = list(set(categories))
+        categories_idx = [category_names.index(i) for i in categories]
+        cmap = plt.cm.get_cmap('jet', len(category_names))
+        formatter = plt.FuncFormatter(lambda val, loc: category_names[val])
+        # We must be sure to specify the ticks matching our target names
+        plt.colorbar(ticks=categories_idx, format=formatter)
     else:
         colors = None
+        cmap = None
 
     node_embeddings = np.load(os.path.join(get_output_dir(config), config['embeddings']['embedding_file_name']))
     tsne_embeddings = TSNE(n_jobs=config['embeddings']['tsne']['n']).fit_transform(node_embeddings.data)
     x = tsne_embeddings[:, 0]
     y = tsne_embeddings[:, 1]
 
-    plt.scatter(x, y, c=colors, **config['embeddings']['tsne']['scatter_params'])
+    plt.scatter(x, y, c=colors, cmap=cmap, **config['embeddings']['tsne']['scatter_params'])
     plt.colorbar(ticks=range(100))
     plt.savefig(os.path.join(get_output_dir(config), config['embeddings']['tsne']['tsne_file_name']))
 
