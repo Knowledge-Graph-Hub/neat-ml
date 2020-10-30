@@ -78,7 +78,7 @@ def make_embeddings(config: dict) -> None:
 
 
 def make_tsne(config: dict) -> None:
-    node_embeddings = np.load(config['embeddings']['embedding_file_name'])
+    node_embeddings = np.load(os.path.join(get_output_dir(config), config['embeddings']['embedding_file_name']))
     tsne_embeddings = TSNE(n_jobs=config['embeddings']['n']).fit_transform(node_embeddings.data)
     x = tsne_embeddings[:, 0]
     y = tsne_embeddings[:, 1]

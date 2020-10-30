@@ -41,7 +41,6 @@ def run(config: str) -> None:
             if 'tsne' in neat_config['embeddings']:
                 make_tsne(neat_config)
 
-
     if 'classifier' in neat_config:
         for classifier in tqdm(neat_config['classifier']['classifiers']):
             model = make_classifier(classifier)
