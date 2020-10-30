@@ -79,7 +79,7 @@ def make_embeddings(config: dict) -> None:
 
 def make_tsne(config: dict) -> None:
     node_embeddings = np.load(os.path.join(get_output_dir(config), config['embeddings']['embedding_file_name']))
-    tsne_embeddings = TSNE(n_jobs=config['embeddings']['n']).fit_transform(node_embeddings.data)
+    tsne_embeddings = TSNE(n_jobs=config['embeddings']['tsne']['n']).fit_transform(node_embeddings.data)
     x = tsne_embeddings[:, 0]
     y = tsne_embeddings[:, 1]
     if 'node_property_for_color' in config['embeddings']:
