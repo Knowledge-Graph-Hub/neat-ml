@@ -81,7 +81,7 @@ def make_tsne(config: dict) -> None:
     # fail early here while debugging:
     if 'node_property_for_color' in config['embeddings']['tsne']:
         nodes = pd.read_csv(config['graph_data']['graph']['node_path'], sep='\t')
-        colors = nodes[[config['embeddings']['node_property_for_color']]]
+        colors = nodes[[config['embeddings']['tsne']['node_property_for_color']]]
     else:
         colors = None
 
