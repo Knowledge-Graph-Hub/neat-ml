@@ -81,88 +81,88 @@ embeddings:
       learning_rate: 0.1
 
 
-# classifier:
-#   edge_method: average # one of EdgeTransformer.methods: hadamard, average, weightedL1, weightedL2
-#   classifiers:  # a list of classifiers to be trained
-#     - type: neural network
-#       model:
-#         outfile: "model_mlp.h5"
-#         type: tensorflow.keras.models.Sequential
-#         layers:
-#           - type: tensorflow.keras.layers.Input
-#             parameters:
-#               shape: 100   # must match embedding_size up above
-#           - type: tensorflow.keras.layers.Dense
-#             parameters:
-#               units: 128
-#               activation: relu
-#           - type: tensorflow.keras.layers.Dense
-#             parameters:
-#               units: 32
-#               activation: relu
-#               # TODO: fix this:
-#               # activity_regularizer: tensorflow.keras.regularizers.l1_l2(l1=1e-5, l2=1e-4)
-#           - type: tensorflow.keras.layers.Dropout
-#             parameters:
-#               rate: 0.5
-#           - type: tensorflow.keras.layers.Dense
-#             parameters:
-#               units: 16
-#               activation: relu
-#           - type: tensorflow.keras.layers.Dense
-#             parameters:
-#               units: 1
-#               activation: sigmoid
-#       model_compile:
-#         loss: binary_crossentropy
-#         optimizer: nadam
-#         metrics:  # these can be tensorflow objects or a string that tensorflow understands, e.g. 'accuracy'
-#           - type: tensorflow.keras.metrics.AUC
-#             parameters:
-#               curve: PR
-#               name: auprc
-#           - type: tensorflow.keras.metrics.AUC
-#             parameters:
-#               curve: ROC
-#               name: auroc
-#           - type: tensorflow.keras.metrics.Recall
-#             parameters:
-#               name: Recall
-#           - type: tensorflow.keras.metrics.Precision
-#             parameters:
-#               name: Precision
-#           - type: accuracy
-#       model_fit:
-#         parameters:
-#           batch_size: 4096  # don't use exponent notation (e.g. 2**12), it will be interpreted as a string
-#           epochs: 5  # typically much higher
-#           callbacks:
-#             - type: tensorflow.keras.callbacks.EarlyStopping
-#               parameters:
-#                 monitor: val_loss
-#                 patience: 5
-#                 min_delta: 0.001  # min improvement to be considered progres
-#             - type: tensorflow.keras.callbacks.ReduceLROnPlateau
-#     - type: Decision Tree
-#       model:
-#         outfile: "model_decision_tree.h5"
-#         type: sklearn.tree.DecisionTreeClassifier
-#         parameters:
-#           max_depth: 30
-#           random_state: 42
-#     - type: Random Forest
-#       model:
-#         outfile: "model_random_forest.h5"
-#         type: sklearn.ensemble.RandomForestClassifier
-#         parameters:
-#           n_estimators: 500
-#           max_depth: 30
-#           n_jobs: 8  # cpu count
-#           random_state: 42
-#     - type: Logistic Regression
-#       model:
-#         outfile: "model_lr.h5"
-#         type: sklearn.linear_model.LogisticRegression
-#         parameters:
-#           random_state: 42
-#           max_iter: 1000
+classifier:
+  edge_method: average # one of EdgeTransformer.methods: hadamard, average, weightedL1, weightedL2
+  classifiers:  # a list of classifiers to be trained
+    - type: neural network
+      model:
+        outfile: "model_mlp.h5"
+        type: tensorflow.keras.models.Sequential
+        layers:
+          - type: tensorflow.keras.layers.Input
+            parameters:
+              shape: 100   # must match embedding_size up above
+          - type: tensorflow.keras.layers.Dense
+            parameters:
+              units: 128
+              activation: relu
+          - type: tensorflow.keras.layers.Dense
+            parameters:
+              units: 32
+              activation: relu
+              # TODO: fix this:
+              # activity_regularizer: tensorflow.keras.regularizers.l1_l2(l1=1e-5, l2=1e-4)
+          - type: tensorflow.keras.layers.Dropout
+            parameters:
+              rate: 0.5
+          - type: tensorflow.keras.layers.Dense
+            parameters:
+              units: 16
+              activation: relu
+          - type: tensorflow.keras.layers.Dense
+            parameters:
+              units: 1
+              activation: sigmoid
+      model_compile:
+        loss: binary_crossentropy
+        optimizer: nadam
+        metrics:  # these can be tensorflow objects or a string that tensorflow understands, e.g. 'accuracy'
+          - type: tensorflow.keras.metrics.AUC
+            parameters:
+              curve: PR
+              name: auprc
+          - type: tensorflow.keras.metrics.AUC
+            parameters:
+              curve: ROC
+              name: auroc
+          - type: tensorflow.keras.metrics.Recall
+            parameters:
+              name: Recall
+          - type: tensorflow.keras.metrics.Precision
+            parameters:
+              name: Precision
+          - type: accuracy
+      model_fit:
+        parameters:
+          batch_size: 4096  # don't use exponent notation (e.g. 2**12), it will be interpreted as a string
+          epochs: 5  # typically much higher
+          callbacks:
+            - type: tensorflow.keras.callbacks.EarlyStopping
+              parameters:
+                monitor: val_loss
+                patience: 5
+                min_delta: 0.001  # min improvement to be considered progres
+            - type: tensorflow.keras.callbacks.ReduceLROnPlateau
+    - type: Decision Tree
+      model:
+        outfile: "model_decision_tree.h5"
+        type: sklearn.tree.DecisionTreeClassifier
+        parameters:
+          max_depth: 30
+          random_state: 42
+    - type: Random Forest
+      model:
+        outfile: "model_random_forest.h5"
+        type: sklearn.ensemble.RandomForestClassifier
+        parameters:
+          n_estimators: 500
+          max_depth: 30
+          n_jobs: 8  # cpu count
+          random_state: 42
+    - type: Logistic Regression
+      model:
+        outfile: "model_lr.h5"
+        type: sklearn.linear_model.LogisticRegression
+        parameters:
+          random_state: 42
+          max_iter: 1000
