@@ -50,7 +50,7 @@ graph_data:
 
 embeddings:
   resume: True
-  embedding_file_name: SkipGram.npy
+  embedding_file_name: SkipGram_training_graph.npy
   model_file_name: embedding_model.h5
   use_pos_valid_for_early_stopping: True # if True, must specify pos_validation_graph above
   tsne:  # comment this out if you don't want a TSNE plot
