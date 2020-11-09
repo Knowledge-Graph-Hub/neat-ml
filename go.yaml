@@ -50,8 +50,8 @@ graph_data:
 
 embeddings:
   resume: True
-  embedding_file_name: SkipGram_training_graph.npy
-  model_file_name: embedding_model.h5
+  embedding_file_name: SkipGram_training_graph_GO.npy
+  model_file_name: embedding_model_GO.h5
   use_pos_valid_for_early_stopping: True # if True, must specify pos_validation_graph above
   tsne:  # comment this out if you don't want a TSNE plot
     n: 230 # how many processors to use
@@ -86,7 +86,7 @@ classifier:
   classifiers:  # a list of classifiers to be trained
     - type: neural network
       model:
-        outfile: "model_mlp.h5"
+        outfile: "model_mlp_GO.h5"
         type: tensorflow.keras.models.Sequential
         layers:
           - type: tensorflow.keras.layers.Input
@@ -145,14 +145,14 @@ classifier:
             - type: tensorflow.keras.callbacks.ReduceLROnPlateau
     - type: Decision Tree
       model:
-        outfile: "model_decision_tree.h5"
+        outfile: "model_decision_tree_GO.h5"
         type: sklearn.tree.DecisionTreeClassifier
         parameters:
           max_depth: 30
           random_state: 42
     - type: Random Forest
       model:
-        outfile: "model_random_forest.h5"
+        outfile: "model_random_forest_GO.h5"
         type: sklearn.ensemble.RandomForestClassifier
         parameters:
           n_estimators: 500
@@ -161,7 +161,7 @@ classifier:
           random_state: 42
     - type: Logistic Regression
       model:
-        outfile: "model_lr.h5"
+        outfile: "model_lr_GO.h5"
         type: sklearn.linear_model.LogisticRegression
         parameters:
           random_state: 42
