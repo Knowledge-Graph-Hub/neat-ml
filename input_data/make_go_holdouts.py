@@ -2,7 +2,7 @@ from ensmallen_graph import EnsmallenGraph
 train_percentage = 0.8
 seed = 42
 graph = EnsmallenGraph.from_unsorted_csv(
-    name="go-json",
+    # name="go-json",
     edge_path="go_edges.tsv",
     sources_column="subject",
     destinations_column="object",
