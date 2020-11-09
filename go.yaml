@@ -20,7 +20,7 @@ graph_data:
     # node_separator: str = "\t"
     sources_column: 'subject'
     destinations_column: 'object'
-    edge_types_column: 'edge_label'
+    edge_types_column: 'label'
     default_edge_type: 'biolink:related_to'
     ignore_duplicated_edges: True
     node_path: input_data/go_nodes_training.tsv
@@ -45,8 +45,10 @@ graph_data:
     edge_path: input_data/go_edges_validation.tsv
   neg_training:
     edge_path: input_data/go_edges_neg_training.tsv
+    default_edge_type: 'negative_edge'
   neg_validation:
     edge_path: input_data/go_edges_neg_validation.tsv
+    default_edge_type: 'negative_edge'
 
 embeddings:
   resume: True
