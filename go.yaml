@@ -41,12 +41,12 @@ graph_data:
   #
   # (when making a classifier, positive training graph is assumed to be 'graph' above)
   # all params below override those in 'graph' above
-   pos_validation:
-     edge_path: input_data/go_edges_validation.tsv
-   neg_training:
-     edge_path: input_data/go_edges_neg_training.tsv
-   neg_validation:
-     edge_path: input_data/go_edges_neg_validation.tsv
+  pos_validation:
+    edge_path: input_data/go_edges_validation.tsv
+  neg_training:
+    edge_path: input_data/go_edges_neg_training.tsv
+  neg_validation:
+    edge_path: input_data/go_edges_neg_validation.tsv
 
 embeddings:
   resume: True
