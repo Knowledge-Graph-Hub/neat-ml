@@ -1,3 +1,5 @@
+import os
+
 from ensmallen_graph import EnsmallenGraph
 train_percentage = 0.8
 seed = 42
@@ -32,3 +34,6 @@ pos_training.dump_edges("go_edges_training.tsv")
 pos_validation.dump_edges("go_edges_validation.tsv")
 neg_training.dump_edges("go_edges_neg_training.tsv")
 neg_validation.dump_edges("go_edges_neg_validation.tsv")
+
+os.system("sed -i 's/$/\tlabel/' go_edges_neg_training.tsv")
+os.system("sed -i 's/$/\tlabel/' go_edges_neg_validation.tsv")
