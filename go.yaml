@@ -45,9 +45,11 @@ graph_data:
     edge_path: input_data/go_edges_validation.tsv
   neg_training:
     edge_path: input_data/go_edges_neg_training.tsv
+    edge_types_column: None
     default_edge_type: 'negative_edge'
   neg_validation:
     edge_path: input_data/go_edges_neg_validation.tsv
+    edge_types_column: None
     default_edge_type: 'negative_edge'
 
 embeddings:
