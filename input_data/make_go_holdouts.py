@@ -21,7 +21,7 @@ if not is_tool("kgx"):
     raise Exception("Need to install KGX! (pip install kgx)")
 
 if not os.path.exists(go_json_file):
-    os.system("wget http://purl.obolibrary.org/obo/go.json -o go.json")
+    os.system("wget http://purl.obolibrary.org/obo/go.json -O go.json")
 
 if not os.path.exists(go_edges_file) or not os.path.exists(go_nodes_file):
     os.system("kgx transform --input-format obojson --output-format tsv --output go go.json")
