@@ -18,7 +18,7 @@ def is_tool(name):
 
 
 if not is_tool("kgx"):
-    raise Exception("Need to install KGX! (pip install kgx)")
+    raise Exception("Need to install KGX! (pip install kgx)") # might also need to roll bmt back to v 0.1.1
 
 if not os.path.exists(go_json_file):
     os.system("wget http://purl.obolibrary.org/obo/go.json -O go.json")
