@@ -1,12 +1,24 @@
 import os
 
 from ensmallen_graph import EnsmallenGraph
+from shutil import which
+
 train_percentage = 0.8
 seed = 42
 
 go_json_file = "go.json"
 go_edges_file = "go_edges.tsv"
 go_nodes_file = "go_nodes.tsv"
+
+
+def is_tool(name):
+    """Check whether `name` is on PATH and marked as executable."""
+    # from whichcraft import which
+    return which(name) is not None
+
+
+if not is_tool("kgx"):
+    raise Exception("Need to install KGX! (pip install kgx)")
 
 if not os.path.exists(go_json_file):
     os.system("wget http://purl.obolibrary.org/obo/go.json -o go.json")
