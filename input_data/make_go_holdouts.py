@@ -54,5 +54,5 @@ for edges in (
     neg_training.dump_edges(os.path.join(edges_string, f"go_edges_neg_training.tsv"))
     neg_validation.dump_edges(os.path.join(edges_string, f"go_edges_neg_validation.tsv"))
 
-    os.system(f"sed -i '.bak' 's/$/\\tlabel/' {edges_string}/go_edges_neg_training.tsv")
-    os.system(f"sed -i '.bak' 's/$/\\tlabel/' {edges_string}/go_edges_neg_validation.tsv")
+    os.system(f"sed -i '.bak' 's/$/\tlabel/' {edges_string}/go_edges_neg_training.tsv")
+    os.system(f"sed -i '.bak' 's/$/\tlabel/' {edges_string}/go_edges_neg_validation.tsv")
