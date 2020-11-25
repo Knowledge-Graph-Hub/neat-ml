@@ -30,7 +30,10 @@ def run(config: str) -> None:
         None.
 
     """
+
     neat_config = parse_yaml(config)
+    # TODO: per Luca, refactor to add help methods to extract kwargs from neat_config
+    #  for various other methods (e.g. `make_embeddings()`, `make_classifier()`)
 
     # generate embeddings if config has 'embeddings' block
     if 'embeddings' in neat_config:
