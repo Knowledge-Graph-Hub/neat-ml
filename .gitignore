@@ -5,3 +5,4 @@ build/
 dist/
 neat.egg-info/
 output_data
+input_data

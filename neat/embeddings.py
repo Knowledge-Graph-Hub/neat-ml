@@ -1,10 +1,14 @@
 import re
 
 import numpy as np
+import pandas as pd
 from ensmallen_graph import EnsmallenGraph
 from embiggen import Node2VecSequence, SkipGram, CBOW
+from matplotlib.pyplot import jet
 from tensorflow.keras.optimizers import Nadam
 from tensorflow.keras.callbacks import EarlyStopping
+from MulticoreTSNE import MulticoreTSNE as TSNE
+from matplotlib import pyplot as plt
 import copy
 import os
 
@@ -19,7 +23,7 @@ def get_output_dir(config: dict):
         The output directory
 
     """
-    output_dir = config['output_directory'] if 'output_directory' in config else 'output_data' 
+    output_dir = config['output_directory'] if 'output_directory' in config else 'output_data'
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     return output_dir
@@ -72,4 +76,30 @@ def make_embeddings(config: dict) -> None:
     np.save(os.path.join(get_output_dir(config), config['embeddings']['embedding_file_name']), model.embedding)
     model.save_weights(os.path.join(get_output_dir(config), config['embeddings']['model_file_name']))
     return None
+
+
+def make_tsne(config: dict) -> None:
+    # fail early here while debugging:
+    if 'node_property_for_color' in config['embeddings']['tsne']:
+        nodes = pd.read_csv(config['graph_data']['graph']['node_path'], sep='\t')
+        categories = nodes[config['embeddings']['tsne']['node_property_for_color']]
+        category_names = list(set(categories))
+        category_names.sort()
+        colors = [category_names.index(i) for i in categories]
+        cmap = plt.cm.get_cmap('jet', len(category_names))
+        ticks = list(range(len(category_names)))
+    else:
+        category_names = None
+        colors = None
+        cmap = None
+        ticks = None
+
+    node_embeddings = np.load(os.path.join(get_output_dir(config), config['embeddings']['embedding_file_name']))
+    tsne_embeddings = TSNE(n_jobs=config['embeddings']['tsne']['n']).fit_transform(node_embeddings.data)
+    x = tsne_embeddings[:, 0]
+    y = tsne_embeddings[:, 1]
+    plt.scatter(x, y, c=colors, cmap=cmap, **config['embeddings']['tsne']['scatter_params'])
+    formatter = plt.FuncFormatter(lambda val, loc: category_names[val])
+    plt.colorbar(ticks=ticks, format=formatter)
+    plt.savefig(os.path.join(get_output_dir(config), config['embeddings']['tsne']['tsne_file_name']))
 

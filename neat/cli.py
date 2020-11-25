@@ -2,9 +2,10 @@ import os
 import click
 import yaml
 
-from neat.embeddings import make_embeddings, get_output_dir
+from neat.embeddings import make_embeddings, get_output_dir, make_tsne
 from neat.classifier import make_classifier, make_data, model_fit
 from tqdm import tqdm
+
 
 def parse_yaml(file: str) -> object:
     with open(file, 'r') as stream:
@@ -37,12 +38,15 @@ def run(config: str) -> None:
                 os.path.join(get_output_dir(neat_config),
                              neat_config['embeddings']['embedding_file_name'])):
             make_embeddings(neat_config)
+            if 'tsne' in neat_config['embeddings']:
+                make_tsne(neat_config)
 
     if 'classifier' in neat_config:
         for classifier in tqdm(neat_config['classifier']['classifiers']):
             model = make_classifier(classifier)
             train_data, validation_data = make_data(neat_config)
             model_fit(neat_config, model, train_data, validation_data, classifier)
+
     return None
 
 

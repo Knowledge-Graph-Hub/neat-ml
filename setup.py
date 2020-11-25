@@ -68,7 +68,8 @@ setup(
         'numpy<1.19.0',
         'matplotlib',
         'sanitize_ml_labels',
-        'sklearn'
+        'sklearn',
+        'MulticoreTSNE'
     ],
     extras_require=extras,
 )
