@@ -21,10 +21,10 @@ if not is_tool("kgx"):
     raise Exception("Need to install KGX! (pip install kgx)") # might also need to roll bmt back to v 0.1.1
 
 if not os.path.exists(go_plus_json_file):
-    os.system("wget http://purl.obolibrary.org/obo/go.json -O go.json")
+    os.system("wget http://purl.obolibrary.org/obo/go/extensions/go-plus.json -O go_plus.json")
 
 if not os.path.exists(go_plus_edges_file) or not os.path.exists(go_plus_nodes_file):
-    os.system("kgx transform --input-format obojson --output-format tsv --output go go.json")
+    os.system("kgx transform --input-format obojson --output-format tsv --output go_plus go.json")
 
 for edges in (
     ['biolink:subclass_of', 'biolink:part_of'],
