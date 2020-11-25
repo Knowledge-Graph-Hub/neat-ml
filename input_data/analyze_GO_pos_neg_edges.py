@@ -54,7 +54,8 @@ pos_valid_predict_sorted = \
 pos_valid_predict_sorted = \
     pos_valid_predict_sorted.rename(columns={'name_x': 'subject_name',
                                              'name_y': 'object_name'})
-pos_valid_predict_sorted.to_csv("pos_sco_edges.tsv", sep='\t', index=False)
+pos_valid_predict_sorted.to_csv(os.path.join("output_data", "pos_sco_edges.tsv"),
+                                sep='\t', index=False)
 
 #
 # negative validation edges
@@ -92,4 +93,5 @@ neg_valid_predict_sorted = \
     neg_valid_predict_sorted.rename(columns={'name_x': 'subject_name',
                                              'name_y': 'object_name'})
 
-neg_valid_predict_sorted.to_csv("neg_sco_edges.tsv", sep='\t', index=False)
+neg_valid_predict_sorted.to_csv(os.path.join("output_data", "neg_sco_edges.tsv"),
+                                sep='\t', index=False)
