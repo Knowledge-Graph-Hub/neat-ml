@@ -24,7 +24,7 @@ if not os.path.exists(go_plus_json_file):
     os.system("wget http://purl.obolibrary.org/obo/go/extensions/go-plus.json -O go_plus.json")
 
 if not os.path.exists(go_plus_edges_file) or not os.path.exists(go_plus_nodes_file):
-    os.system("kgx transform --input-format obojson --output-format tsv --output go_plus go.json")
+    os.system("kgx transform --input-format obojson --output-format tsv --output go_plus go_plus.json")
 
 for edges in (
     ['biolink:subclass_of'],
