@@ -27,9 +27,7 @@ if not os.path.exists(go_plus_edges_file) or not os.path.exists(go_plus_nodes_fi
     os.system("kgx transform --input-format obojson --output-format tsv --output go_plus go.json")
 
 for edges in (
-    ['biolink:subclass_of', 'biolink:part_of'],
     ['biolink:subclass_of'],
-    ['biolink:part_of']
 ):
     edges_string = "_".join(edges)
     os.makedirs(edges_string, exist_ok=True)
