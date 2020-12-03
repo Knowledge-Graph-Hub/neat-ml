@@ -1,15 +1,12 @@
 import os
 import click
-import yaml
 
-from neat.embeddings import make_embeddings, get_output_dir, make_tsne
 from neat.classifier import make_classifier, make_data, model_fit
 from tqdm import tqdm
 
-
-def parse_yaml(file: str) -> object:
-    with open(file, 'r') as stream:
-        return yaml.load(stream, Loader=yaml.FullLoader)
+from neat.embeddings import make_tsne
+from neat.graph_embedding.graph_embedding import make_embeddings
+from neat.yaml_helper.yaml_helper import YamlHelper
 
 
 @click.group()
@@ -31,18 +28,15 @@ def run(config: str) -> None:
 
     """
 
-    neat_config = parse_yaml(config)
-    # TODO: per Luca, refactor to add help methods to extract kwargs from neat_config
-    #  for various other methods (e.g. `make_embeddings()`, `make_classifier()`)
+    yhelp = YamlHelper(config)
 
     # generate embeddings if config has 'embeddings' block
-    if 'embeddings' in neat_config:
-        if not os.path.exists(
-                os.path.join(get_output_dir(neat_config),
-                             neat_config['embeddings']['embedding_file_name'])):
-            make_embeddings(neat_config)
-            if 'tsne' in neat_config['embeddings']:
-                make_tsne(neat_config)
+    if yhelp.do_embeddings() and not os.path.exists(yhelp.embedding_outfile()):
+        kwargs = yhelp.make_embedding_args()
+        make_embeddings(**kwargs)
+
+    if 'tsne' in neat_config['embeddings']:
+        make_tsne(neat_config)
 
     if 'classifier' in neat_config:
         for classifier in tqdm(neat_config['classifier']['classifiers']):
