@@ -9,22 +9,6 @@ from tensorflow.python.keras.callbacks import EarlyStopping
 from tensorflow.keras.optimizers import Nadam
 
 
-def get_output_dir(config: dict):
-    """Get output directory from config.
-
-    Args:
-        config: The config object
-
-    Returns:
-        The output directory
-
-    """
-    output_dir = config['output_directory'] if 'output_directory' in config else 'output_data'
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
-    return output_dir
-
-
 def make_embeddings(main_graph_args: dict,
                     pos_valid_graph_args: dict,
                     embiggen_seq_args: dict,
