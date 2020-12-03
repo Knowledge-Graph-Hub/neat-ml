@@ -50,19 +50,19 @@ graph_data:
 
 embeddings:
   resume: True
-  embedding_file_name: SkipGram.npy
+  embedding_file_name: test_embeddings.npy
   model_file_name: embedding_model.h5
   use_pos_valid_for_early_stopping: True # if True, must specify pos_validation_graph above
   embiggen_params:
     epochs: 1 # typically more than this
     seq_params:  # these params are passed to Node2VecSequence()
-      walk_length: 100
-      batch_size: 512
+      walk_length: 10 # typically 100 or so
+      batch_size: 128 # typically 512? or more
       window_size: 4
       return_weight: 1.0  # 1/p
       explore_weight: 1.0  # 1/q
-      iterations: 20
-    model: skipgram  # or CBOW
+      iterations: 5 # typically 20
+    model: skipgram # or CBOW
     node2vec_params:  # these params are passed to SkipGram() or CBOW()
       embedding_size: 100
       negative_samples: 30
