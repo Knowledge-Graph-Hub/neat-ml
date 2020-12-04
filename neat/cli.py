@@ -40,7 +40,7 @@ def run(config: str) -> None:
         make_tsne(**tsne_kwargs)
 
     if yhelp.do_classifier():
-        for classifier in tqdm(neat_config['classifier']['classifiers']):
+        for classifier in tqdm(yhelp.classifiers()):
             model = make_classifier(classifier)
             train_data, validation_data = make_data(neat_config)
             model_fit(neat_config, model, train_data, validation_data, classifier)

@@ -87,3 +87,15 @@ class YamlHelper:
     def tsne_outfile(self) -> str:
         return os.path.join(self.output_dir(),
                             self.yaml['embeddings']['tsne']['tsne_file_name'])
+
+    #
+    # classifier stuff
+    #
+
+    def classifiers(self):
+        """From the YAML, extract a list of classifiers to be trained
+
+        :return: list of classifiers to be trained
+        """
+        return self.yaml['classifier']['classifiers']
+
