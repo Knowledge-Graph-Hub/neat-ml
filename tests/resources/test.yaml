@@ -74,7 +74,7 @@ embeddings:
       learning_rate: 0.1
 
 classifier:
-  edge_method: average # one of EdgeTransformer.methods: hadamard, average, weightedL1, weightedL2
+  edge_method: Average # one of EdgeTransformer.methods: Hadamard, Sum, Average, L1, AbsoluteL1, L2, or alternatively a lambda
   classifiers:  # a list of classifiers to be trained
     - type: neural network
       model:
