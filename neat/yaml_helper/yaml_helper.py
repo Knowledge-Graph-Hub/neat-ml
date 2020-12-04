@@ -33,6 +33,21 @@ class YamlHelper:
         return output_dir
 
     #
+    # graph stuff
+    #
+    def main_graph_args(self) -> dict:
+        return self.yaml['graph_data']['graph']
+
+    def pos_val_graph_args(self) -> dict:
+        return self.yaml['graph_data']['pos_validation']
+
+    def neg_val_graph_args(self) -> dict:
+        return self.yaml['graph_data']['neg_validation']
+
+    def neg_train_graph_args(self) -> dict:
+        return self.yaml['graph_data']['neg_training']
+
+    #
     # embedding stuff
     #
 
@@ -49,8 +64,8 @@ class YamlHelper:
 
     def make_embedding_args(self) -> dict:
         make_embedding_args = {
-            'main_graph_args': self.yaml['graph_data']['graph'],
-            'pos_valid_graph_args': self.yaml['graph_data']['pos_validation'],
+            'main_graph_args': self.main_graph_args(),
+            'pos_valid_graph_args': self.pos_val_graph_args(),
             'embiggen_seq_args': self.yaml['embeddings']['embiggen_params']['seq_params'],
             'node2vec_params': self.yaml['embeddings']['embiggen_params']['node2vec_params'],
             'epochs': self.yaml['embeddings']['embiggen_params']['epochs'],
@@ -92,10 +107,13 @@ class YamlHelper:
     # classifier stuff
     #
 
-    def classifiers(self):
+    def classifiers(self) -> list:
         """From the YAML, extract a list of classifiers to be trained
 
         :return: list of classifiers to be trained
         """
         return self.yaml['classifier']['classifiers']
+
+    def edge_embedding_method(self) -> str:
+        return self.yaml['classifier']['edge_method']
 

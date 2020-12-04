@@ -5,6 +5,7 @@ from neat.classifier import make_classifier, make_data, model_fit
 from tqdm import tqdm
 
 from neat.graph_embedding.graph_embedding import make_embeddings
+from neat.link_prediction.make_link_prediction_data import make_link_prediction_data
 from neat.visualization.visualization import make_tsne
 from neat.yaml_helper.yaml_helper import YamlHelper
 
@@ -42,8 +43,14 @@ def run(config: str) -> None:
     if yhelp.do_classifier():
         for classifier in tqdm(yhelp.classifiers()):
             model = make_classifier(classifier)
-            train_data, validation_data = make_data(neat_config)
-            model_fit(neat_config, model, train_data, validation_data, classifier)
+            train_data, validation_data = \
+                make_link_prediction_data(yhelp.embedding_outfile(),
+                                          yhelp.main_graph_args(),
+                                          yhelp.pos_val_graph_args(),
+                                          yhelp.neg_train_graph_args(),
+                                          yhelp.neg_val_graph_args(),
+                                          yhelp.edge_embedding_method())
+            model_fit(yhelp.yaml, model, train_data, validation_data, classifier)
 
     return None
 
