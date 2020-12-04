@@ -79,8 +79,9 @@ class YamlHelper:
             'color_nodes': 'node_property_for_color' in self.yaml['embeddings']['tsne']
         }
         if 'node_property_for_color' in self.yaml['embeddings']['tsne']:
-            make_tsne_args['node_file'] = self.yaml['graph_data']['graph']['node_path'],
-            make_tsne_args['node_property_for_color']: self.yaml['embeddings']['tsne']['node_property_for_color']
+            make_tsne_args['node_file'] = self.yaml['graph_data']['graph']['node_path']
+            make_tsne_args['node_property_for_color'] = \
+                self.yaml['embeddings']['tsne']['node_property_for_color']
         return make_tsne_args
 
     def tsne_outfile(self) -> str:
