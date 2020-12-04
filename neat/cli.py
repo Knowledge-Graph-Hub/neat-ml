@@ -4,8 +4,8 @@ import click
 from neat.classifier import make_classifier, make_data, model_fit
 from tqdm import tqdm
 
-from neat.embeddings import make_tsne
 from neat.graph_embedding.graph_embedding import make_embeddings
+from neat.visualization.visualization import make_tsne
 from neat.yaml_helper.yaml_helper import YamlHelper
 
 
@@ -39,11 +39,11 @@ def run(config: str) -> None:
         tsne_kwargs = yhelp.make_tsne_args()
         make_tsne(**tsne_kwargs)
 
-    # if 'classifier' in neat_config:
-    #     for classifier in tqdm(neat_config['classifier']['classifiers']):
-    #         model = make_classifier(classifier)
-    #         train_data, validation_data = make_data(neat_config)
-    #         model_fit(neat_config, model, train_data, validation_data, classifier)
+    if yhelp.do_classifier():
+        for classifier in tqdm(neat_config['classifier']['classifiers']):
+            model = make_classifier(classifier)
+            train_data, validation_data = make_data(neat_config)
+            model_fit(neat_config, model, train_data, validation_data, classifier)
 
     return None
 
