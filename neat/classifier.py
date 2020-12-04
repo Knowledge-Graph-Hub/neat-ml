@@ -8,49 +8,48 @@ import tensorflow
 from embiggen import GraphTransformer, EdgeTransformer
 from ensmallen_graph import EnsmallenGraph
 
-from neat.embeddings import get_output_dir
 
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 import pickle
 
-# def make_classifier(classifier_config: dict) -> object:
-#     """Make a model for a classifier based on a given
-#     set of configurations.
-#
-#     Args:
-#         classifier_config: The config corresponding to 'classifiers'
-#
-#     Returns:
-#         model: The compiled model
-#
-#     """
-#     if 'neural network' in classifier_config['type']:
-#         model = make_neural_net_model(classifier_config, classifier_config['model'])
-#         model_compile_parameters = classifier_config['model_compile']
-#         metrics = model_compile_parameters['metrics'] if 'metrics' in model_compile_parameters else None
-#         metrics_class_list = []
-#         for m in metrics:
-#             if m['type'].startswith('tensorflow.keras'):
-#                 m_class = dynamically_import_class(m['type'])
-#                 m_parameters = m['parameters']
-#                 m_instance = m_class(**m_parameters)
-#                 metrics_class_list.append(m_instance)
-#             else:
-#                 metrics_class_list.append([m['type']])
-#         model.compile(
-#             loss = model_compile_parameters['loss'],
-#             optimizer = model_compile_parameters['optimizer'],
-#             metrics = metrics_class_list
-#         )
-#     elif classifier_config['type'] in 'Decision Tree':
-#         model = make_model(classifier_config, classifier_config['model'])
-#     elif classifier_config['type'] in 'Random Forest':
-#         model = make_model(classifier_config, classifier_config['model'])
-#     elif classifier_config['type'] in 'Logistic Regression':
-#         model = make_model(classifier_config, classifier_config['model'])
-#     return model
+def make_classifier(classifier_config: dict) -> object:
+    """Make a model for a classifier based on a given
+    set of configurations.
+
+    Args:
+        classifier_config: The config corresponding to 'classifiers'
+
+    Returns:
+        model: The compiled model
+
+    """
+    if 'neural network' in classifier_config['type']:
+        model = make_neural_net_model(classifier_config, classifier_config['model'])
+        model_compile_parameters = classifier_config['model_compile']
+        metrics = model_compile_parameters['metrics'] if 'metrics' in model_compile_parameters else None
+        metrics_class_list = []
+        for m in metrics:
+            if m['type'].startswith('tensorflow.keras'):
+                m_class = dynamically_import_class(m['type'])
+                m_parameters = m['parameters']
+                m_instance = m_class(**m_parameters)
+                metrics_class_list.append(m_instance)
+            else:
+                metrics_class_list.append([m['type']])
+        model.compile(
+            loss = model_compile_parameters['loss'],
+            optimizer = model_compile_parameters['optimizer'],
+            metrics = metrics_class_list
+        )
+    elif classifier_config['type'] in 'Decision Tree':
+        model = make_model(classifier_config, classifier_config['model'])
+    elif classifier_config['type'] in 'Random Forest':
+        model = make_model(classifier_config, classifier_config['model'])
+    elif classifier_config['type'] in 'Logistic Regression':
+        model = make_model(classifier_config, classifier_config['model'])
+    return model
 
 
 def model_fit(config, model, train_data, validation_data, classifier) -> object:

@@ -1,7 +1,7 @@
 import os
 import click
 
-from neat.classifier import make_classifier, make_data, model_fit
+from neat.classifier import model_fit, make_classifier
 from tqdm import tqdm
 
 from neat.graph_embedding.graph_embedding import make_embeddings

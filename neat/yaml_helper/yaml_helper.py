@@ -107,6 +107,9 @@ class YamlHelper:
     # classifier stuff
     #
 
+    def do_classifier(self) -> bool:
+        return 'classifier' in self.yaml
+
     def classifiers(self) -> list:
         """From the YAML, extract a list of classifiers to be trained
 
