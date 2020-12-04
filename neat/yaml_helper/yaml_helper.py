@@ -32,6 +32,10 @@ class YamlHelper:
             os.makedirs(output_dir)
         return output_dir
 
+    #
+    # embedding stuff
+    #
+
     def do_embeddings(self) -> bool:
         return 'embeddings' in self.yaml
 
@@ -58,3 +62,27 @@ class YamlHelper:
             'learning_rate': self.yaml['embeddings']['embiggen_params']['optimizer']['learning_rate']
         }
         return make_embedding_args
+
+    #
+    # tSNE stuff
+    #
+
+    def do_tsne(self) -> bool:
+        return 'tsne' in self.yaml['embeddings']
+
+    def make_tsne_args(self) -> dict:
+        make_tsne_args = {
+            'tsne_outfile': self.tsne_outfile(),
+            'embedding_file': self.embedding_outfile(),
+            'num_processors': self.yaml['embeddings']['tsne']['n'],
+            'scatter_params': self.yaml['embeddings']['tsne']['scatter_params'],
+            'color_nodes': 'node_property_for_color' in self.yaml['embeddings']['tsne']
+        }
+        if 'node_property_for_color' in self.yaml['embeddings']['tsne']:
+            make_tsne_args['node_file'] = self.yaml['graph_data']['graph']['node_path'],
+            make_tsne_args['node_property_for_color']: self.yaml['embeddings']['tsne']['node_property_for_color']
+        return make_tsne_args
+
+    def tsne_outfile(self) -> str:
+        return os.path.join(self.output_dir(),
+                            self.yaml['embeddings']['tsne']['tsne_file_name'])

@@ -32,17 +32,18 @@ def run(config: str) -> None:
 
     # generate embeddings if config has 'embeddings' block
     if yhelp.do_embeddings() and not os.path.exists(yhelp.embedding_outfile()):
-        kwargs = yhelp.make_embedding_args()
-        make_embeddings(**kwargs)
+        embed_kwargs = yhelp.make_embedding_args()
+        make_embeddings(**embed_kwargs)
 
-    if 'tsne' in neat_config['embeddings']:
-        make_tsne(neat_config)
+    if yhelp.do_tsne() and not os.path.exists(yhelp.tsne_outfile()):
+        tsne_kwargs = yhelp.make_tsne_args()
+        make_tsne(**tsne_kwargs)
 
-    if 'classifier' in neat_config:
-        for classifier in tqdm(neat_config['classifier']['classifiers']):
-            model = make_classifier(classifier)
-            train_data, validation_data = make_data(neat_config)
-            model_fit(neat_config, model, train_data, validation_data, classifier)
+    # if 'classifier' in neat_config:
+    #     for classifier in tqdm(neat_config['classifier']['classifiers']):
+    #         model = make_classifier(classifier)
+    #         train_data, validation_data = make_data(neat_config)
+    #         model_fit(neat_config, model, train_data, validation_data, classifier)
 
     return None
 
