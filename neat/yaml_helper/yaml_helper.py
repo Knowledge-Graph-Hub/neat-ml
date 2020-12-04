@@ -39,6 +39,10 @@ class YamlHelper:
         return os.path.join(self.output_dir(),
                             self.yaml['embeddings']['embedding_file_name'])
 
+    def model_outfile(self) -> str:
+        return os.path.join(self.output_dir(),
+                            self.yaml['embeddings']['model_file_name'])
+
     def make_embedding_args(self) -> dict:
         make_embedding_args = {
             'main_graph_args': self.yaml['graph_data']['graph'],
@@ -48,8 +52,8 @@ class YamlHelper:
             'epochs': self.yaml['embeddings']['embiggen_params']['epochs'],
             'early_stopping_args': self.yaml['embeddings']['embiggen_params']['early_stopping'],
             'model': self.yaml['embeddings']['embiggen_params']['model'],
-            'embedding_outfile': self.yaml['embeddings']['embedding_file_name'],
-            'model_outfile': self.yaml['embeddings']['model_file_name'],
+            'embedding_outfile': self.embedding_outfile(),
+            'model_outfile': self.model_outfile(),
             'use_pos_valid_for_early_stopping': 'use_pos_valid_for_early_stopping' in self.yaml,
             'learning_rate': self.yaml['embeddings']['embiggen_params']['optimizer']['learning_rate']
         }
