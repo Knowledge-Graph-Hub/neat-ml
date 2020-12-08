@@ -46,7 +46,7 @@ def make_link_prediction_data(
         transformer.transform(graph)
         for graph in (graphs['pos_training'], graphs['neg_training'])
     ])
-    valid_edges = np.vstack([ # computing edge embeddings for validation graph
+    valid_edges = np.vstack([  # computing edge embeddings for validation graph
         transformer.transform(graph)
         for graph in (graphs['pos_validation'], graphs['neg_validation'])
     ])
