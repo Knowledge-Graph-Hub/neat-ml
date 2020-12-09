@@ -8,10 +8,10 @@ class Model:
     def fit(self, X, y):
         pass
 
-    def load(self, path: str):
+    def load(self, path: str) -> object:
         pass
 
-    def save(self, path: str):
+    def save(self, path: str) -> None:
         pass
 
     def predict(self, X) -> np.ndarray:

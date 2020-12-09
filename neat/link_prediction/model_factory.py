@@ -6,5 +6,5 @@ class AbstractModelFactory:
     def __init__(self):
         pass
 
-    def build(self)->Model:
+    def build(self) -> Model:
         pass
