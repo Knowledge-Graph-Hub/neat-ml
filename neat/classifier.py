@@ -147,56 +147,6 @@ def make_neural_net_model(config, model_config: dict) -> object:
     return model_instance
 
 
-# def make_data(config) -> Tuple[Tuple, Tuple]:
-#     """Prepare data for training and validation.
-#
-#     Args:
-#         config: the config
-#
-#     Returns:
-#         A tuple of tuples
-#
-#     """
-#     embedding = np.load(
-#         os.path.join(get_output_dir(config), config['embeddings']['embedding_file_name']))
-#
-#     # load graphs
-#     graphs = {'pos_training': EnsmallenGraph.from_unsorted_csv(**config['graph_data']['graph'])}
-#     for this_graph in ['pos_validation', 'neg_training', 'neg_validation']:
-#         these_params = copy.deepcopy(config['graph_data']['graph'])
-#         these_params.update(config['graph_data'][this_graph])
-#         graphs[this_graph] = EnsmallenGraph.from_unsorted_csv(**these_params)
-#
-#     # create graph transformer object to convert graphs into edge embeddings
-#     transformer = GraphTransformer(config['classifier']['edge_method'])
-#     transformer.fit(embedding)  # pass node embeddings to be used to create edge embeddings
-#     train_edges = np.vstack([  # computing edge embeddings for training graph
-#         transformer.transform(graph)
-#         for graph in (graphs['pos_training'], graphs['neg_training'])
-#     ])
-#     valid_edges = np.vstack([ # computing edge embeddings for validation graph
-#         transformer.transform(graph)
-#         for graph in (graphs['pos_validation'], graphs['neg_validation'])
-#     ])
-#     train_labels = np.concatenate([ # make labels for training graph
-#         np.ones(graphs['pos_training'].get_edges_number()),
-#         np.zeros(graphs['neg_training'].get_edges_number())
-#     ])
-#     valid_labels = np.concatenate([ # make labels for validation graph
-#         np.ones(graphs['pos_validation'].get_edges_number()),
-#         np.zeros(graphs['neg_validation'].get_edges_number())
-#     ])
-#     train_indices = np.arange(0, train_labels.size)
-#     valid_indices = np.arange(0, valid_labels.size)
-#     np.random.shuffle(train_indices) # shuffle to prevent bias caused by ordering of edge labels
-#     np.random.shuffle(valid_indices) # ``   ``
-#     train_edges = train_edges[train_indices]
-#     train_labels = train_labels[train_indices]
-#     valid_edges = valid_edges[valid_indices]
-#     valid_labels = valid_labels[valid_indices]
-#     return (train_edges, train_labels), (valid_edges, valid_labels)
-
-
 def dynamically_import_class(reference) -> object:
     """Dynamically import a class based on its reference.
 
