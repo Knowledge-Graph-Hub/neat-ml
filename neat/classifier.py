@@ -14,6 +14,20 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 import pickle
 
+
+def get_output_dir(config):
+    """Get output directory from config.
+
+    Args:
+        config: The config object
+
+    Returns:
+        The output directory
+
+    """
+    output_dir = config['output_directory']
+    return output_dir
+
 def make_classifier(classifier_config: dict) -> object:
     """Make a model for a classifier based on a given
     set of configurations.
