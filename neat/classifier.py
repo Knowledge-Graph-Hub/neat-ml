@@ -1,17 +1,6 @@
-import copy
 import importlib
 import os
-from typing import Tuple
-
-import numpy as np
 import tensorflow
-from embiggen import GraphTransformer, EdgeTransformer
-from ensmallen_graph import EnsmallenGraph
-
-
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.linear_model import LogisticRegression
 import pickle
 
 
@@ -27,6 +16,7 @@ def get_output_dir(config):
     """
     output_dir = config['output_directory']
     return output_dir
+
 
 def make_classifier(classifier_config: dict) -> object:
     """Make a model for a classifier based on a given
