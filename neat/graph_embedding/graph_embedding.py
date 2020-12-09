@@ -43,7 +43,7 @@ def make_embeddings(main_graph_args: dict,
 
     """
     # load main graph
-    graph = EnsmallenGraph.from_unsorted_csv(**main_graph_args)
+    graph: EnsmallenGraph = EnsmallenGraph.from_unsorted_csv(**main_graph_args)
     graph_sequence = Node2VecSequence(graph, **embiggen_seq_args)
 
     fit_args = {
@@ -76,6 +76,6 @@ def make_embeddings(main_graph_args: dict,
                      **node2vec_params)
     ## TODO: deal with GloVe
     history = model.fit(graph_sequence, **fit_args)
-    np.save(os.path.join(embedding_outfile), model.embedding)
+    model.save_embedding(embedding_outfile, graph.get_node_names())
     model.save_weights(model_outfile)
     return None
