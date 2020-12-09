@@ -1,5 +1,6 @@
 from .model import Model
 
+
 class AbstractModelFactory:
 
     def __init__(self):
