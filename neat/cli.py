@@ -22,7 +22,7 @@ def run(config: str) -> None:
     \f
 
     Args:
-        config: Specify the YAML file containing a list of datasets to download.
+        config: Specify the YAML file containing instructions of what ML tasks to perform
 
     Returns:
         None.
