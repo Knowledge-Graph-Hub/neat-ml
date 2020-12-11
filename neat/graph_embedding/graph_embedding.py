@@ -1,10 +1,8 @@
 import copy
-import os
 import re
 
 from embiggen import Node2VecSequence, SkipGram, CBOW
 from ensmallen_graph import EnsmallenGraph
-import numpy as np
 from tensorflow.python.keras.callbacks import EarlyStopping
 from tensorflow.keras.optimizers import Nadam
 
