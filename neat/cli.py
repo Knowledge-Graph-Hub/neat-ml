@@ -1,11 +1,11 @@
 import os
 import click
+from neat.link_prediction.sklearn_model import SklearnModel
+from neat.link_prediction.mlp_model import MLPModel
 
-from neat.classifier import model_fit, make_classifier
 from tqdm import tqdm
 
 from neat.graph_embedding.graph_embedding import make_embeddings
-from neat.link_prediction.make_link_prediction_data import make_link_prediction_data
 from neat.visualization.visualization import make_tsne
 from neat.yaml_helper.yaml_helper import YamlHelper
 
@@ -42,15 +42,24 @@ def run(config: str) -> None:
 
     if yhelp.do_classifier():
         for classifier in tqdm(yhelp.classifiers()):
-            model = make_classifier(classifier)
+            if classifier['type'] == 'neural network':
+                model = MLPModel(classifier)
+            elif classifier['type'] in \
+                    ['Decision Tree', 'Logistic Regression', 'Random Forest']:
+                model = SklearnModel(classifier)
+            else:
+                raise NotImplemented()
+
+            model.compile()
             train_data, validation_data = \
-                make_link_prediction_data(yhelp.embedding_outfile(),
-                                          yhelp.main_graph_args(),
-                                          yhelp.pos_val_graph_args(),
-                                          yhelp.neg_train_graph_args(),
-                                          yhelp.neg_val_graph_args(),
-                                          yhelp.edge_embedding_method())
-            model_fit(yhelp.yaml, model, train_data, validation_data, classifier)
+                model.make_link_prediction_data(yhelp.embedding_outfile(),
+                                                yhelp.main_graph_args(),
+                                                yhelp.pos_val_graph_args(),
+                                                yhelp.neg_train_graph_args(),
+                                                yhelp.neg_val_graph_args(),
+                                                yhelp.edge_embedding_method())
+            model.fit(train_data, validation_data)
+            model.save()
 
     return None
 

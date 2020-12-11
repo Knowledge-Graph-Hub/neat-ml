@@ -110,6 +110,9 @@ class YamlHelper:
     def do_classifier(self) -> bool:
         return 'classifier' in self.yaml
 
+    def classifier_type(self) -> str:
+        return self.yaml['classifier']['type']
+
     def classifiers(self) -> list:
         """From the YAML, extract a list of classifiers to be trained
 
