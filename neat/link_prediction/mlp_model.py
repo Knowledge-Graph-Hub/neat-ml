@@ -51,10 +51,8 @@ class MLPModel(Model):
         """Takes a model, generated from make_model(), and calls .fit()
 
         Args:
-            config: the config of the parent
-            model: output of make_model()
-            data: thing that generates training and validation data
-            classifier: classifier config from parsed YAML file
+            train_data: training data for fitting
+            validation_data: validation data for fitting
 
         Returns:
             The model object
