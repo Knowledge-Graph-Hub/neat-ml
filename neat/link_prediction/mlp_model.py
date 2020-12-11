@@ -1,5 +1,4 @@
 import tensorflow
-from .link_prediction import dynamically_import_class
 from .model import Model
 
 
@@ -17,11 +16,11 @@ class MLPModel(Model):
         """
         self.config = config
         model_type = config['model']['type']
-        model_class = dynamically_import_class(model_type)
+        model_class = self.dynamically_import_class(model_type)
         model_layers = []
         for layer in config['model']['layers']:
             layer_type = layer['type']
-            layer_class = dynamically_import_class(layer_type)
+            layer_class = self.dynamically_import_class(layer_type)
             parameters = layer['parameters']
             layer_instance = layer_class(**parameters)
             model_layers.append(layer_instance)
@@ -37,7 +36,7 @@ class MLPModel(Model):
         metrics_class_list = []
         for m in metrics:
             if m['type'].startswith('tensorflow.keras'):
-                m_class = dynamically_import_class(m['type'])
+                m_class = self.dynamically_import_class(m['type'])
                 m_parameters = m['parameters']
                 m_instance = m_class(**m_parameters)
                 metrics_class_list.append(m_instance)
@@ -70,7 +69,7 @@ class MLPModel(Model):
         callback_list = []
         if 'callbacks' in classifier_params:
             for callback in classifier_params['callbacks']:
-                c_class = dynamically_import_class(callback['type'])
+                c_class = self.dynamically_import_class(callback['type'])
                 c_params = callback[
                     'parameters'] if 'parameters' in callback else {}
                 c_instance = c_class(**c_params)
