@@ -4,11 +4,10 @@ from .model import Model
 
 class MLPModel(Model):
     def __init__(self, config) -> None:
-        """return an (uncompiled) tensorflow model
+        """make an MLP model
 
         Args:
             config: the classifier config
-            model_config: the model config
 
         Returns:
             The model
