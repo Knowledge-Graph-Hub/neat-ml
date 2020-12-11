@@ -27,13 +27,13 @@ class Model:
 
     @classmethod
     def make_link_prediction_data(self,
-                                    embedding_file: str,
-                                    training_graph_args: dict,
-                                    pos_validation_args: dict,
-                                    neg_training_args: dict,
-                                    neg_validation_args: dict,
-                                    edge_method: str
-                                    ) -> Tuple[Tuple, Tuple]:
+                                  embedding_file: str,
+                                  training_graph_args: dict,
+                                  pos_validation_args: dict,
+                                  neg_training_args: dict,
+                                  neg_validation_args: dict,
+                                  edge_method: str
+                                  ) -> Tuple[Tuple, Tuple]:
         """Prepare training and validation data for training link prediction classifers
 
         Args:
