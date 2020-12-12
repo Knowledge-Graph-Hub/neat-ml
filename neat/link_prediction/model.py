@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 import copy
 import pandas as pd
@@ -14,8 +16,8 @@ import importlib
 
 
 class Model:
-    def __init__(self):
-        pass
+    def __init__(self, outdir=None):
+        self.outdir=outdir
 
     def fit(self, X, y):
         pass
@@ -27,7 +29,7 @@ class Model:
         pass
 
     def save(self) -> None:
-        self.model.save(self.config['model']['outfile'])
+        self.model.save(os.path.join(self.outdir, self.config['model']['outfile']))
 
     def predict(self, X) -> np.ndarray:
         pass

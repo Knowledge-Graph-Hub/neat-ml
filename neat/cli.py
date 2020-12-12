@@ -43,10 +43,10 @@ def run(config: str) -> None:
     if yhelp.do_classifier():
         for classifier in tqdm(yhelp.classifiers()):
             if classifier['type'] == 'neural network':
-                model = MLPModel(classifier)
+                model = MLPModel(classifier, outdir=yhelp.outdir())
             elif classifier['type'] in \
                     ['Decision Tree', 'Logistic Regression', 'Random Forest']:
-                model = SklearnModel(classifier)
+                model = SklearnModel(classifier, outdir=yhelp.outdir())
             else:
                 raise NotImplemented()
 

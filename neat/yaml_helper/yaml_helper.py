@@ -13,24 +13,21 @@ class YamlHelper:
     """
 
     def __init__(self, config: str):
-        self.default_output_dir = 'output_data'
+        self.default_outdir = 'output_data'
         self.yaml = parse_yaml(config)
 
-    def output_dir(self):
+    def outdir(self):
         """Get output directory from config.
-
-        Args:
-            config: The config object
 
         Returns:
             The output directory
 
         """
-        output_dir = self.yaml['output_directory'] if 'output_directory' in self.yaml \
-            else self.default_output_dir
-        if not os.path.exists(output_dir):
-            os.makedirs(output_dir)
-        return output_dir
+        outdir = self.yaml['output_directory'] if 'output_directory' in self.yaml \
+            else self.default_outdir
+        if not os.path.exists(outdir):
+            os.makedirs(outdir)
+        return outdir
 
     #
     # graph stuff
@@ -55,11 +52,11 @@ class YamlHelper:
         return 'embeddings' in self.yaml
 
     def embedding_outfile(self) -> str:
-        return os.path.join(self.output_dir(),
+        return os.path.join(self.outdir(),
                             self.yaml['embeddings']['embedding_file_name'])
 
     def model_outfile(self) -> str:
-        return os.path.join(self.output_dir(),
+        return os.path.join(self.outdir(),
                             self.yaml['embeddings']['model_file_name'])
 
     def make_embedding_args(self) -> dict:
@@ -100,7 +97,7 @@ class YamlHelper:
         return make_tsne_args
 
     def tsne_outfile(self) -> str:
-        return os.path.join(self.output_dir(),
+        return os.path.join(self.outdir(),
                             self.yaml['embeddings']['tsne']['tsne_file_name'])
 
     #

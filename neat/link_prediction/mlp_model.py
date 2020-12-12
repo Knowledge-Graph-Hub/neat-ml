@@ -3,7 +3,7 @@ from .model import Model
 
 
 class MLPModel(Model):
-    def __init__(self, config) -> None:
+    def __init__(self, config, outdir: str = None) -> None:
         """make an MLP model
 
         Args:
@@ -13,6 +13,7 @@ class MLPModel(Model):
             The model
 
         """
+        super().__init__(outdir=outdir)
         self.config = config
         model_type = config['model']['type']
         model_class = self.dynamically_import_class(model_type)
