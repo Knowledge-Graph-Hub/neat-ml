@@ -1,7 +1,8 @@
 import re
 from unittest import TestCase
 from click.testing import CliRunner
-from neat import run
+
+from neat.cli import run
 
 
 class TestRun(TestCase):
@@ -12,6 +13,6 @@ class TestRun(TestCase):
     def test_run_no_yaml_file(self):
         result = self.runner.invoke(catch_exceptions=False,
                                     cli=run,
-                                    args=['-y', 'doesntexist'])
+                                    args=['--config', 'doesntexist'])
         self.assertTrue(re.search('doesntexist', result.output))
         self.assertNotEqual(result.exit_code, 0)
