@@ -1,6 +1,6 @@
 # Neural network Embedding All the Things (NEAT)
 
-NEAT is a flexible pipeline for,
+NEAT is a flexible pipeline for:
 - Parsing a graph serialization
 - Generating embeddings
 - Training Classifiers
