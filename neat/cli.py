@@ -1,15 +1,13 @@
 import os
 import click
-import yaml
+from neat.link_prediction.sklearn_model import SklearnModel
+from neat.link_prediction.mlp_model import MLPModel
 
-from neat.embeddings import make_embeddings, get_output_dir, make_tsne
-from neat.classifier import make_classifier, make_data, model_fit
 from tqdm import tqdm
 
-
-def parse_yaml(file: str) -> object:
-    with open(file, 'r') as stream:
-        return yaml.load(stream, Loader=yaml.FullLoader)
+from neat.graph_embedding.graph_embedding import make_embeddings
+from neat.visualization.visualization import make_tsne
+from neat.yaml_helper.yaml_helper import YamlHelper
 
 
 @click.group()
@@ -24,28 +22,44 @@ def run(config: str) -> None:
     \f
 
     Args:
-        config: Specify the YAML file containing a list of datasets to download.
+        config: Specify the YAML file containing instructions of what ML tasks to perform
 
     Returns:
         None.
 
     """
-    neat_config = parse_yaml(config)
+
+    yhelp = YamlHelper(config)
 
     # generate embeddings if config has 'embeddings' block
-    if 'embeddings' in neat_config:
-        if not os.path.exists(
-                os.path.join(get_output_dir(neat_config),
-                             neat_config['embeddings']['embedding_file_name'])):
-            make_embeddings(neat_config)
-            if 'tsne' in neat_config['embeddings']:
-                make_tsne(neat_config)
+    if yhelp.do_embeddings() and not os.path.exists(yhelp.embedding_outfile()):
+        embed_kwargs = yhelp.make_embedding_args()
+        make_embeddings(**embed_kwargs)
 
-    if 'classifier' in neat_config:
-        for classifier in tqdm(neat_config['classifier']['classifiers']):
-            model = make_classifier(classifier)
-            train_data, validation_data = make_data(neat_config)
-            model_fit(neat_config, model, train_data, validation_data, classifier)
+    if yhelp.do_tsne() and not os.path.exists(yhelp.tsne_outfile()):
+        tsne_kwargs = yhelp.make_tsne_args()
+        make_tsne(**tsne_kwargs)
+
+    if yhelp.do_classifier():
+        for classifier in tqdm(yhelp.classifiers()):
+            if classifier['type'] == 'neural network':
+                model = MLPModel(classifier, outdir=yhelp.outdir())
+            elif classifier['type'] in \
+                    ['Decision Tree', 'Logistic Regression', 'Random Forest']:
+                model = SklearnModel(classifier, outdir=yhelp.outdir())
+            else:
+                raise NotImplemented()
+
+            model.compile()
+            train_data, validation_data = \
+                model.make_link_prediction_data(yhelp.embedding_outfile(),
+                                                yhelp.main_graph_args(),
+                                                yhelp.pos_val_graph_args(),
+                                                yhelp.neg_train_graph_args(),
+                                                yhelp.neg_val_graph_args(),
+                                                yhelp.edge_embedding_method())
+            model.fit(train_data, validation_data)
+            model.save()
 
     return None
 

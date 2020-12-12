@@ -69,7 +69,8 @@ setup(
         'matplotlib',
         'sanitize_ml_labels',
         'sklearn',
-        'MulticoreTSNE'
+        'MulticoreTSNE',
+        'pandas'
     ],
     extras_require=extras,
 )
