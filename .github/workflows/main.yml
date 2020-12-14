@@ -15,6 +15,7 @@ jobs:
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
+          pip install git+https://github.com/monarch-initiative/embiggen.git@develop -U      
           pip install .
           pip install pytest
           pip install --upgrade pytest
@@ -25,8 +26,7 @@ jobs:
           pip install pytest-cov
           pip install validate_version_code
           pip install codacy-coverage
-          pip install parameterized
-          pip install git+https://github.com/monarch-initiative/embiggen.git@develop -U      
+          pip install parameterized 
       - name: run pytest
         run: |
           coverage erase
