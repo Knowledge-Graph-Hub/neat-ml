@@ -26,7 +26,6 @@ jobs:
           pip install validate_version_code
           pip install codacy-coverage
           pip install parameterized
-          pip install git+https://github.com/monarch-initiative/embiggen@develop -U
       - name: run pytest
         run: |
           coverage erase
