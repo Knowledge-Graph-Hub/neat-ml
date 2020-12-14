@@ -77,7 +77,7 @@ embeddings:
       negative_samples: 30
     early_stopping:  # optional
       patience: 5
-      delta: 0.0001
+      min_delta: 0.0001
       restore_best_weights: True
     optimizer:  # hard-coded to Nadam for now
       learning_rate: 0.1
