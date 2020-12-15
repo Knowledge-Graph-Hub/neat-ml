@@ -3,7 +3,7 @@ import click
 from neat.link_prediction.sklearn_model import SklearnModel
 from neat.link_prediction.mlp_model import MLPModel
 
-from tqdm import tqdm
+from tqdm import tqdm  # type: ignore
 
 from neat.graph_embedding.graph_embedding import make_embeddings
 from neat.visualization.visualization import make_tsne
@@ -42,13 +42,14 @@ def run(config: str) -> None:
 
     if yhelp.do_classifier():
         for classifier in tqdm(yhelp.classifiers()):
+            model: object = None
             if classifier['type'] == 'neural network':
                 model = MLPModel(classifier, outdir=yhelp.outdir())
             elif classifier['type'] in \
                     ['Decision Tree', 'Logistic Regression', 'Random Forest']:
                 model = SklearnModel(classifier, outdir=yhelp.outdir())
             else:
-                raise NotImplemented()
+                raise NotImplemented
 
             model.compile()
             train_data, validation_data = \
