@@ -74,7 +74,8 @@ def make_embeddings(main_graph_args: dict,
         word2vec_model = CBOW(vocabulary_size=graph.get_nodes_number(), optimizer=lr,
                      **node2vec_params)
     else:
-        raise NotImplemented
+        raise NotImplementedError(f"{model} isn't implemented yet")
+
     ## TODO: deal with GloVe
     history = word2vec_model.fit(graph_sequence, **fit_args)
     word2vec_model.save_embedding(embedding_outfile, graph.get_node_names())

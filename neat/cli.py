@@ -49,7 +49,7 @@ def run(config: str) -> None:
                     ['Decision Tree', 'Logistic Regression', 'Random Forest']:
                 model = SklearnModel(classifier, outdir=yhelp.outdir())
             else:
-                raise NotImplemented
+                raise NotImplementedError(f"{model} isn't implemented yet")
 
             model.compile()
             train_data, validation_data = \
