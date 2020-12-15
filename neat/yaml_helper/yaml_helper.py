@@ -2,7 +2,7 @@ import os
 import yaml
 
 
-def parse_yaml(file: str) -> object:
+def parse_yaml(file: str) -> dict:
     with open(file, 'r') as stream:
         return yaml.load(stream, Loader=yaml.FullLoader)
 
@@ -14,7 +14,7 @@ class YamlHelper:
 
     def __init__(self, config: str):
         self.default_outdir = 'output_data'
-        self.yaml = parse_yaml(config)
+        self.yaml: dict = parse_yaml(config)
 
     def outdir(self):
         """Get output directory from config.
