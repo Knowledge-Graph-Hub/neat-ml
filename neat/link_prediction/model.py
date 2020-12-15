@@ -17,6 +17,7 @@ import importlib
 
 class Model:
     def __init__(self, outdir=None):
+        os.makedirs(self.outdir, exist_ok=True)
         self.outdir=outdir
 
     def fit(self, X, y):
