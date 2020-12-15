@@ -1,10 +1,10 @@
 import copy
 import re
 
-from embiggen import Node2VecSequence, SkipGram, CBOW
-from ensmallen_graph import EnsmallenGraph
-from tensorflow.python.keras.callbacks import EarlyStopping
-from tensorflow.keras.optimizers import Nadam
+from embiggen import Node2VecSequence, SkipGram, CBOW  # type: ignore
+from ensmallen_graph import EnsmallenGraph  # type: ignore
+from tensorflow.python.keras.callbacks import EarlyStopping  # type: ignore
+from tensorflow.keras.optimizers import Nadam  # type: ignore
 
 
 def make_embeddings(main_graph_args: dict,
@@ -66,14 +66,17 @@ def make_embeddings(main_graph_args: dict,
         fit_args['callbacks'] = [es]
 
     lr = Nadam(learning_rate=learning_rate)
+    word2vec_model = None
     if re.search('skipgram', model, re.IGNORECASE):
-        model = SkipGram(vocabulary_size=graph.get_nodes_number(), optimizer=lr,
+        word2vec_model = SkipGram(vocabulary_size=graph.get_nodes_number(), optimizer=lr,
                          **node2vec_params)
     elif re.search('CBOW', model, re.IGNORECASE):
-        model = CBOW(vocabulary_size=graph.get_nodes_number(), optimizer=lr,
+        word2vec_model = CBOW(vocabulary_size=graph.get_nodes_number(), optimizer=lr,
                      **node2vec_params)
+    else:
+        raise NotImplemented
     ## TODO: deal with GloVe
-    history = model.fit(graph_sequence, **fit_args)
-    model.save_embedding(embedding_outfile, graph.get_node_names())
-    model.save_weights(model_outfile)
+    history = word2vec_model.fit(graph_sequence, **fit_args)
+    word2vec_model.save_embedding(embedding_outfile, graph.get_node_names())
+    word2vec_model.save_weights(model_outfile)
     return None
