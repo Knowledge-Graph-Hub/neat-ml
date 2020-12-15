@@ -1,4 +1,4 @@
-import tensorflow
+import tensorflow   # type: ignore
 from .model import Model
 
 
@@ -22,9 +22,9 @@ class MLPModel(Model):
             layer_type = layer['type']
             layer_class = self.dynamically_import_class(layer_type)
             parameters = layer['parameters']
-            layer_instance = layer_class(**parameters)
+            layer_instance = layer_class(**parameters)  # type: ignore
             model_layers.append(layer_instance)
-        model_instance = model_class()
+        model_instance = model_class()  # type: ignore
         for l in model_layers:
             model_instance.add(l)
         self.model = model_instance
@@ -48,7 +48,7 @@ class MLPModel(Model):
             metrics=metrics_class_list
         )
 
-    def fit(self, train_data, validation_data) -> object:
+    def fit(self, train_data, validation_data):
         """Takes a model, generated from make_model(), and calls .fit()
 
         Args:

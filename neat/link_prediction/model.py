@@ -1,16 +1,16 @@
 import os
 
-import numpy as np
+import numpy as np  # type: ignore
 import copy
-import pandas as pd
+import pandas as pd  # type: ignore
 from typing import Tuple
-from embiggen import LinkPredictionTransformer
-from ensmallen_graph import EnsmallenGraph
-import sklearn
-import tensorflow
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.linear_model import LogisticRegression
+from embiggen import LinkPredictionTransformer  # type: ignore
+from ensmallen_graph import EnsmallenGraph  # type: ignore
+import sklearn   # type: ignore
+import tensorflow  # type: ignore
+from sklearn.tree import DecisionTreeClassifier  # type: ignore
+from sklearn.ensemble import RandomForestClassifier  # type: ignore
+from sklearn.linear_model import LogisticRegression  # type: ignore
 
 import importlib
 
@@ -29,7 +29,7 @@ class Model:
         pass
 
     def save(self) -> None:
-        self.model.save(os.path.join(self.outdir, self.config['model']['outfile']))
+        self.model.save(os.path.join(self.outdir, self.config['model']['outfile']))  # type: ignore
 
     def predict(self, X) -> np.ndarray:
         pass

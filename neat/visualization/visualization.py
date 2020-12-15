@@ -1,7 +1,9 @@
-import pandas as pd
-import numpy as np
-from MulticoreTSNE import MulticoreTSNE as TSNE
-from matplotlib import pyplot as plt
+from typing import Any, Optional
+
+import pandas as pd  # type: ignore
+import numpy as np  # type: ignore
+from MulticoreTSNE import MulticoreTSNE as TSNE  # type: ignore
+from matplotlib import pyplot as plt  # type: ignore
 
 
 def make_tsne(
@@ -29,6 +31,10 @@ def make_tsne(
     :return:
     """
     # fail early here while debugging:
+    category_names: Optional[Any] = None
+    colors: Optional[Any] = None
+    cmap: Optional[Any] = None
+    ticks: Optional[Any] = None
     if color_nodes:
         nodes = pd.read_csv(node_file, sep='\t')
         categories = nodes[node_property_for_color]
@@ -37,17 +43,12 @@ def make_tsne(
         colors = [category_names.index(i) for i in categories]
         cmap = plt.cm.get_cmap('jet', len(category_names))
         ticks = list(range(len(category_names)))
-    else:
-        category_names = None
-        colors = None
-        cmap = None
-        ticks = None
 
     node_embeddings = np.load(embedding_file)
     tsne_embeddings = TSNE(n_jobs=num_processors).fit_transform(node_embeddings.data)
     x = tsne_embeddings[:, 0]
     y = tsne_embeddings[:, 1]
     plt.scatter(x, y, c=colors, cmap=cmap, **scatter_params)
-    formatter = plt.FuncFormatter(lambda val, loc: category_names[val])
+    formatter = plt.FuncFormatter(lambda val, loc: category_names[val] if val in category_names else None)  # type: ignore
     plt.colorbar(ticks=ticks, format=formatter)
     plt.savefig(tsne_outfile)
