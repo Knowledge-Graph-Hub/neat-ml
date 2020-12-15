@@ -16,6 +16,6 @@ class SklearnModel(Model):
         self.model.fit(*train_data)
 
     def save(self):
-        with open(os.path.join(self.outdir, self.config['model']['outfile'], 'wb')) as f:
+        with open(os.path.join(self.outdir, self.config['model']['outfile']), 'wb') as f:
              pickle.dump(self.model, f)
 
