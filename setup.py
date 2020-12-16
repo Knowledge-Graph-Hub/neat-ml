@@ -70,7 +70,8 @@ setup(
         'sanitize_ml_labels',
         'sklearn',
         'MulticoreTSNE',
-        'pandas'
+        'pandas',
+        'torch'
     ],
     extras_require=extras,
 )

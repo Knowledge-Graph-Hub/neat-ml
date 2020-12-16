@@ -71,7 +71,9 @@ class YamlHelper:
             'embedding_outfile': self.embedding_outfile(),
             'model_outfile': self.model_outfile(),
             'use_pos_valid_for_early_stopping': 'use_pos_valid_for_early_stopping' in self.yaml,
-            'learning_rate': self.yaml['embeddings']['embiggen_params']['optimizer']['learning_rate']
+            'learning_rate': self.yaml['embeddings']['embiggen_params']['optimizer']['learning_rate'],
+            'bert_columns': self.yaml['embeddings']['bert_params']['node_columns']
+            if 'node_columns' in self.yaml['embeddings']['bert_params'] else None
         }
         return make_embedding_args
 

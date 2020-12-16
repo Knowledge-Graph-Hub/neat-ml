@@ -72,6 +72,10 @@ embeddings:
       restore_best_weights: True
     optimizer:  # hard-coded to Nadam for now
       learning_rate: 0.1
+  bert_params:
+    node_columns:
+      - category
+      - id
 
 classifier:
   edge_method: Average # one of EdgeTransformer.methods: Hadamard, Sum, Average, L1, AbsoluteL1, L2, or alternatively a lambda
