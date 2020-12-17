@@ -3,14 +3,14 @@ import re
 
 import torch
 from embiggen import Node2VecSequence, SkipGram, CBOW  # type: ignore
-from embiggen.embedders.embedder import Embedder
+from embiggen.embedders.embedder import Embedder  # type: ignore
 from ensmallen_graph import EnsmallenGraph  # type: ignore
-import numpy as np
-import pandas as pd
+import numpy as np  # type: ignore
+import pandas as pd  # type: ignore
 from tensorflow.python.keras.callbacks import EarlyStopping  # type: ignore
 from tensorflow.keras.optimizers import Nadam  # type: ignore
-from tqdm.auto import tqdm
-from transformers import BertModel, BertTokenizer
+from tqdm.auto import tqdm  # type: ignore
+from transformers import BertModel, BertTokenizer  # type: ignore
 
 
 def get_node_data(file: str, sep="\t") -> pd.DataFrame:
