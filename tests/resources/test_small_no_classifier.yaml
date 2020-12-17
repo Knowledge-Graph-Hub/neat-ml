@@ -45,7 +45,7 @@ embeddings:
     epochs: 1 # typically more than this
     seq_params:  # these params are passed to Node2VecSequence()
       walk_length: 10 # typically 100 or so
-      batch_size: 128 # typically 512? or more
+      batch_size: 64 # typically 512? or more
       window_size: 4
       return_weight: 1.0  # 1/p
       explore_weight: 1.0  # 1/q

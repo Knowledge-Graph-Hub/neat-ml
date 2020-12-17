@@ -1,3 +1,4 @@
+import functools
 import os
 import yaml
 
@@ -5,6 +6,17 @@ import yaml
 def parse_yaml(file: str) -> dict:
     with open(file, 'r') as stream:
         return yaml.load(stream, Loader=yaml.FullLoader)
+
+
+def catch_keyerror(f):
+    @functools.wraps(f)
+    def func(*args, **kwargs):
+        try:
+            return f(*args, **kwargs)
+        except KeyError as e:
+            print("can't find key in YAML: ", e)
+            return None
+    return func
 
 
 class YamlHelper:
@@ -35,12 +47,15 @@ class YamlHelper:
     def main_graph_args(self) -> dict:
         return self.yaml['graph_data']['graph']
 
+    @catch_keyerror
     def pos_val_graph_args(self) -> dict:
         return self.yaml['graph_data']['pos_validation']
 
+    @catch_keyerror
     def neg_val_graph_args(self) -> dict:
         return self.yaml['graph_data']['neg_validation']
 
+    @catch_keyerror
     def neg_train_graph_args(self) -> dict:
         return self.yaml['graph_data']['neg_training']
 
