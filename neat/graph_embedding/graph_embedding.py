@@ -3,6 +3,7 @@ import re
 
 import torch
 from embiggen import Node2VecSequence, SkipGram, CBOW  # type: ignore
+from embiggen.embedders.embedder import Embedder
 from ensmallen_graph import EnsmallenGraph  # type: ignore
 import numpy as np
 import pandas as pd
@@ -15,7 +16,8 @@ from transformers import BertModel, BertTokenizer
 def get_node_data(file: str, sep="\t") -> pd.DataFrame:
     """Read node TSV file and return pandas dataframe
 
-    :param file:
+    :param file: node TSV file
+    :param sep: separator
     :return:
     """
     return pd.read_csv(file, sep=sep)
@@ -67,7 +69,7 @@ def make_graph_embeddings(main_graph_args: dict,
 
         node_data = get_node_data(main_graph_args['node_path'])
 
-        for _, row in tqdm(node_data.iterrows(),
+        for index, row in tqdm(node_data.iterrows(),
                            "making BERT embeddings of columns: " + " ".join(bert_columns),
                            total=node_data.shape[0]):
             node_text = "".join([row[col] for col in bert_columns])
@@ -112,9 +114,34 @@ def make_graph_embeddings(main_graph_args: dict,
     ## TODO: deal with GloVe
     word2vec_model.fit(graph_sequence, **fit_args)
 
+    word2vec_model = concat_bert_embeddings(word2vec_model, graph, bert_embeddings)
+
     word2vec_model.save_embedding(embedding_outfile, graph.get_node_names())
     word2vec_model.save_weights(model_outfile)
     return None
+
+
+def concat_bert_embeddings(word2vec_model: Embedder,
+                           graph: EnsmallenGraph,
+                           bert_embeddings: dict) -> Embedder:
+    """For each node in the graph, concatenate the Bert embeddings on the end of
+    word2vec embeddings
+
+    :param word2vec_model: word2vec model (CBOW, SkipGram, could be GloVe too, once we
+    implement that)
+    :param graph: the graph containing the nodes (an EnsmallenGraph)
+    :param bert_embeddings: dictionary with graph IDs as keys, and output of
+    get_embedding() as values
+    :return:
+    """
+    new_shape = (word2vec_model.embedding.shape[0],
+                 word2vec_model.embedding.shape[1] + next(iter(bert_embeddings.values())).shape[0])
+    new_embeddings = np.ndarray(new_shape)
+    for idx, node in tqdm(enumerate(graph.get_node_names())):
+        new_embeddings[idx,] = np.concatenate([word2vec_model.embedding[idx,],
+                                               bert_embeddings[node]])
+    word2vec_model.embedding = new_embeddings
+    return word2vec_model
 
 
 def get_embedding(bert_model, tokenizer, text) -> np.array:
