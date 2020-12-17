@@ -140,7 +140,8 @@ def concat_bert_embeddings(word2vec_model: Embedder,
     for idx, node in tqdm(enumerate(graph.get_node_names())):
         new_embeddings[idx,] = np.concatenate([word2vec_model.embedding[idx,],
                                                bert_embeddings[node]])
-    word2vec_model.embedding = new_embeddings
+    word2vec_model = word2vec_model._replace(embedding=new_embeddings)
+
     return word2vec_model
 
 
