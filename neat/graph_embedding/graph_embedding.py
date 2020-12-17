@@ -66,16 +66,12 @@ def make_graph_embeddings(main_graph_args: dict,
         bert_model.eval()
 
         node_data = get_node_data(main_graph_args['node_path'])
-        for col in bert_columns:
-            if col not in list(node_data.columns):
-                raise RuntimeError(
-                    f"column {col} not in node file {main_graph_args['node_path']}")
 
         for _, row in tqdm(node_data.iterrows(),
-                           "making BERT embeddings of columns: " + " ".join(bert_columns)):
-            for col in bert_columns:
-                bert_embeddings[row['id']] = \
-                    get_embedding(bert_model, bert_tokenizer, row[col])
+                           "making BERT embeddings of columns: " + " ".join(bert_columns),
+                           total=node_data.shape[0]):
+            node_text = "".join([row[col] for col in bert_columns])
+            bert_embeddings[row['id']] = get_embedding(bert_model, bert_tokenizer, node_text)
 
     # load main graph
     graph: EnsmallenGraph = EnsmallenGraph.from_unsorted_csv(**main_graph_args)
