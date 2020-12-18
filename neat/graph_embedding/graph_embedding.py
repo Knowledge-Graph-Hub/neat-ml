@@ -1,9 +1,7 @@
 import copy
 import re
 
-import torch
 from embiggen import Node2VecSequence, SkipGram, CBOW  # type: ignore
-from embiggen.embedders.embedder import Embedder  # type: ignore
 from ensmallen_graph import EnsmallenGraph  # type: ignore
 import numpy as np  # type: ignore
 import pandas as pd  # type: ignore
@@ -59,25 +57,35 @@ def make_graph_embeddings(main_graph_args: dict,
         None.
 
     """
+    # load main graph
+    graph: EnsmallenGraph = EnsmallenGraph.from_unsorted_csv(**main_graph_args)
+    graph_sequence = Node2VecSequence(graph, **embiggen_seq_args)
+
     # embed columns with BERT first (if we're gonna)
-    bert_embeddings = {}
+    bert_embeddings = pd.DataFrame()
     if bert_columns:
         bert_model = BertModel.from_pretrained(bert_pretrained_model,
                                                output_hidden_states=True)
         bert_tokenizer = BertTokenizer.from_pretrained(bert_pretrained_model)
         bert_model.eval()
+        all_bert_embeddings = bert_model.embeddings.word_embeddings.weight.data.numpy()
 
         node_data = get_node_data(main_graph_args['node_path'])
 
-        for index, row in tqdm(node_data.iterrows(),
-                           "making BERT embeddings of columns: " + " ".join(bert_columns),
-                           total=node_data.shape[0]):
-            node_text = "".join([row[col] for col in bert_columns])
-            bert_embeddings[row['id']] = get_embedding(bert_model, bert_tokenizer, node_text)
+        node_text = [
+            " ".join([row[col] for col in bert_columns])
+            for index, row in tqdm(node_data.iterrows())
+        ]
+        node_text_tokenized = [bert_tokenizer.encode(
+            this_text,  # Sentence to encode
+            # add_special_tokens=True,  # Add '[CLS]' and '[SEP]'
+            return_tensors='np'
+        ) for this_text in node_text]
+        node_text_tensors = [
+            np.mean(all_bert_embeddings[ids.flatten()], axis=0)
+            for ids in node_text_tokenized]
 
-    # load main graph
-    graph: EnsmallenGraph = EnsmallenGraph.from_unsorted_csv(**main_graph_args)
-    graph_sequence = Node2VecSequence(graph, **embiggen_seq_args)
+        bert_embeddings = pd.DataFrame(node_text_tensors, index=graph.get_node_names())
 
     fit_args = {
         'steps_per_epoch': graph_sequence.steps_per_epoch,
@@ -114,85 +122,14 @@ def make_graph_embeddings(main_graph_args: dict,
     ## TODO: deal with GloVe
     word2vec_model.fit(graph_sequence, **fit_args)
 
-    word2vec_model = concat_bert_embeddings(word2vec_model, graph, bert_embeddings)
+    these_embeddings = pd.DataFrame(word2vec_model.embedding,
+                                    index=graph.get_node_names())
 
-    word2vec_model.save_embedding(embedding_outfile, graph.get_node_names())
+    if not bert_embeddings.empty:
+        these_embeddings = pd.concat([these_embeddings, bert_embeddings],
+                                     axis=1,
+                                     ignore_index=False)
+
+    these_embeddings.to_csv(embedding_outfile, header=False)
     word2vec_model.save_weights(model_outfile)
     return None
-
-
-def concat_bert_embeddings(word2vec_model: Embedder,
-                           graph: EnsmallenGraph,
-                           bert_embeddings: dict) -> Embedder:
-    """For each node in the graph, concatenate the Bert embeddings on the end of
-    word2vec embeddings
-
-    :param word2vec_model: word2vec model (CBOW, SkipGram, could be GloVe too, once we
-    implement that)
-    :param graph: the graph containing the nodes (an EnsmallenGraph)
-    :param bert_embeddings: dictionary with graph IDs as keys, and output of
-    get_embedding() as values
-    :return:
-    """
-    new_shape = (word2vec_model.embedding.shape[0],
-                 word2vec_model.embedding.shape[1] + next(iter(bert_embeddings.values())).shape[0])
-    new_embeddings = np.ndarray(new_shape)
-    for idx, node in tqdm(enumerate(graph.get_node_names())):
-        new_embeddings[idx,] = np.concatenate([word2vec_model.embedding[idx,],
-                                               bert_embeddings[node]])
-    word2vec_model = word2vec_model._replace(embedding=new_embeddings)
-
-    return word2vec_model
-
-
-def get_embedding(bert_model, tokenizer, text) -> np.array:
-    '''
-    Uses the provided model and tokenizer to produce an embedding for the
-    provided `text`, and a "contextualized" embedding for `word`, if provided.
-
-    :param bert_model
-    :param tokenizer
-    :text  text for which we want an embedding
-    '''
-
-    # Encode the text, adding the (required!) special tokens, and converting to
-    # PyTorch tensors.
-    encoded_dict = tokenizer.encode_plus(
-        text,  # Sentence to encode.
-        add_special_tokens=True,  # Add '[CLS]' and '[SEP]'
-        return_tensors='pt',  # Return pytorch tensors.
-    )
-
-    input_ids = encoded_dict['input_ids']
-
-    bert_model.eval()
-
-    # Run the text through the model and get the hidden states.
-    bert_outputs = bert_model(input_ids)
-
-    # Run the text through BERT, and collect all of the hidden states produced
-    # from all 12 layers.
-    with torch.no_grad():
-        outputs = bert_model(input_ids)
-
-        # Evaluating the model will return a different number of objects based on
-        # how it's  configured in the `from_pretrained` call earlier. In this case,
-        # becase we set `output_hidden_states = True`, the third item will be the
-        # hidden states from all layers. See the documentation for more details:
-        # https://huggingface.co/transformers/model_doc/bert.html#bertmodel
-        hidden_states = outputs[2]
-
-    # `hidden_states` has shape [13 x 1 x <sentence length> x 768]
-
-    # Select the embeddings from the second to last layer.
-    # `token_vecs` is a tensor with shape [<sent length> x 768]
-    token_vecs = hidden_states[-2][0]
-
-    # Calculate the average of all token vectors.
-    sentence_embedding = torch.mean(token_vecs, dim=0)
-
-    # Convert to numpy array.
-    sentence_embedding = sentence_embedding.detach().numpy()
-
-    # If `word` was provided, compute an embedding for those tokens.
-    return sentence_embedding
