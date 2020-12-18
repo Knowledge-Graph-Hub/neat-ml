@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from neat.graph_embedding.graph_embedding import get_node_data
+from neat.graph_embedding.graph_embedding import get_node_data, make_graph_embeddings
 import pandas as pd
 
 
@@ -18,4 +18,5 @@ class TestGraphEmbedding(TestCase):
         self.assertTrue(isinstance(node_data, pd.DataFrame))
 
     def test_make_graph_embeddings(self):
+        make_graph_embeddings
         self.assertTrue(True)
