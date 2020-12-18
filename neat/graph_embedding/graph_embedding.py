@@ -74,16 +74,16 @@ def make_graph_embeddings(main_graph_args: dict,
 
         node_text = [
             " ".join([row[col] for col in bert_columns])
-            for index, row in tqdm(node_data.iterrows())
+            for index, row in tqdm(node_data.iterrows(), "extracting text from nodes")
         ]
         node_text_tokenized = [bert_tokenizer.encode(
             this_text,  # Sentence to encode
             # add_special_tokens=True,  # Add '[CLS]' and '[SEP]'
             return_tensors='np'
-        ) for this_text in node_text]
+        ) for this_text in tqdm(node_text, "tokenzing text")]
         node_text_tensors = [
             np.mean(all_bert_embeddings[ids.flatten()], axis=0)
-            for ids in node_text_tokenized]
+            for ids in tqdm(node_text_tokenized, "extracting embeddings for tokens")]
 
         bert_embeddings = pd.DataFrame(node_text_tensors, index=graph.get_node_names())
 
