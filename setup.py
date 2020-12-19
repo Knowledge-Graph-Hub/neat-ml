@@ -71,7 +71,8 @@ setup(
         'sklearn',
         'MulticoreTSNE',
         'pandas',
-        'transformers'
+        'transformers',
+        'torch'
     ],
     extras_require=extras,
 )
