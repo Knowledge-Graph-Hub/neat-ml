@@ -73,7 +73,7 @@ def make_graph_embeddings(main_graph_args: dict,
         node_data = get_node_data(main_graph_args['node_path'])
 
         node_text = [
-            " ".join([row[col] for col in bert_columns])
+            " ".join([str(row[col]) for col in bert_columns])
             for index, row in tqdm(node_data.iterrows(), "extracting text from nodes")
         ]
         node_text_tokenized = [bert_tokenizer.encode(
