@@ -133,3 +133,11 @@ def make_graph_embeddings(main_graph_args: dict,
     these_embeddings.to_csv(embedding_outfile, header=False)
     word2vec_model.save_weights(model_outfile)
     return None
+
+
+def merge_and_write_complete_node_data(
+        original_nodes_file: str, node_data: pd.DataFrame, outfile: str):
+    complete_node_data = get_node_data(original_nodes_file)
+    node_data = node_data.merge(complete_node_data, how="left", on="id",
+                                suffixes=("", "_y")).drop("category_y", axis=1)
+    node_data.to_csv(outfile, sep="\t", index=False)
