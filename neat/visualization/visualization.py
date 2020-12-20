@@ -1,7 +1,6 @@
 from typing import Any, Optional
 
 import pandas as pd  # type: ignore
-import numpy as np  # type: ignore
 from MulticoreTSNE import MulticoreTSNE as TSNE  # type: ignore
 from matplotlib import pyplot as plt  # type: ignore
 
