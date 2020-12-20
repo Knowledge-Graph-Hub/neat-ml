@@ -44,8 +44,8 @@ def make_tsne(
         cmap = plt.cm.get_cmap('jet', len(category_names))
         ticks = list(range(len(category_names)))
 
-    node_embeddings = np.load(embedding_file)
-    tsne_embeddings = TSNE(n_jobs=num_processors).fit_transform(node_embeddings.data)
+    node_embeddings = pd.read_csv(embedding_file, index_col=0)
+    tsne_embeddings = TSNE(n_jobs=num_processors).fit_transform(node_embeddings)
     x = tsne_embeddings[:, 0]
     y = tsne_embeddings[:, 1]
     plt.scatter(x, y, c=colors, cmap=cmap, **scatter_params)
