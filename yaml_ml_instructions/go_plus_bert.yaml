@@ -45,10 +45,10 @@ graph_data:
     edge_path: input_data/biolink:subclass_of/go_plus_edges_validation.tsv
   neg_training:
     edge_path: input_data/biolink:subclass_of/go_plus_edges_neg_training.tsv
-    default_edge_type: 'negative_edge'
+    edge_types_column: neg_edge   
   neg_validation:
     edge_path: input_data/biolink:subclass_of/go_plus_edges_neg_validation.tsv
-    default_edge_type: 'negative_edge'
+    edge_types_column: neg_edge
 
 embeddings:
   resume: True
@@ -88,7 +88,7 @@ embeddings:
       - description
 
 classifier:
-  edge_method: average # one of EdgeTransformer.methods: hadamard, average, weightedL1, weightedL2
+  edge_method: Average # one of EdgeTransformer.methods: hadamard, average, weightedL1, weightedL2
   classifiers:  # a list of classifiers to be trained
     - type: neural network
       model:
