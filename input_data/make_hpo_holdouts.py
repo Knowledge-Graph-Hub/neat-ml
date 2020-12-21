@@ -55,12 +55,12 @@ neg_training, neg_validation = reduced_graph.sample_negatives(
    negatives_number=graph.get_edges_number(),
 ).random_holdout(random_state=seed, train_size=train_percentage)
 
-reduced_graph.dump_nodes(os.path.join(edges_string, f"hpo_nodes_training.tsv"))
+reduced_graph.dump_nodes(os.path.join(edges_string, "hpo_nodes_training.tsv"))
 
-pos_training.dump_edges(os.path.join(edges_string, f"hpo_edges_training.tsv"))
-pos_validation.dump_edges(os.path.join(edges_string, f"hpo_edges_validation.tsv"))
-neg_training.dump_edges(os.path.join(edges_string, f"hpo_edges_neg_training.tsv"))
-neg_validation.dump_edges(os.path.join(edges_string, f"hpo_edges_neg_validation.tsv"))
+pos_training.dump_edges(os.path.join(edges_string, "hpo_edges_training.tsv"))
+pos_validation.dump_edges(os.path.join(edges_string, "hpo_edges_validation.tsv"))
+neg_training.dump_edges(os.path.join(edges_string, "hpo_edges_neg_training.tsv"))
+neg_validation.dump_edges(os.path.join(edges_string, "hpo_edges_neg_validation.tsv"))
 
-os.system(f"sed -i '.bak' 's/$/\tlabel/' {edges_string}/hpo_edges_neg_training.tsv")
-os.system(f"sed -i '.bak' 's/$/\tlabel/' {edges_string}/hpo_edges_neg_validation.tsv")
+os.system("perl -pi -e 's/$/\tlabel/' {edges_string}/hpo_edges_neg_training.tsv".format(edges_string=edges_string))
+os.system("perl -pi -e 's/$/\tlabel/' {edges_string}/hpo_edges_neg_validation.tsv".format(edges_string=edges_string))
