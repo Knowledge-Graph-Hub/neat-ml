@@ -43,7 +43,7 @@ def make_tsne(
         cmap = plt.cm.get_cmap('jet', len(category_names))
         ticks = list(range(len(category_names)))
 
-    node_embeddings = pd.read_csv(embedding_file, index_col=0)
+    node_embeddings = pd.read_csv(embedding_file, index_col=0, header=None)
     tsne_embeddings = TSNE(n_jobs=num_processors).fit_transform(node_embeddings)
     x = tsne_embeddings[:, 0]
     y = tsne_embeddings[:, 1]

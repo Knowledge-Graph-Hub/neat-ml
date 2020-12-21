@@ -130,7 +130,7 @@ def make_graph_embeddings(main_graph_args: dict,
                                      axis=1,
                                      ignore_index=False)
 
-    these_embeddings.to_csv(embedding_outfile, header=True)
+    these_embeddings.to_csv(embedding_outfile, header=False)
     word2vec_model.save_weights(model_outfile)
     return None
 
