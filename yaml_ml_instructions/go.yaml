@@ -138,7 +138,7 @@ classifier:
       model_fit:
         parameters:
           batch_size: 4096  # don't use exponent notation (e.g. 2**12), it will be interpreted as a string
-          epochs: 5  # typically much higher
+          epochs: 1000  # typically much higher
           callbacks:
             - type: tensorflow.keras.callbacks.EarlyStopping
               parameters:
