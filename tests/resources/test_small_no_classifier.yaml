@@ -60,6 +60,13 @@ embeddings:
       restore_best_weights: True
     optimizer:  # hard-coded to Nadam for now
       learning_rate: 0.1
+  tsne:  # comment this out if you don't want a TSNE plot
+    n: 230 # how many processors to use
+    tsne_file_name: test_embedding_tsne.png
+    node_property_for_color: category
+    scatter_params:
+      marker: '.'
+      s: 5
   bert_params:
     node_columns:
       - category
