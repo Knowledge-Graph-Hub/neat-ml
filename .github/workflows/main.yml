@@ -16,7 +16,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install git+https://github.com/monarch-initiative/embiggen.git@develop -U
-          pip install git+https://github.com/LucaCappelletti94/ensmallen_graph.git@develop -U      
           pip install .
           pip install pytest
           pip install --upgrade pytest
