@@ -20,11 +20,11 @@ graph_data:
     # node_separator: str = "\t"
     sources_column: 'subject'
     destinations_column: 'object'
-    # edge_types_column: 'weight'  # fix this
+    edge_types_column: 'label'
     default_edge_type: 'biolink:related_to'
     ignore_duplicated_edges: True
-    node_path: tests/resources/test_graphs/pos_train_nodes.tsv
-    edge_path: tests/resources/test_graphs/pos_train_edges.tsv
+    node_path: input_data/biolink:subclass_of/go_plus_nodes_training.tsv
+    edge_path: input_data/biolink:subclass_of/go_plus_edges_training.tsv
     # edge_header: str
     # edge_rows_to_skip: int = 0,
     # sources_column_number: int = 0
@@ -42,27 +42,36 @@ graph_data:
   # (when making a classifier, positive training graph is assumed to be 'graph' above)
   # all params below override those in 'graph' above
   pos_validation:
-    edge_path: tests/resources/test_graphs/pos_valid_edges.tsv
+    edge_path: input_data/biolink:subclass_of/go_plus_edges_validation.tsv
   neg_training:
-    edge_path: tests/resources/test_graphs/neg_train_edges.tsv
+    edge_path: input_data/biolink:subclass_of/go_plus_edges_neg_training.tsv
+    edge_types_column: neg_edge
   neg_validation:
-    edge_path: tests/resources/test_graphs/neg_train_edges.tsv
+    edge_path: input_data/biolink:subclass_of/go_plus_edges_neg_validation.tsv
+    edge_types_column: neg_edge
 
 embeddings:
   resume: True
-  embedding_file_name: test_embeddings.npy
-  model_file_name: embedding_model.h5
+  embedding_file_name: SkipGram_training_graph_GO_plus_bert.npy
+  model_file_name: embedding_model_GO_plus_bert.h5
   use_pos_valid_for_early_stopping: True # if True, must specify pos_validation_graph above
+  tsne:  # comment this out if you don't want a TSNE plot
+    n: 230 # how many processors to use
+    tsne_file_name: go_plus_tsne_bert.png
+    node_property_for_color: category
+    scatter_params:
+      marker: '.'
+      s: 0.1
   embiggen_params:
-    epochs: 1 # typically more than this
+    epochs: 100 # typically more than this
     seq_params:  # these params are passed to Node2VecSequence()
-      walk_length: 10 # typically 100 or so
-      batch_size: 128 # typically 512? or more
+      walk_length: 100
+      batch_size: 512
       window_size: 4
       return_weight: 1.0  # 1/p
       explore_weight: 1.0  # 1/q
-      iterations: 5 # typically 20
-    model: skipgram # or CBOW
+      iterations: 20
+    model: skipgram  # or CBOW
     node2vec_params:  # these params are passed to SkipGram() or CBOW()
       embedding_size: 100
       negative_samples: 30
@@ -70,25 +79,25 @@ embeddings:
       patience: 5
       min_delta: 0.0001
       restore_best_weights: True
-      metric: loss
+      monitor: loss
     optimizer:  # hard-coded to Nadam for now
       learning_rate: 0.1
   bert_params:
     node_columns:
-      - category
-      - id
+      - name
+      - description
 
 classifier:
-  edge_method: Average # one of EdgeTransformer.methods: Hadamard, Sum, Average, L1, AbsoluteL1, L2, or alternatively a lambda
+  edge_method: Average # one of EdgeTransformer.methods: hadamard, average, weightedL1, weightedL2
   classifiers:  # a list of classifiers to be trained
     - type: neural network
       model:
-        outfile: "model_mlp.h5"
+        outfile: "model_mlp_GO_plus_bert.h5"
         type: tensorflow.keras.models.Sequential
         layers:
           - type: tensorflow.keras.layers.Input
             parameters:
-              shape: 100   # must match embedding_size up above
+              shape: 868   # must match embedding_size up above
           - type: tensorflow.keras.layers.Dense
             parameters:
               units: 128
@@ -131,8 +140,8 @@ classifier:
           - type: accuracy
       model_fit:
         parameters:
-          batch_size: 4096
-          epochs: 5  # typically much higher
+          batch_size: 4096  # don't use exponent notation (e.g. 2**12), it will be interpreted as a string
+          epochs: 1000  # typically much higher
           callbacks:
             - type: tensorflow.keras.callbacks.EarlyStopping
               parameters:
@@ -142,14 +151,14 @@ classifier:
             - type: tensorflow.keras.callbacks.ReduceLROnPlateau
     - type: Decision Tree
       model:
-        outfile: "model_decision_tree.h5"
+        outfile: "model_decision_tree_GO_plus_bert.h5"
         type: sklearn.tree.DecisionTreeClassifier
         parameters:
           max_depth: 30
           random_state: 42
     - type: Random Forest
       model:
-        outfile: "model_random_forest.h5"
+        outfile: "model_random_forest_GO_plus_bert.h5"
         type: sklearn.ensemble.RandomForestClassifier
         parameters:
           n_estimators: 500
@@ -158,7 +167,7 @@ classifier:
           random_state: 42
     - type: Logistic Regression
       model:
-        outfile: "model_lr.h5"
+        outfile: "model_lr_GO_plus_bert.h5"
         type: sklearn.linear_model.LogisticRegression
         parameters:
           random_state: 42

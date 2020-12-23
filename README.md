@@ -7,6 +7,20 @@ NEAT is a flexible pipeline for:
 - Making predictions
 - Creating well formatted output and metrics for the predictions
 
+To install:
+
+```
+git clone https://github.com/Knowledge-Graph-Hub/NEAT.git
+cd NEAT
+pip install .
+```
+
+To run:
+```
+neat run tests/resources/test.yaml # example
+neat run --config [your yaml]
+```
+
 This pipeline has [KGX](https://github.com/biolink/kgx) and [Embiggen](https://github.com/monarch-initiative/embiggen) as major dependencies.
 
 The pipeline is driven by a YAML file, `neat.yaml`, which contains all parameters needed to complete the pipeline.

@@ -3,22 +3,38 @@ import re
 
 from embiggen import Node2VecSequence, SkipGram, CBOW  # type: ignore
 from ensmallen_graph import EnsmallenGraph  # type: ignore
+import numpy as np  # type: ignore
+import pandas as pd  # type: ignore
 from tensorflow.python.keras.callbacks import EarlyStopping  # type: ignore
 from tensorflow.keras.optimizers import Nadam  # type: ignore
+from tqdm.auto import tqdm  # type: ignore
+from transformers import BertModel, BertTokenizer  # type: ignore
 
 
-def make_embeddings(main_graph_args: dict,
-                    pos_valid_graph_args: dict,
-                    embiggen_seq_args: dict,
-                    node2vec_params: dict,
-                    epochs: int,
-                    early_stopping_args: dict,
-                    model: str,
-                    embedding_outfile: str,
-                    model_outfile: str,
-                    use_pos_valid_for_early_stopping: bool = False,
-                    learning_rate: float = 0.1,
-                    ) -> None:
+def get_node_data(file: str, sep="\t") -> pd.DataFrame:
+    """Read node TSV file and return pandas dataframe
+
+    :param file: node TSV file
+    :param sep: separator
+    :return:
+    """
+    return pd.read_csv(file, sep=sep)
+
+
+def make_graph_embeddings(main_graph_args: dict,
+                          pos_valid_graph_args: dict,
+                          embiggen_seq_args: dict,
+                          node2vec_params: dict,
+                          epochs: int,
+                          early_stopping_args: dict,
+                          model: str,
+                          embedding_outfile: str,
+                          model_outfile: str,
+                          use_pos_valid_for_early_stopping: bool = False,
+                          learning_rate: float = 0.1,
+                          bert_columns: list = None,
+                          bert_pretrained_model: str = "allenai/scibert_scivocab_uncased"
+                          ) -> None:
     """Make embeddings and output embeddings and model file
 
     Args:
@@ -36,6 +52,7 @@ def make_embeddings(main_graph_args: dict,
         model: SkipGram or CBOW (TODO: Glove)
         embedding_outfile: outfile for embeddings
         model_outfile: outfile for model
+        bert_columns: list of columns from bert_node_file to embed
     Returns:
         None.
 
@@ -43,6 +60,32 @@ def make_embeddings(main_graph_args: dict,
     # load main graph
     graph: EnsmallenGraph = EnsmallenGraph.from_unsorted_csv(**main_graph_args)
     graph_sequence = Node2VecSequence(graph, **embiggen_seq_args)
+
+    # embed columns with BERT first (if we're gonna)
+    bert_embeddings = pd.DataFrame()
+    if bert_columns:
+        bert_model = BertModel.from_pretrained(bert_pretrained_model,
+                                               output_hidden_states=True)
+        bert_tokenizer = BertTokenizer.from_pretrained(bert_pretrained_model)
+        bert_model.eval()
+        all_bert_embeddings = bert_model.embeddings.word_embeddings.weight.data.numpy()
+
+        node_data = get_node_data(main_graph_args['node_path'])
+
+        node_text = [
+            " ".join([str(row[col]) for col in bert_columns])
+            for index, row in tqdm(node_data.iterrows(), "extracting text from nodes")
+        ]
+        node_text_tokenized = [bert_tokenizer.encode(
+            this_text,  # Sentence to encode
+            # add_special_tokens=True,  # Add '[CLS]' and '[SEP]'
+            return_tensors='np'
+        ) for this_text in tqdm(node_text, "tokenzing text")]
+        node_text_tensors = [
+            np.mean(all_bert_embeddings[ids.flatten()], axis=0)
+            for ids in tqdm(node_text_tokenized, "extracting embeddings for tokens")]
+
+        bert_embeddings = pd.DataFrame(node_text_tensors, index=graph.get_node_names())
 
     fit_args = {
         'steps_per_epoch': graph_sequence.steps_per_epoch,
@@ -77,7 +120,24 @@ def make_embeddings(main_graph_args: dict,
         raise NotImplementedError(f"{model} isn't implemented yet")
 
     ## TODO: deal with GloVe
-    history = word2vec_model.fit(graph_sequence, **fit_args)
-    word2vec_model.save_embedding(embedding_outfile, graph.get_node_names())
+    word2vec_model.fit(graph_sequence, **fit_args)
+
+    these_embeddings = pd.DataFrame(word2vec_model.embedding,
+                                    index=graph.get_node_names())
+
+    if not bert_embeddings.empty:
+        these_embeddings = pd.concat([these_embeddings, bert_embeddings],
+                                     axis=1,
+                                     ignore_index=False)
+
+    these_embeddings.to_csv(embedding_outfile, header=False)
     word2vec_model.save_weights(model_outfile)
     return None
+
+
+def merge_and_write_complete_node_data(
+        original_nodes_file: str, node_data: pd.DataFrame, outfile: str):
+    complete_node_data = get_node_data(original_nodes_file)
+    node_data = node_data.merge(complete_node_data, how="left", on="id",
+                                suffixes=("", "_y")).drop("category_y", axis=1)
+    node_data.to_csv(outfile, sep="\t", index=False)

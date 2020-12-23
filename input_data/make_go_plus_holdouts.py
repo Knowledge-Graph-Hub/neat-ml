@@ -2,6 +2,8 @@ import os
 
 from ensmallen_graph import EnsmallenGraph
 from shutil import which
+from neat.graph_embedding.graph_embedding import get_node_data, \
+    merge_and_write_complete_node_data
 
 train_percentage = 0.8
 seed = 42
@@ -58,6 +60,13 @@ for edges in (
     ).random_holdout(random_state=seed, train_size=train_percentage)
 
     reduced_graph.dump_nodes(os.path.join(edges_string, f"go_plus_nodes_training.tsv"))
+    node_data = get_node_data(os.path.join(edges_string, f"go_plus_nodes_training.tsv"))
+
+    merge_and_write_complete_node_data(
+        go_plus_nodes_file,
+        node_data,
+        os.path.join(edges_string, f"go_plus_nodes_training.tsv")
+    )
 
     pos_training.dump_edges(os.path.join(edges_string, f"go_plus_edges_training.tsv"))
     pos_validation.dump_edges(os.path.join(edges_string, f"go_plus_edges_validation.tsv"))

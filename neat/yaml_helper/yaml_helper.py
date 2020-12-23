@@ -1,3 +1,4 @@
+import functools
 import os
 import yaml
 
@@ -5,6 +6,17 @@ import yaml
 def parse_yaml(file: str) -> dict:
     with open(file, 'r') as stream:
         return yaml.load(stream, Loader=yaml.FullLoader)
+
+
+def catch_keyerror(f):
+    @functools.wraps(f)
+    def func(*args, **kwargs):
+        try:
+            return f(*args, **kwargs)
+        except KeyError as e:
+            print("can't find key in YAML: ", e)
+            return None
+    return func
 
 
 class YamlHelper:
@@ -35,12 +47,15 @@ class YamlHelper:
     def main_graph_args(self) -> dict:
         return self.yaml['graph_data']['graph']
 
+    @catch_keyerror
     def pos_val_graph_args(self) -> dict:
         return self.yaml['graph_data']['pos_validation']
 
+    @catch_keyerror
     def neg_val_graph_args(self) -> dict:
         return self.yaml['graph_data']['neg_validation']
 
+    @catch_keyerror
     def neg_train_graph_args(self) -> dict:
         return self.yaml['graph_data']['neg_training']
 
@@ -71,7 +86,9 @@ class YamlHelper:
             'embedding_outfile': self.embedding_outfile(),
             'model_outfile': self.model_outfile(),
             'use_pos_valid_for_early_stopping': 'use_pos_valid_for_early_stopping' in self.yaml,
-            'learning_rate': self.yaml['embeddings']['embiggen_params']['optimizer']['learning_rate']
+            'learning_rate': self.yaml['embeddings']['embiggen_params']['optimizer']['learning_rate'],
+            'bert_columns': self.yaml['embeddings']['bert_params']['node_columns']
+            if 'bert_params' in self.yaml['embeddings'] else None
         }
         return make_embedding_args
 
