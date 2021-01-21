@@ -17,13 +17,13 @@ pip install .
 
 To run:
 ```
-neat run tests/resources/test.yaml # example
+neat run --config tests/resources/test.yaml # example
 neat run --config [your yaml]
 ```
 
 This pipeline has [KGX](https://github.com/biolink/kgx) and [Embiggen](https://github.com/monarch-initiative/embiggen) as major dependencies.
 
-The pipeline is driven by a YAML file, `neat.yaml`, which contains all parameters needed to complete the pipeline.
+The pipeline is driven by a YAML file (e.g. `tests/resources/test.yaml`), which contains all parameters needed to complete the pipeline.
 This includes hyperparameters for machine learning and also things like files/paths to output results.
 
 A diagram explaining the design a bit is [here](https://app.diagrams.net/#G1XLKYf9ZiBfWmjfAIeI9yYv_CycE8GmIQ).
