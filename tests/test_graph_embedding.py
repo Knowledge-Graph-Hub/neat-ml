@@ -15,7 +15,7 @@ class TestGraphEmbedding(TestCase):
 
     def setUp(self) -> None:
         self.test_node_file = 'tests/resources/test_graphs/test_small_nodes.tsv'
-        self.expected_embedding_file = 'output_data/test_embeddings.npy'
+        self.expected_embedding_file = 'output_data/test_embeddings.tsv'
         if os.path.exists(self.expected_embedding_file):
             print(
                 f"removing existing test embedding file {self.expected_embedding_file}")

@@ -38,7 +38,7 @@ graph_data:
 
 embeddings:
   resume: True
-  embedding_file_name: test_embeddings.npy
+  embedding_file_name: test_embeddings.tsv
   model_file_name: embedding_model.h5
   use_pos_valid_for_early_stopping: True # if True, must specify pos_validation_graph above
   embiggen_params:
