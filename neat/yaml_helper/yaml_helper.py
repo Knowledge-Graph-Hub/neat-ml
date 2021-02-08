@@ -37,10 +37,12 @@ class YamlHelper:
             The input directory
 
         """
-        indir = self.yaml['input_directory'] if 'input_directory' in self.yaml \
-            else self.default_indir
-        if not os.path.exists(indir):
-            logging.error(f"Can't find input dir {indir}")
+        if 'input_directory' in self.yaml:
+            indir = self.yaml['input_directory']
+            if not os.path.exists(indir):
+                raise Exception(f"Can't find input dir {indir}")
+        else:
+            indir = self.default_indir
         return indir
 
     def outdir(self):
