@@ -1,3 +1,4 @@
+import os
 from unittest import TestCase
 
 from neat.yaml_helper.yaml_helper import YamlHelper
@@ -14,6 +15,11 @@ class TestGraphEmbedding(TestCase):
 
     def setUp(self) -> None:
         self.test_node_file = 'tests/resources/test_graphs/test_small_nodes.tsv'
+        self.expected_embedding_file = 'output_data/test_embeddings.npy'
+        if os.path.exists(self.expected_embedding_file):
+            print(
+                f"removing existing test embedding file {self.expected_embedding_file}")
+            os.unlink(self.expected_embedding_file)
 
     def test_get_node_data(self):
         node_data = get_node_data(self.test_node_file)
@@ -23,3 +29,5 @@ class TestGraphEmbedding(TestCase):
         yhelp = YamlHelper("tests/resources/test_graph_embedding_bert_tsne.yaml")
         embed_kwargs = yhelp.make_embedding_args()
         make_graph_embeddings(**embed_kwargs)
+
+        self.assertTrue(os.path.exists(self.expected_embedding_file))
