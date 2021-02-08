@@ -14,7 +14,7 @@ class TestTsne(TestCase):
         self.expected_tsne_file = 'output_data/test_embedding_tsne.png'
         if os.path.exists(self.expected_tsne_file):
             print(
-                f"removing existing test embedding file {self.expected_tsne_file}")
+                f"removing existing test tsne file {self.expected_tsne_file}")
             os.unlink(self.expected_tsne_file)
 
     def test_make_tsne(self):
