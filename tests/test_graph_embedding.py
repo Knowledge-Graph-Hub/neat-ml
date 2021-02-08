@@ -22,4 +22,4 @@ class TestGraphEmbedding(TestCase):
     def test_make_graph_embeddings(self):
         yhelp = YamlHelper("tests/resources/test_graph_embedding.yaml")
         embed_kwargs = yhelp.make_embedding_args()
-        # make_graph_embeddings(**embed_kwargs)
+        make_graph_embeddings(**embed_kwargs)
