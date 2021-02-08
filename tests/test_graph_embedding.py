@@ -5,8 +5,6 @@ from neat.yaml_helper.yaml_helper import YamlHelper
 from neat.graph_embedding.graph_embedding import get_node_data, make_graph_embeddings
 import pandas as pd
 
-from neat.yaml_helper import yaml_helper
-
 
 class TestGraphEmbedding(TestCase):
 
