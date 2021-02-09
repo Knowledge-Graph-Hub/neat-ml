@@ -69,7 +69,7 @@ class YamlHelper:
             if k in graph_data:
                 graph_data[k] = os.path.join(self.indir(), graph_data[k])
             else:
-                logging.error(f"Can't find key {k} in graph_data! Skipping")
+                logging.error(f"Can't find key {k} in graph_data - skipping (possibly harmless)")
         return graph_data
 
     #
