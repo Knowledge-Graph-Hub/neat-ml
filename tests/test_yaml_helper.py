@@ -17,7 +17,7 @@ class TestYamlHelper(TestCase):
         self.assertEqual("", yh.indir())
 
     def test_bad_indir(self) -> None:
-        with self.assertRaises(Exception) as context:
+        with self.assertRaises(FileNotFoundError) as context:
             YamlHelper("tests/resources/test_bad_indir.yaml").indir()
 
     def test_outdir(self) -> None:

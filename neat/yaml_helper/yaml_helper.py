@@ -40,7 +40,7 @@ class YamlHelper:
         if 'input_directory' in self.yaml:
             indir = self.yaml['input_directory']
             if not os.path.exists(indir):
-                raise Exception(f"Can't find input dir {indir}")
+                raise FileNotFoundError(f"Can't find input dir {indir}")
         else:
             indir = self.default_indir
         return indir
