@@ -1,4 +1,5 @@
 import functools
+import logging
 import os
 import yaml
 
@@ -14,7 +15,7 @@ def catch_keyerror(f):
         try:
             return f(*args, **kwargs)
         except KeyError as e:
-            print("can't find key in YAML: ", e)
+            print("can't find key in YAML: ", e, "(possibly harmless)")
             return None
     return func
 
@@ -26,7 +27,23 @@ class YamlHelper:
 
     def __init__(self, config: str):
         self.default_outdir = 'output_data'
+        self.default_indir = ''
         self.yaml: dict = parse_yaml(config)
+
+    def indir(self):
+        """Get input directory from config.
+
+        Returns:
+            The input directory
+
+        """
+        if 'input_directory' in self.yaml:
+            indir = self.yaml['input_directory']
+            if not os.path.exists(indir):
+                raise FileNotFoundError(f"Can't find input dir {indir}")
+        else:
+            indir = self.default_indir
+        return indir
 
     def outdir(self):
         """Get output directory from config.
@@ -41,23 +58,37 @@ class YamlHelper:
             os.makedirs(outdir)
         return outdir
 
+    def add_indir_to_graph_data(self, graph_data: dict,
+                                keys_to_add_indir: list = ['node_path', 'edge_path']) -> dict:
+        """
+        :param graph_data - parsed yaml
+        :param keys_to_add_indir: what keys to add indir to
+        :return:
+        """
+        for k in keys_to_add_indir:
+            if k in graph_data:
+                graph_data[k] = os.path.join(self.indir(), graph_data[k])
+            else:
+                logging.warning(f"Can't find key {k} in graph_data - skipping (possibly harmless)")
+        return graph_data
+
     #
     # graph stuff
     #
     def main_graph_args(self) -> dict:
-        return self.yaml['graph_data']['graph']
+        return self.add_indir_to_graph_data(self.yaml['graph_data']['graph'])
 
     @catch_keyerror
     def pos_val_graph_args(self) -> dict:
-        return self.yaml['graph_data']['pos_validation']
+        return self.add_indir_to_graph_data(self.yaml['graph_data']['pos_validation'])
 
     @catch_keyerror
     def neg_val_graph_args(self) -> dict:
-        return self.yaml['graph_data']['neg_validation']
+        return self.add_indir_to_graph_data(self.yaml['graph_data']['neg_validation'])
 
     @catch_keyerror
     def neg_train_graph_args(self) -> dict:
-        return self.yaml['graph_data']['neg_training']
+        return self.add_indir_to_graph_data(self.yaml['graph_data']['neg_training'])
 
     #
     # embedding stuff
@@ -108,7 +139,7 @@ class YamlHelper:
             'color_nodes': 'node_property_for_color' in self.yaml['embeddings']['tsne']
         }
         if 'node_property_for_color' in self.yaml['embeddings']['tsne']:
-            make_tsne_args['node_file'] = self.yaml['graph_data']['graph']['node_path']
+            make_tsne_args['node_file'] = os.path.join(self.indir(), self.yaml['graph_data']['graph']['node_path'])
             make_tsne_args['node_property_for_color'] = \
                 self.yaml['embeddings']['tsne']['node_property_for_color']
         return make_tsne_args

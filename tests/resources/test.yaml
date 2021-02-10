@@ -50,8 +50,8 @@ graph_data:
 
 embeddings:
   resume: True
-  embedding_file_name: test_embeddings.npy
-  model_file_name: embedding_model.h5
+  embedding_file_name: test_embeddings_test_yaml.tsv
+  model_file_name: embedding_model_test_yaml.h5
   use_pos_valid_for_early_stopping: True # if True, must specify pos_validation_graph above
   embiggen_params:
     epochs: 1 # typically more than this
@@ -70,7 +70,7 @@ embeddings:
       patience: 5
       min_delta: 0.0001
       restore_best_weights: True
-      metric: loss
+      monitor: loss
     optimizer:  # hard-coded to Nadam for now
       learning_rate: 0.1
   bert_params:
@@ -83,7 +83,7 @@ classifier:
   classifiers:  # a list of classifiers to be trained
     - type: neural network
       model:
-        outfile: "model_mlp.h5"
+        outfile: "model_mlp_test_yaml.h5"
         type: tensorflow.keras.models.Sequential
         layers:
           - type: tensorflow.keras.layers.Input
@@ -142,14 +142,14 @@ classifier:
             - type: tensorflow.keras.callbacks.ReduceLROnPlateau
     - type: Decision Tree
       model:
-        outfile: "model_decision_tree.h5"
+        outfile: "model_decision_tree_test_yaml.h5"
         type: sklearn.tree.DecisionTreeClassifier
         parameters:
           max_depth: 30
           random_state: 42
     - type: Random Forest
       model:
-        outfile: "model_random_forest.h5"
+        outfile: "model_random_forest_test_yaml.h5"
         type: sklearn.ensemble.RandomForestClassifier
         parameters:
           n_estimators: 500
@@ -158,7 +158,7 @@ classifier:
           random_state: 42
     - type: Logistic Regression
       model:
-        outfile: "model_lr.h5"
+        outfile: "model_lr_test_yaml.h5"
         type: sklearn.linear_model.LogisticRegression
         parameters:
           random_state: 42

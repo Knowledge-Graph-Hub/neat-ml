@@ -12,7 +12,7 @@
 
 date
 
-neat run --config yaml_ml_instructions/IMGVR_sample.yaml &> IMGVR_sample.out
+neat run --config ../yaml_ml_instructions/IMGVR_sample.yaml &> IMGVR_sample.out
 
 date
- 
+
