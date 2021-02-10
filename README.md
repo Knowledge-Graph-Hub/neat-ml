@@ -1,5 +1,9 @@
 # Neural network Embedding All the Things (NEAT)
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Knowledge-Graph-Hub_NEAT&metric=alert_status)](https://sonarcloud.io/dashboard?id=Knowledge-Graph-Hub_NEAT) [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=Knowledge-Graph-Hub_NEAT&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=Knowledge-Graph-Hub_NEAT) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Knowledge-Graph-Hub_NEAT&metric=coverage)](https://sonarcloud.io/dashboard?id=Knowledge-Graph-Hub_NEAT)
+
+
+    
 NEAT is a flexible pipeline for:
 - Parsing a graph serialization
 - Generating embeddings
