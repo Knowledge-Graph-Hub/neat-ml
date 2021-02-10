@@ -46,7 +46,7 @@ graph_data:
   neg_training:
     edge_path: tests/resources/test_graphs/neg_train_edges.tsv
   neg_validation:
-    edge_path: tests/resources/test_graphs/neg_train_edges.tsv
+    edge_path: tests/resources/test_graphs/neg_valid_edges.tsv
 
 embeddings:
   resume: True
