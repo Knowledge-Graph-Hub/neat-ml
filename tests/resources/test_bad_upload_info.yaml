@@ -1,0 +1,5 @@
+---
+upload:
+  aws:
+    bucket_name: some_bucket
+    destination: where/to/put/files/
