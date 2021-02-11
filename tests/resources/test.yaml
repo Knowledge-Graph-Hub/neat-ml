@@ -163,3 +163,19 @@ classifier:
         parameters:
           random_state: 42
           max_iter: 1000
+
+upload:
+  aws:
+    bucket_name: my_s3_bucket
+    destination: where/to/put/files/
+
+    # Credentials:
+    # https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html
+
+    #    ~/.aws/credentials:
+    #    [ default ]
+    #    aws_access_key_id = YOUR_ACCESS_KEY
+    #    aws_secret_access_key = YOUR_SECRET_KEY
+
+    # to upload directory
+    # https://gist.github.com/feelinc/d1f541af4f31d09a2ec3
