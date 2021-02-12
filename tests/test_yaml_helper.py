@@ -48,3 +48,12 @@ class TestYamlHelper(TestCase):
         self.assertTrue(hasattr(YamlHelper, 'do_upload'))
         yg = YamlHelper(self.test_yaml_upload_good)
         self.assertTrue(yg.do_upload())
+
+    def test_make_upload_args(self):
+        self.assertTrue(hasattr(YamlHelper, 'make_upload_args'))
+        yg = YamlHelper(self.test_yaml_upload_good)
+        self.assertDictEqual(
+            yg.make_upload_args(),
+            {'local_directory': 'output_data', 's3_bucket': 'some_bucket',
+                's3_bucket_dir': 'some/remote/directory/'})
+

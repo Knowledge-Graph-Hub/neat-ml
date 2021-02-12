@@ -1,5 +1,4 @@
 ---
 upload:
-  aws:
-    bucket_name: some_bucket
-    destination: where/to/put/files/
+  s3_bucket: some_bucket
+  s3_bucket_dir: some/remote/directory/

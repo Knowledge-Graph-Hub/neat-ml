@@ -168,3 +168,16 @@ class YamlHelper:
     def edge_embedding_method(self) -> str:
         return self.yaml['classifier']['edge_method']
 
+    #
+    # upload stuff
+    #
+
+    def do_upload(self) -> bool:
+        return 'upload' in self.yaml
+
+    def make_upload_args(self) -> dict:
+        make_upload_args = {
+            'local_directory': self.outdir(),
+            's3_bucket': self.yaml['upload']['s3_bucket'],
+            's3_bucket_dir': self.yaml['upload']['s3_bucket_dir']}
+        return make_upload_args
