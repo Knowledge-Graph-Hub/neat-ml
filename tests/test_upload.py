@@ -1,36 +1,31 @@
 from unittest import TestCase
-import boto3
-from botocore.stub import Stubber
+from botocore.exceptions import ClientError
 from neat.upload.upload import upload_dir_to_s3
 from neat.yaml_helper.yaml_helper import YamlHelper
+from unittest import mock
 
 
 class TestUpload(TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        cls.boto3 = boto3.client('s3')
+        pass
 
     def setUp(self) -> None:
         self.bad_yaml = 'tests/resources/test_bad_upload_info.yaml'
         self.good_yaml = 'tests/resources/test_good_upload_info.yaml'
-        self.stubber = Stubber(self.boto3)
-        # self.stubber.add_response('', self.upload_file_response,
-        #                           self.expected_upload_file_params)
 
-    def test_boto_list_buckets(self) -> None:
-        with self.stubber:
-            expected_ls_params = {}
-            list_buckets_response = {
-                "Owner": {"DisplayName": "name", "ID": "EXAMPLE123"},
-                "Buckets":
-                    [{"CreationDate": "2016-05-25T16:55:48.000Z", "Name": "foo"}]}
-            self.stubber.add_response('list_buckets', list_buckets_response,
-                                      expected_ls_params)
-            self.assertEqual(self.boto3.list_buckets(), list_buckets_response)
+    @mock.patch("boto3.client.head_object")
+    @mock.patch("boto3.client.upload_file")
+    @mock.patch("boto3.client")
+    def test_upload_dir_to_s3(self, mock_boto_client, mock_upload_file, mock_head_object):
+        mock_upload_file.return_value = {}
+        mock_upload_file.head_object = ClientError({'Error':
+                                                     {'Code': '42',
+                                                      'Message': "don't kill bugs"}},
+                                                   "head_object")
+        mock_upload_file.upload_file = {}
+        kwargs = YamlHelper(self.good_yaml).make_upload_args()
+        upload_dir_to_s3(**kwargs)
+        self.assertEqual(mock_boto_client.call_count, 1)
 
-    # def test_upload_dir_to_s3(self) -> None:
-    #     with self.stubber:
-    #         self.assertEqual(self.boto3.list_buckets(), self.list_buckets_response)
-    #
-    #         upload_dir_to_s3(local_directory, bucket, destination)

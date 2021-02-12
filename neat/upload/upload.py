@@ -4,7 +4,7 @@ import boto3
 from botocore.exceptions import ClientError
 
 
-def upload_dir_to_s3(local_directory: str, bucket: str, destination: str) -> None:
+def upload_dir_to_s3(local_directory: str, s3_bucket: str, s3_bucket_dir: str) -> None:
 
     client = boto3.client('s3')
     for root, dirs, files in os.walk(local_directory):
@@ -14,12 +14,12 @@ def upload_dir_to_s3(local_directory: str, bucket: str, destination: str) -> Non
 
             # construct the full path
             relative_path = os.path.relpath(local_path, local_directory)
-            s3_path = os.path.join(destination, relative_path)
+            s3_path = os.path.join(s3_bucket_dir, relative_path)
 
-            logging.info(f"Searching {s3_path} in {bucket}")
+            logging.info(f"Searching {s3_path} in {s3_bucket}")
             try:
-                client.head_object(Bucket=bucket, Key=s3_path)
+                client.head_object(Bucket=s3_bucket, Key=s3_path)
                 logging.warning("Path found on S3! Skipping {s3_path}")
             except ClientError:  # Exception abuse
                 logging.info(f"Uploading {s3_path}")
-                client.upload_file(local_path, bucket, s3_path)
+                client.upload_file(local_path, s3_bucket, s3_path)
