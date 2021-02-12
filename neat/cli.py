@@ -65,7 +65,7 @@ def run(config: str) -> None:
 
     if yhelp.do_upload():
         upload_kwargs = yhelp.make_upload_args()
-        upload_dir_to_s3(upload_kwargs)
+        upload_dir_to_s3(**upload_kwargs)
 
     return None
 

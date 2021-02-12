@@ -22,5 +22,3 @@ class TestUpload(TestCase):
         upload_dir_to_s3(**self.good_kwargs)
         self.assertTrue(mock_boto_client.called)
 
-
-

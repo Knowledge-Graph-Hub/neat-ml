@@ -1,7 +1,7 @@
 import logging
 import os
-import boto3
-from botocore.exceptions import ClientError
+import boto3  # type: ignore
+from botocore.exceptions import ClientError  # type: ignore
 
 
 def upload_dir_to_s3(local_directory: str, s3_bucket: str, s3_bucket_dir: str) -> None:
