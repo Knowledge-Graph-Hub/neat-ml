@@ -20,7 +20,7 @@ class TestUpload(TestCase):
     @mock.patch("boto3.client")
     def test_upload_dir_to_s3(self, mock_boto_client, mock_upload_file, mock_head_object):
         mock_upload_file.return_value = {}
-        mock_upload_file.head_object = ClientError({'Error':
+        mock_head_object.return_value = ClientError({'Error':
                                                      {'Code': '42',
                                                       'Message': "don't kill bugs"}},
                                                    "head_object")
