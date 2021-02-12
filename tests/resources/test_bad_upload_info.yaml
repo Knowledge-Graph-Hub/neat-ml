@@ -1,4 +1,4 @@
 ---
 upload:
-  s3_bucket: some_bucket
-  s3_bucket_dir: some/remote/directory/
+  wrong_key: some_bucket
+  another_wrong_key: some/remote/directory/
