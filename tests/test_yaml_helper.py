@@ -54,6 +54,6 @@ class TestYamlHelper(TestCase):
         yg = YamlHelper(self.test_yaml_upload_good)
         self.assertDictEqual(
             yg.make_upload_args(),
-            {'local_directory': 'output_data', 's3_bucket': 'some_bucket',
-                's3_bucket_dir': 'some/remote/directory/'})
+            {'local_directory': 'tests/resources/test_output_data_dir/',
+             's3_bucket': 'some_bucket', 's3_bucket_dir': 'some/remote/directory/'})
 
