@@ -31,3 +31,6 @@ The pipeline is driven by a YAML file (e.g. `tests/resources/test.yaml`), which 
 This includes hyperparameters for machine learning and also things like files/paths to output results.
 
 A diagram explaining the design a bit is [here](https://app.diagrams.net/#G1XLKYf9ZiBfWmjfAIeI9yYv_CycE8GmIQ).
+
+If you are uploading to AWS/S3, see here for configuring AWS credentials:
+https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html
