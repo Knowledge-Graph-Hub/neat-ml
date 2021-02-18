@@ -72,7 +72,9 @@ setup(
         'MulticoreTSNE',
         'pandas',
         'transformers',
-        'torch'
+        'torch',
+        'boto3',
+        'botocore'
     ],
     extras_require=extras,
 )

@@ -6,6 +6,7 @@ from neat.link_prediction.mlp_model import MLPModel
 from tqdm import tqdm  # type: ignore
 
 from neat.graph_embedding.graph_embedding import make_graph_embeddings
+from neat.upload.upload import upload_dir_to_s3
 from neat.visualization.visualization import make_tsne
 from neat.yaml_helper.yaml_helper import YamlHelper
 
@@ -61,6 +62,10 @@ def run(config: str) -> None:
                                                 yhelp.edge_embedding_method())
             model.fit(train_data, validation_data)
             model.save()
+
+    if yhelp.do_upload():
+        upload_kwargs = yhelp.make_upload_args()
+        upload_dir_to_s3(**upload_kwargs)
 
     return None
 

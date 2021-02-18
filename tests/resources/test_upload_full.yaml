@@ -1,0 +1,50 @@
+---
+name: ""
+description: ""
+output_directory: tests/resources/test_output_data_dir/
+
+graph_data:
+  graph:
+    directed: False
+    verbose: True
+    skip_self_loops: False
+    nodes_column: 'id'
+    node_types_column: 'category'
+    default_node_type: 'biolink:NamedThing'
+    ignore_duplicated_nodes: True
+    sources_column: 'subject'
+    destinations_column: 'object'
+    default_edge_type: 'biolink:related_to'
+    ignore_duplicated_edges: True
+    node_path: tests/resources/test_graphs/pos_train_nodes.tsv
+    edge_path: tests/resources/test_graphs/pos_train_edges.tsv
+
+embeddings:
+  resume: True
+  embedding_file_name: test_embeddings_test_yaml.tsv
+  model_file_name: embedding_model_test_yaml.h5
+  use_pos_valid_for_early_stopping: True # if True, must specify pos_validation_graph above
+  embiggen_params:
+    epochs: 1 # typically more than this
+    seq_params:  # these params are passed to Node2VecSequence()
+      walk_length: 10 # typically 100 or so
+      batch_size: 128 # typically 512? or more
+      window_size: 4
+      return_weight: 1.0  # 1/p
+      explore_weight: 1.0  # 1/q
+      iterations: 5 # typically 20
+    model: skipgram # or CBOW
+    node2vec_params:  # these params are passed to SkipGram() or CBOW()
+      embedding_size: 100
+      negative_samples: 30
+    early_stopping:  # optional
+      patience: 5
+      min_delta: 0.0001
+      restore_best_weights: True
+      monitor: loss
+    optimizer:  # hard-coded to Nadam for now
+      learning_rate: 0.1
+
+upload:
+  s3_bucket: kg-hub-public-data
+  s3_bucket_dir: some/remote/directory/
