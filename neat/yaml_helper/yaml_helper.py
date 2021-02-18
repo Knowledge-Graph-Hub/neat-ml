@@ -91,6 +91,12 @@ class YamlHelper:
         return self.add_indir_to_graph_data(self.yaml['graph_data']['neg_training'])
 
     #
+    # holdout stuff
+    def do_holdouts(self) -> bool:
+        return 'holdout' in self.yaml['graph_data'] and \
+               'make_holdouts' in self.yaml['graph_data']['holdout']
+
+    #
     # embedding stuff
     #
 

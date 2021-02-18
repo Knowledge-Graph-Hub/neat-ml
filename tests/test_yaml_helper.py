@@ -13,6 +13,7 @@ class TestYamlHelper(TestCase):
         self.test_yaml_upload_good = 'tests/resources/test_good_upload_info.yaml'
         self.test_yaml_upload_bad = 'tests/resources/test_bad_upload_info.yaml'
         self.test_yaml_bert_tsne = 'tests/resources/test_graph_embedding_bert_tsne.yaml'
+        self.test_yaml_holdouts = 'tests/resources/test_holdouts.yaml'
         self.yh = YamlHelper(self.test_yaml)
 
     def test_no_indir(self) -> None:
@@ -57,3 +58,12 @@ class TestYamlHelper(TestCase):
             {'local_directory': 'tests/resources/test_output_data_dir/',
              's3_bucket': 'some_bucket', 's3_bucket_dir': 'some/remote/directory/'})
 
+    def test_do_holdouts(self):
+        self.assertTrue(hasattr(YamlHelper, 'do_holdouts'))
+        yg = YamlHelper(self.test_yaml_holdouts)
+        self.assertTrue(yg.do_holdouts())
+
+    def test_dont_do_holdouts(self):
+        self.assertTrue(hasattr(YamlHelper, 'do_holdouts'))
+        yg = YamlHelper(self.test_yaml)
+        self.assertTrue(not yg.do_holdouts())

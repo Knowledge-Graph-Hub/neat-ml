@@ -1,6 +1,5 @@
 import logging
 import os
-from typing import Dict
 
 from ensmallen_graph import EnsmallenGraph  # type: ignore
 
