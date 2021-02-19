@@ -96,6 +96,16 @@ class YamlHelper:
         return 'holdout' in self.yaml['graph_data'] and \
                'make_holdouts' in self.yaml['graph_data']['holdout']
 
+    def make_holdouts_args(self) -> dict:
+        holdout_args = {
+            'main_graph_args': self.main_graph_args(),
+            'output_dir': self.outdir(),
+            'train_size': self.yaml['graph_data']['holdout']['make_holdouts']['train_size'],
+            'validation': self.yaml['graph_data']['holdout']['make_holdouts']['validation'],
+            'seed': self.yaml['graph_data']['holdout']['make_holdouts']['random_state'],
+            'edge_types': self.yaml['graph_data']['holdout']['make_holdouts']['edge_types']}
+        return holdout_args
+
     #
     # embedding stuff
     #

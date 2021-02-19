@@ -60,10 +60,28 @@ class TestYamlHelper(TestCase):
 
     def test_do_holdouts(self):
         self.assertTrue(hasattr(YamlHelper, 'do_holdouts'))
-        yg = YamlHelper(self.test_yaml_holdouts)
-        self.assertTrue(yg.do_holdouts())
+        yh = YamlHelper(self.test_yaml_holdouts)
+        self.assertTrue(yh.do_holdouts())
 
     def test_dont_do_holdouts(self):
         self.assertTrue(hasattr(YamlHelper, 'do_holdouts'))
-        yg = YamlHelper(self.test_yaml)
-        self.assertTrue(not yg.do_holdouts())
+        yh = YamlHelper(self.test_yaml)
+        self.assertTrue(not yh.do_holdouts())
+
+    def test_make_holdouts_args(self):
+        self.assertTrue(hasattr(YamlHelper, 'make_holdouts_args'))
+        yh = YamlHelper(self.test_yaml_holdouts)
+        mh_args = yh.make_holdouts_args()
+        expected_args = {'main_graph_args': yh.main_graph_args(),
+                         'output_dir': yh.outdir(),
+                         'train_size': 0.8,
+                         'validation': False,
+                         'seed': 42,
+                         'edge_types': ['biolink:interacts_with',
+                                        'biolink:has_gene_product']}
+        self.assertListEqual(list(mh_args.keys()), list(expected_args.keys()))
+        self.maxDiff = None
+        self.assertDictEqual(mh_args, expected_args)
+
+
+

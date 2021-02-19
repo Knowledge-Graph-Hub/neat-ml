@@ -1,5 +1,7 @@
 import os
 import click
+
+from neat.holdouts.holdouts import make_holdouts
 from neat.link_prediction.sklearn_model import SklearnModel
 from neat.link_prediction.mlp_model import MLPModel
 
@@ -31,6 +33,10 @@ def run(config: str) -> None:
     """
 
     yhelp = YamlHelper(config)
+
+    if yhelp.do_holdouts():
+        # make_holdouts(yhelp.main_graph_args())
+        pass
 
     # generate embeddings if config has 'embeddings' block
     if yhelp.do_embeddings() and not os.path.exists(yhelp.embedding_outfile()):

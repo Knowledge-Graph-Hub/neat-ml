@@ -1,18 +1,22 @@
 import logging
 import os
+from typing import List
 
 from ensmallen_graph import EnsmallenGraph  # type: ignore
 
 
 def make_holdouts(main_graph_args: dict, output_dir: str,
-                  train_size: float, validation: bool, seed=42) -> None:
+                  train_size: float, validation: bool,
+                  edge_types: List[str] = None,
+                  seed=42) -> None:
     """Prepare positive and negative edges for testing and training (see run.py holdouts
     command for documentation)
 
     Args:
         :param main_graph_args: how to load the main graph (produced by YamlHelper().main_graph_args()
         :param output_dir:      where should we write out holdout data
-        :param train_fraction:  fraction of edges to emit as training
+        :param train_size:      fraction of edges to emit as training
+        :param edge_types:      what edge types should we select for positive test/validation edges?
         :param validation:      should we make validation edges? [False]
         :param seed:            random seed [42]
     Returns:
@@ -25,7 +29,8 @@ def make_holdouts(main_graph_args: dict, output_dir: str,
     # make positive edges
     logging.info("Making positive edges")
     pos_train_edges, pos_test_edges = graph.random_holdout(random_state=seed,
-                                                           train_size=train_size)
+                                                           train_size=train_size,
+                                                           edge_types=edge_types)
     pos_valid_edges = None
     if validation:
         pos_valid_edges, pos_test_edges = \

@@ -38,10 +38,9 @@ graph_data:
 
   holdout:
     make_holdouts:
-      type: connected_holdout # only option at the moment
+      train_size: 0.8
+      validation: False
       random_state: 42 # seed
-      train_size: 0.8 # fraction
       edge_types: # optional
         - biolink:interacts_with
         - biolink:has_gene_product
-      verbose: bool
