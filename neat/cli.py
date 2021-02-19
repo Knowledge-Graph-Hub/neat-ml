@@ -35,8 +35,7 @@ def run(config: str) -> None:
     yhelp = YamlHelper(config)
 
     if yhelp.do_holdouts():
-        # make_holdouts(yhelp.main_graph_args())
-        pass
+        make_holdouts(**yhelp.make_holdouts_args())
 
     # generate embeddings if config has 'embeddings' block
     if yhelp.do_embeddings() and not os.path.exists(yhelp.embedding_outfile()):
