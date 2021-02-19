@@ -22,7 +22,6 @@ def make_holdouts(main_graph_args: dict, output_dir: str,
     Returns:
         None.
     """
-    logging.basicConfig(level=logging.INFO)
     logging.info("Loading graph")
     graph = EnsmallenGraph.from_unsorted_csv(**main_graph_args)
 
