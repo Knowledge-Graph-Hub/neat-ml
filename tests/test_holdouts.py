@@ -25,7 +25,7 @@ class TestHoldouts(TestCase):
         pass
 
     def test_output_files(self):
-        self.assertListEqual(os.listdir(self.tmp_output_dir.name),
+        self.assertCountEqual(os.listdir(self.tmp_output_dir.name),
                              ['pos_train_edges.tsv', 'neg_train_edges.tsv',
                               'pos_test_edges.tsv', 'pos_train_nodes.tsv',
                               'neg_test_edges.tsv'])
@@ -35,7 +35,7 @@ class TestHoldouts(TestCase):
         make_holdouts(main_graph_args=self.main_graph_args,
                       output_dir=different_tmpdir.name,
                       train_size=self.train_fraction, validation=True, seed=self.seed)
-        self.assertListEqual(os.listdir(different_tmpdir.name),
+        self.assertCountEqual(os.listdir(different_tmpdir.name),
                              ['neg_valid_edges.tsv', 'pos_valid_edges.tsv',
                               'pos_train_edges.tsv', 'neg_train_edges.tsv',
                               'pos_test_edges.tsv', 'pos_train_nodes.tsv',
