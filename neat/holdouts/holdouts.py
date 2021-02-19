@@ -1,6 +1,6 @@
 import logging
 import os
-from typing import List
+from typing import List, Optional
 
 from ensmallen_graph import EnsmallenGraph  # type: ignore
 
@@ -31,7 +31,7 @@ def make_holdouts(main_graph_args: dict, output_dir: str,
     pos_train_edges, pos_test_edges = graph.random_holdout(random_state=seed,
                                                            train_size=train_size,
                                                            edge_types=edge_types)
-    pos_valid_edges = None
+    pos_valid_edges: Optional[EnsmallenGraph] = None
     if validation:
         pos_valid_edges, pos_test_edges = \
             pos_test_edges.random_holdout(random_state=seed,
@@ -64,7 +64,7 @@ def make_holdouts(main_graph_args: dict, output_dir: str,
     pos_train_edges.dump_nodes(path=pos_train_nodes_outfile)
     pos_test_edges.dump_edges(path=pos_test_edges_outfile)
     if validation:
-        pos_valid_edges.dump_edges(path=pos_valid_edges_outfile)
+        pos_valid_edges.dump_edges(path=pos_valid_edges_outfile)  # type: ignore
 
     #
     # write out negative edges
@@ -77,4 +77,4 @@ def make_holdouts(main_graph_args: dict, output_dir: str,
     neg_train_edges.dump_edges(path=neg_train_edges_outfile)
     neg_test_edges.dump_edges(path=neg_test_edges_outfile)
     if validation:
-        neg_valid_edges.dump_edges(path=neg_valid_edges_outfile)
+        neg_valid_edges.dump_edges(path=neg_valid_edges_outfile)  # type: ignore
