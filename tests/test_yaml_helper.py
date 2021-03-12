@@ -55,5 +55,6 @@ class TestYamlHelper(TestCase):
         self.assertDictEqual(
             yg.make_upload_args(),
             {'local_directory': 'tests/resources/test_output_data_dir/',
-             's3_bucket': 'some_bucket', 's3_bucket_dir': 'some/remote/directory/'})
+             's3_bucket': 'some_bucket', 's3_bucket_dir': 'some/remote/directory/',
+             'extra_args': {'ACL': 'public-read'}})
 
