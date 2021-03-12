@@ -179,5 +179,7 @@ class YamlHelper:
         make_upload_args = {
             'local_directory': self.outdir(),
             's3_bucket': self.yaml['upload']['s3_bucket'],
-            's3_bucket_dir': self.yaml['upload']['s3_bucket_dir']}
+            's3_bucket_dir': self.yaml['upload']['s3_bucket_dir'],
+            'extra_args': self.yaml['upload']['extra_args'] if 'extra_args' in self.yaml['upload'] else None
+        }
         return make_upload_args
