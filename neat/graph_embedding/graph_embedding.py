@@ -120,7 +120,7 @@ def make_graph_embeddings(main_graph_args: dict,
         raise NotImplementedError(f"{model} isn't implemented yet")
 
     ## TODO: deal with GloVe
-    word2vec_model.fit(graph_sequence, **fit_args)
+    history = word2vec_model.fit(graph_sequence, **fit_args)
 
     these_embeddings = pd.DataFrame(word2vec_model.embedding,
                                     index=graph.get_node_names())
