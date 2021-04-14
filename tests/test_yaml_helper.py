@@ -10,14 +10,15 @@ class TestYamlHelper(TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        pass
+        cls.test_yaml = "tests/resources/test.yaml"
+        cls.yh = YamlHelper(cls.test_yaml)
+        cls.embedding_args = cls.yh.make_embedding_args()
 
     def setUp(self) -> None:
-        self.test_yaml = "tests/resources/test.yaml"
         self.test_yaml_upload_good = 'tests/resources/test_good_upload_info.yaml'
         self.test_yaml_upload_bad = 'tests/resources/test_bad_upload_info.yaml'
         self.test_yaml_bert_tsne = 'tests/resources/test_graph_embedding_bert_tsne.yaml'
-        self.yh = YamlHelper(self.test_yaml)
+
 
     def test_no_indir(self) -> None:
         yh = YamlHelper("tests/resources/test_no_indir.yaml")
@@ -97,8 +98,7 @@ class TestYamlHelper(TestCase):
         ('bert_columns', ['category', 'id']),
     ])
     def test_make_embedding_args(self, key, value):
-        ea = self.yh.make_embedding_args()
-        self.assertTrue(key in ea,
+        self.assertTrue(key in self.embedding_args,
                         msg=f"can't find key {key} in output of make_embedding_args()")
-        self.assertEqual(ea[key], value)
+        self.assertEqual(self.embedding_args[key], value)
 
