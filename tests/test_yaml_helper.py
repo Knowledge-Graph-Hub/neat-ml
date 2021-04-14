@@ -19,7 +19,6 @@ class TestYamlHelper(TestCase):
         self.test_yaml_upload_bad = 'tests/resources/test_bad_upload_info.yaml'
         self.test_yaml_bert_tsne = 'tests/resources/test_graph_embedding_bert_tsne.yaml'
 
-
     def test_no_indir(self) -> None:
         yh = YamlHelper("tests/resources/test_no_indir.yaml")
         self.assertEqual("", yh.indir())
@@ -92,7 +91,8 @@ class TestYamlHelper(TestCase):
              'restore_best_weights': True}),
         ('model', 'skipgram'),
         ('embedding_outfile', 'output_data/test_embeddings_test_yaml.tsv'),
-        ('model_outfile', 'output_data/embedding_model_test_yaml.h5'), # : self.model_outfile(),
+        ('model_outfile', 'output_data/embedding_model_test_yaml.h5'),
+        ('embedding_history_outfile', 'output_data/embedding_history.json'),
         ('use_pos_valid_for_early_stopping', False),
         ('learning_rate', 0.1),
         ('bert_columns', ['category', 'id']),

@@ -105,6 +105,10 @@ class YamlHelper:
         return os.path.join(self.outdir(),
                             self.yaml['embeddings']['model_file_name'])
 
+    def embedding_history_outfile(self):
+        return os.path.join(self.outdir(),
+                            self.yaml['embeddings']['embedding_history_file_name'])
+
     def make_embedding_args(self) -> dict:
         make_embedding_args = {
             'main_graph_args': self.main_graph_args(),
@@ -116,6 +120,7 @@ class YamlHelper:
             'model': self.yaml['embeddings']['embiggen_params']['model'],
             'embedding_outfile': self.embedding_outfile(),
             'model_outfile': self.model_outfile(),
+            'embedding_history_outfile': self.embedding_history_outfile(),
             'use_pos_valid_for_early_stopping': 'use_pos_valid_for_early_stopping' in self.yaml,
             'learning_rate': self.yaml['embeddings']['embiggen_params']['optimizer']['learning_rate'],
             'bert_columns': self.yaml['embeddings']['bert_params']['node_columns']
