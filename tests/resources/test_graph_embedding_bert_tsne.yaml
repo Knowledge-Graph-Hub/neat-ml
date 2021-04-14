@@ -41,6 +41,7 @@ embeddings:
   resume: True
   embedding_file_name: test_embeddings.tsv
   model_file_name: embedding_model.h5
+  embedding_history_file_name: embedding_history.json
   use_pos_valid_for_early_stopping: True # if True, must specify pos_validation_graph above
   embiggen_params:
     epochs: 1 # typically more than this
