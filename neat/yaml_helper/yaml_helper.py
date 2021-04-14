@@ -105,6 +105,7 @@ class YamlHelper:
         return os.path.join(self.outdir(),
                             self.yaml['embeddings']['model_file_name'])
 
+    @catch_keyerror
     def embedding_history_outfile(self):
         return os.path.join(self.outdir(),
                             self.yaml['embeddings']['embedding_history_file_name'])

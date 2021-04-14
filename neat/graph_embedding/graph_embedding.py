@@ -30,6 +30,7 @@ def make_graph_embeddings(main_graph_args: dict,
                           model: str,
                           embedding_outfile: str,
                           model_outfile: str,
+                          embedding_history_outfile: str,
                           use_pos_valid_for_early_stopping: bool = False,
                           learning_rate: float = 0.1,
                           bert_columns: list = None,
@@ -52,6 +53,7 @@ def make_graph_embeddings(main_graph_args: dict,
         model: SkipGram or CBOW (TODO: Glove)
         embedding_outfile: outfile for embeddings
         model_outfile: outfile for model
+        embedding_history_outfile: outfile for history
         bert_columns: list of columns from bert_node_file to embed
     Returns:
         None.
