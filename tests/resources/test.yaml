@@ -96,6 +96,7 @@ classifier:
     - type: neural network
       model:
         outfile: "model_mlp_test_yaml.h5"
+        classifier_history_file_name: "mlp_classifier_history.json"
         type: tensorflow.keras.models.Sequential
         layers:
           - type: tensorflow.keras.layers.Input
