@@ -194,6 +194,11 @@ class YamlHelper:
     def edge_embedding_method(self) -> str:
         return self.yaml['classifier']['edge_method']
 
+    def classifier_history_file_name(self, classifier: dict) -> Optional[str]:
+        return classifier['model']['classifier_history_file_name'] \
+            if 'model' in classifier and 'classifier_history_file_name' in classifier['model'] \
+            else None
+
     #
     # upload stuff
     #

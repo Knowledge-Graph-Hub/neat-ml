@@ -60,7 +60,12 @@ def run(config: str) -> None:
                                                 yhelp.neg_train_graph_args(),
                                                 yhelp.neg_val_graph_args(),
                                                 yhelp.edge_embedding_method())
-            model.fit(train_data, validation_data)
+            history = model.fit(train_data, validation_data)
+
+            if yhelp.classifier_history_file_name(classifier):
+                with open(yhelp.classifier_history_file_name(classifier), 'w') as f:
+                    f.write(history.to_json())
+
             model.save()
 
     if yhelp.do_upload():

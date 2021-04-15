@@ -62,6 +62,12 @@ class TestYamlHelper(TestCase):
              's3_bucket': 'some_bucket', 's3_bucket_dir': 'some/remote/directory/',
              'extra_args': {'ACL': 'public-read'}})
 
+    def test_classifier_history_file_name(self):
+        self.assertTrue(hasattr(YamlHelper, 'classifier_history_file_name'))
+        yg = YamlHelper(self.test_yaml)
+        self.assertEqual(yg.classifier_history_file_name(yg.yaml['classifier']['classifiers'][0]),
+                         "mlp_classifier_history.json")
+
     @parameterized.expand([
         ('main_graph_args', {'default_edge_type': 'biolink:related_to',
              'default_node_type': 'biolink:NamedThing',
