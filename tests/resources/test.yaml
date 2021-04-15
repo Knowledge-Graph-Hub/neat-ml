@@ -79,6 +79,16 @@ embeddings:
     node_columns:
       - category
       - id
+  metrics:  # these can be tensorflow.keras.metrics
+    - type: tensorflow.keras.metrics.AUC
+      parameters:
+        name: AUC
+    - type: tensorflow.keras.metrics.Recall
+      parameters:
+        name: Recall
+    - type: tensorflow.keras.metrics.Precision
+      parameters:
+        name: Precision
 
 classifier:
   edge_method: Average # one of EdgeTransformer.methods: Hadamard, Sum, Average, L1, AbsoluteL1, L2, or alternatively a lambda

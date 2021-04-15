@@ -5,6 +5,7 @@ from embiggen import Node2VecSequence, SkipGram, CBOW  # type: ignore
 from ensmallen_graph import EnsmallenGraph  # type: ignore
 import numpy as np  # type: ignore
 import pandas as pd  # type: ignore
+from neat.link_prediction.model import Model
 from tensorflow.python.keras.callbacks import EarlyStopping  # type: ignore
 from tensorflow.keras.optimizers import Nadam  # type: ignore
 from tqdm.auto import tqdm  # type: ignore
@@ -120,6 +121,23 @@ def make_graph_embeddings(main_graph_args: dict,
                      **node2vec_params)
     else:
         raise NotImplementedError(f"{model} isn't implemented yet")
+
+    import yaml
+    with open('tests/resources/test.yaml', 'r') as stream:
+        y = yaml.load(stream, Loader=yaml.FullLoader)
+
+    metrics = y['embeddings']['metrics'] if 'metrics' in y['embeddings'] else None
+    metrics_class_list = []
+    for m in metrics:
+        if m['type'].startswith('tensorflow.keras'):
+            m_class = Model.dynamically_import_class(m['type'])
+            m_parameters = m['parameters']
+            m_instance = m_class(**m_parameters)
+            metrics_class_list.append(m_instance)
+        else:
+            metrics_class_list.append([m['type']])
+
+    word2vec_model._model.compile(metrics=metrics_class_list)
 
     ## TODO: deal with GloVe
     history = word2vec_model.fit(graph_sequence, **fit_args)
