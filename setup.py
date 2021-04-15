@@ -65,7 +65,8 @@ setup(
         'pyyaml',
         'embiggen',  # currently this needs to be installed from github master, not pypi
         'ensmallen_graph',
-        'numpy<1.19.0',
+        # 'numpy<1.19.0',
+        'numpy',
         'matplotlib',
         'sanitize_ml_labels',
         'sklearn',
