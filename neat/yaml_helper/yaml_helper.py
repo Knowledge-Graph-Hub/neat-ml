@@ -1,7 +1,10 @@
 import functools
 import logging
 import os
+from typing import Optional
+
 import yaml
+from neat.link_prediction.model import Model
 
 
 def parse_yaml(file: str) -> dict:
@@ -110,6 +113,22 @@ class YamlHelper:
         return os.path.join(self.outdir(),
                             self.yaml['embeddings']['embedding_history_file_name'])
 
+    def make_embeddings_metrics_class_list(self) -> list:
+        metrics_class_list = []
+
+        metrics = self.yaml['embeddings']['metrics'] \
+            if 'metrics' in self.yaml['embeddings'] else None
+        if metrics:
+            for m in metrics:
+                if m['type'].startswith('tensorflow.keras'):
+                    m_class = Model.dynamically_import_class(m['type'])
+                    m_parameters = m['parameters']
+                    m_instance = m_class(**m_parameters)
+                    metrics_class_list.append(m_instance)
+                else:
+                    metrics_class_list.append([m['type']])
+        return metrics_class_list
+
     def make_embedding_args(self) -> dict:
         make_embedding_args = {
             'main_graph_args': self.main_graph_args(),
@@ -122,6 +141,7 @@ class YamlHelper:
             'embedding_outfile': self.embedding_outfile(),
             'model_outfile': self.model_outfile(),
             'embedding_history_outfile': self.embedding_history_outfile(),
+            'metrics_class_list': self.make_embeddings_metrics_class_list(),
             'use_pos_valid_for_early_stopping': 'use_pos_valid_for_early_stopping' in self.yaml,
             'learning_rate': self.yaml['embeddings']['embiggen_params']['optimizer']['learning_rate'],
             'bert_columns': self.yaml['embeddings']['bert_params']['node_columns']

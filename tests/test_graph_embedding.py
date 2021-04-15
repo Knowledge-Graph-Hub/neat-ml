@@ -1,6 +1,6 @@
 import os
 from unittest import TestCase
-
+import json
 from neat.yaml_helper.yaml_helper import YamlHelper
 
 from neat.graph_embedding.graph_embedding import get_node_data, make_graph_embeddings
@@ -32,4 +32,10 @@ class TestGraphEmbedding(TestCase):
         embed_kwargs = yhelp.make_embedding_args()
         make_graph_embeddings(**embed_kwargs)
         self.assertTrue(os.path.exists(self.expected_embedding_file))
+
         self.assertTrue(os.path.exists(self.expected_history_file))
+        with open(self.expected_history_file) as f:
+            data = f.read()
+            obj = json.loads(data)
+            self.assertListEqual(list(obj.keys()),
+                                 ['loss', 'AUC', 'Recall', 'Precision'])

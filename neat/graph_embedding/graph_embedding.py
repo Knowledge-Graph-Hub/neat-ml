@@ -5,7 +5,6 @@ from embiggen import Node2VecSequence, SkipGram, CBOW  # type: ignore
 from ensmallen_graph import EnsmallenGraph  # type: ignore
 import numpy as np  # type: ignore
 import pandas as pd  # type: ignore
-from neat.link_prediction.model import Model
 from tensorflow.python.keras.callbacks import EarlyStopping  # type: ignore
 from tensorflow.keras.optimizers import Nadam  # type: ignore
 from tqdm.auto import tqdm  # type: ignore
@@ -32,6 +31,7 @@ def make_graph_embeddings(main_graph_args: dict,
                           embedding_outfile: str,
                           model_outfile: str,
                           embedding_history_outfile: str,
+                          metrics_class_list: list,
                           use_pos_valid_for_early_stopping: bool = False,
                           learning_rate: float = 0.1,
                           bert_columns: list = None,
@@ -55,6 +55,7 @@ def make_graph_embeddings(main_graph_args: dict,
         embedding_outfile: outfile for embeddings
         model_outfile: outfile for model
         embedding_history_outfile: outfile for history
+        metrics_class_list: list of metrics to output in embedding_history_outfile
         bert_columns: list of columns from bert_node_file to embed
     Returns:
         None.
@@ -126,18 +127,8 @@ def make_graph_embeddings(main_graph_args: dict,
     with open('tests/resources/test.yaml', 'r') as stream:
         y = yaml.load(stream, Loader=yaml.FullLoader)
 
-    metrics = y['embeddings']['metrics'] if 'metrics' in y['embeddings'] else None
-    metrics_class_list = []
-    for m in metrics:
-        if m['type'].startswith('tensorflow.keras'):
-            m_class = Model.dynamically_import_class(m['type'])
-            m_parameters = m['parameters']
-            m_instance = m_class(**m_parameters)
-            metrics_class_list.append(m_instance)
-        else:
-            metrics_class_list.append([m['type']])
-
-    word2vec_model._model.compile(metrics=metrics_class_list)
+    if metrics_class_list:
+        word2vec_model._model.compile(metrics=metrics_class_list)
 
     ## TODO: deal with GloVe
     history = word2vec_model.fit(graph_sequence, **fit_args)
