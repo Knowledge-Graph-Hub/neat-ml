@@ -1,7 +1,10 @@
 import functools
 import logging
 import os
+from typing import Optional
+
 import yaml
+from neat.link_prediction.model import Model
 
 
 def parse_yaml(file: str) -> dict:
@@ -121,6 +124,27 @@ class YamlHelper:
         return os.path.join(self.outdir(),
                             self.yaml['embeddings']['model_file_name'])
 
+    @catch_keyerror
+    def embedding_history_outfile(self):
+        return os.path.join(self.outdir(),
+                            self.yaml['embeddings']['embedding_history_file_name'])
+
+    def make_embeddings_metrics_class_list(self) -> list:
+        metrics_class_list = []
+
+        metrics = self.yaml['embeddings']['metrics'] \
+            if 'metrics' in self.yaml['embeddings'] else None
+        if metrics:
+            for m in metrics:
+                if m['type'].startswith('tensorflow.keras'):
+                    m_class = Model.dynamically_import_class(m['type'])
+                    m_parameters = m['parameters']
+                    m_instance = m_class(**m_parameters)
+                    metrics_class_list.append(m_instance)
+                else:
+                    metrics_class_list.append([m['type']])
+        return metrics_class_list
+
     def make_embedding_args(self) -> dict:
         make_embedding_args = {
             'main_graph_args': self.main_graph_args(),
@@ -132,6 +156,8 @@ class YamlHelper:
             'model': self.yaml['embeddings']['embiggen_params']['model'],
             'embedding_outfile': self.embedding_outfile(),
             'model_outfile': self.model_outfile(),
+            'embedding_history_outfile': self.embedding_history_outfile(),
+            'metrics_class_list': self.make_embeddings_metrics_class_list(),
             'use_pos_valid_for_early_stopping': 'use_pos_valid_for_early_stopping' in self.yaml,
             'learning_rate': self.yaml['embeddings']['embiggen_params']['optimizer']['learning_rate'],
             'bert_columns': self.yaml['embeddings']['bert_params']['node_columns']
@@ -184,6 +210,11 @@ class YamlHelper:
     def edge_embedding_method(self) -> str:
         return self.yaml['classifier']['edge_method']
 
+    def classifier_history_file_name(self, classifier: dict) -> Optional[str]:
+        return classifier['model']['classifier_history_file_name'] \
+            if 'model' in classifier and 'classifier_history_file_name' in classifier['model'] \
+            else None
+
     #
     # upload stuff
     #
@@ -195,5 +226,7 @@ class YamlHelper:
         make_upload_args = {
             'local_directory': self.outdir(),
             's3_bucket': self.yaml['upload']['s3_bucket'],
-            's3_bucket_dir': self.yaml['upload']['s3_bucket_dir']}
+            's3_bucket_dir': self.yaml['upload']['s3_bucket_dir'],
+            'extra_args': self.yaml['upload']['extra_args'] if 'extra_args' in self.yaml['upload'] else None
+        }
         return make_upload_args

@@ -36,7 +36,7 @@ def make_tsne(
     ticks: Optional[Any] = None
     if color_nodes:
         nodes = pd.read_csv(node_file, sep='\t')
-        categories = nodes[node_property_for_color]
+        categories = nodes[node_property_for_color].astype(str)
         category_names = list(set(categories))
         category_names.sort()
         colors = [category_names.index(i) for i in categories]

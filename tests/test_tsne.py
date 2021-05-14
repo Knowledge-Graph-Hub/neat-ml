@@ -20,6 +20,7 @@ class TestTsne(TestCase):
     def test_make_tsne(self):
         yhelp = YamlHelper("tests/resources/test_graph_embedding_bert_tsne.yaml")
         embed_kwargs = yhelp.make_tsne_args()
+        embed_kwargs['embedding_file'] = 'tests/resources/test_embeddings.tsv'
         make_tsne(**embed_kwargs)
 
         self.assertTrue(os.path.exists(self.expected_tsne_file))

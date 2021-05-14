@@ -30,6 +30,8 @@ def make_graph_embeddings(main_graph_args: dict,
                           model: str,
                           embedding_outfile: str,
                           model_outfile: str,
+                          embedding_history_outfile: str,
+                          metrics_class_list: list,
                           use_pos_valid_for_early_stopping: bool = False,
                           learning_rate: float = 0.1,
                           bert_columns: list = None,
@@ -52,6 +54,8 @@ def make_graph_embeddings(main_graph_args: dict,
         model: SkipGram or CBOW (TODO: Glove)
         embedding_outfile: outfile for embeddings
         model_outfile: outfile for model
+        embedding_history_outfile: outfile for history
+        metrics_class_list: list of metrics to output in embedding_history_outfile
         bert_columns: list of columns from bert_node_file to embed
     Returns:
         None.
@@ -119,8 +123,19 @@ def make_graph_embeddings(main_graph_args: dict,
     else:
         raise NotImplementedError(f"{model} isn't implemented yet")
 
+    import yaml
+    with open('tests/resources/test.yaml', 'r') as stream:
+        y = yaml.load(stream, Loader=yaml.FullLoader)
+
+    if metrics_class_list:
+        word2vec_model._model.compile(metrics=metrics_class_list)
+
     ## TODO: deal with GloVe
-    word2vec_model.fit(graph_sequence, **fit_args)
+    history = word2vec_model.fit(graph_sequence, **fit_args)
+
+    if embedding_history_outfile:
+        with open(embedding_history_outfile, 'w') as f:
+            f.write(history.to_json())
 
     these_embeddings = pd.DataFrame(word2vec_model.embedding,
                                     index=graph.get_node_names())
