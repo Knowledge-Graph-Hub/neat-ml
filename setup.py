@@ -63,9 +63,9 @@ setup(
         'tqdm',
         'click',
         'pyyaml',
+        'tensorflow==2.1.0'
         'embiggen==0.8.2',
         'ensmallen_graph==0.5.2',
-        # 'numpy<1.19.0',
         'numpy',
         'matplotlib',
         'sanitize_ml_labels',
