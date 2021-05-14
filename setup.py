@@ -63,6 +63,7 @@ setup(
         'tqdm',
         'click',
         'pyyaml',
+        'tensorflow-estimator==2.1.*',
         'tensorflow==2.2',
         'embiggen==0.8.2',
         'ensmallen_graph==0.5.2',
