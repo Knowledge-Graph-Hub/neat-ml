@@ -83,15 +83,15 @@ class YamlHelper:
 
     @catch_keyerror
     def pos_val_graph_args(self) -> dict:
-        return self.add_indir_to_graph_data(self.yaml['graph_data']['pos_validation'])
+        return self.add_indir_to_graph_data(self.yaml['graph_data']['existing_holdouts']['pos_validation'])
 
     @catch_keyerror
     def neg_val_graph_args(self) -> dict:
-        return self.add_indir_to_graph_data(self.yaml['graph_data']['neg_validation'])
+        return self.add_indir_to_graph_data(self.yaml['graph_data']['existing_holdouts']['neg_validation'])
 
     @catch_keyerror
     def neg_train_graph_args(self) -> dict:
-        return self.add_indir_to_graph_data(self.yaml['graph_data']['neg_training'])
+        return self.add_indir_to_graph_data(self.yaml['graph_data']['existing_holdouts']['neg_training'])
 
     #
     # holdout stuff
