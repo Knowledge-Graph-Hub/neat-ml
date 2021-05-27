@@ -32,6 +32,7 @@ test_deps = [
     'coveralls',
     'validate_version_code',
     'codacy-coverage',
+    'parameterized'
 ]
 
 extras = {
@@ -60,10 +61,11 @@ setup(
     },
     tests_require=test_deps,
     install_requires=[
+	'cmake==3.18.4.post1',
         'tqdm',
         'click',
         'pyyaml',
-        'tensorflow==2.1',
+        'tensorflow>=2.1',
         'embiggen==0.8.2',
         'ensmallen_graph==0.5.2',
         'numpy',
