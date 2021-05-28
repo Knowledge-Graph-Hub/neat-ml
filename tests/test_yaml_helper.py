@@ -1,4 +1,3 @@
-import math
 from unittest import TestCase
 
 from parameterized import parameterized
@@ -18,6 +17,8 @@ class TestYamlHelper(TestCase):
         self.test_yaml_upload_good = 'tests/resources/test_good_upload_info.yaml'
         self.test_yaml_upload_bad = 'tests/resources/test_bad_upload_info.yaml'
         self.test_yaml_bert_tsne = 'tests/resources/test_graph_embedding_bert_tsne.yaml'
+        self.test_yaml_holdouts = 'tests/resources/test_holdouts.yaml'
+        self.yh = YamlHelper(self.test_yaml)
 
     def test_no_indir(self) -> None:
         yh = YamlHelper("tests/resources/test_no_indir.yaml")
@@ -108,4 +109,31 @@ class TestYamlHelper(TestCase):
         self.assertTrue(key in self.embedding_args,
                         msg=f"can't find key {key} in output of make_embedding_args()")
         self.assertEqual(self.embedding_args[key], value)
+
+    def test_do_holdouts(self):
+        self.assertTrue(hasattr(YamlHelper, 'do_holdouts'))
+        yh = YamlHelper(self.test_yaml_holdouts)
+        self.assertTrue(yh.do_holdouts())
+
+    def test_dont_do_holdouts(self):
+        self.assertTrue(hasattr(YamlHelper, 'do_holdouts'))
+        yh = YamlHelper(self.test_yaml)
+        self.assertTrue(not yh.do_holdouts())
+
+    def test_make_holdouts_args(self):
+        self.assertTrue(hasattr(YamlHelper, 'make_holdouts_args'))
+        yh = YamlHelper(self.test_yaml_holdouts)
+        mh_args = yh.make_holdouts_args()
+        expected_args = {'main_graph_args': yh.main_graph_args(),
+                         'output_dir': yh.outdir(),
+                         'train_size': 0.8,
+                         'validation': False,
+                         'seed': 42,
+                         'edge_types': ['biolink:interacts_with',
+                                        'biolink:has_gene_product']}
+        self.assertListEqual(list(mh_args.keys()), list(expected_args.keys()))
+        self.maxDiff = None
+        self.assertDictEqual(mh_args, expected_args)
+
+
 

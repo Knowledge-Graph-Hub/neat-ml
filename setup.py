@@ -32,6 +32,7 @@ test_deps = [
     'coveralls',
     'validate_version_code',
     'codacy-coverage',
+    'parameterized'
 ]
 
 extras = {
@@ -60,12 +61,13 @@ setup(
     },
     tests_require=test_deps,
     install_requires=[
+	'cmake==3.18.4.post1',
         'tqdm',
         'click',
         'pyyaml',
-        'embiggen',  # currently this needs to be installed from github master, not pypi
-        'ensmallen_graph',
-        # 'numpy<1.19.0',
+        'tensorflow==2.1.0',
+        'embiggen==0.8.2',
+        'ensmallen_graph==0.5.2',
         'numpy',
         'matplotlib',
         'sanitize_ml_labels',

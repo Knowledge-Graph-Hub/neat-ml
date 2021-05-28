@@ -84,7 +84,7 @@ def make_graph_embeddings(main_graph_args: dict,
             this_text,  # Sentence to encode
             # add_special_tokens=True,  # Add '[CLS]' and '[SEP]'
             return_tensors='np'
-        ) for this_text in tqdm(node_text, "tokenzing text")]
+        ) for this_text in tqdm(node_text, "tokenizing text")]
         node_text_tensors = [
             np.mean(all_bert_embeddings[ids.flatten()], axis=0)
             for ids in tqdm(node_text_tokenized, "extracting embeddings for tokens")]
