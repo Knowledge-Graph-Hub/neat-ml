@@ -11,7 +11,6 @@ graph_data:
     nodes_column: 'id'
     node_types_column: 'category'
     default_node_type: 'biolink:NamedThing'
-    ignore_duplicated_nodes: True
     # other parameters:
     # nodes_column_number: int = None
     # node_types_column_number: int = None,
@@ -22,7 +21,6 @@ graph_data:
     destinations_column: 'object'
     # edge_types_column: 'weight'  # fix this
     default_edge_type: 'biolink:related_to'
-    ignore_duplicated_edges: True
     node_path: test_small_nodes.tsv
     edge_path: test_small_edges.tsv
     # edge_header: str

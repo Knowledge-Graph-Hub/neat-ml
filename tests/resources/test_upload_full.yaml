@@ -10,11 +10,9 @@ graph_data:
     nodes_column: 'id'
     node_types_column: 'category'
     default_node_type: 'biolink:NamedThing'
-    ignore_duplicated_nodes: True
     sources_column: 'subject'
     destinations_column: 'object'
     default_edge_type: 'biolink:related_to'
-    ignore_duplicated_edges: True
     node_path: tests/resources/test_graphs/pos_train_nodes.tsv
     edge_path: tests/resources/test_graphs/pos_train_edges.tsv
 
