@@ -1,7 +1,7 @@
 import copy
 import re
 
-from embiggen import Node2VecSequence, SkipGram, CBOW  # type: ignore
+from embiggen import SkipGram, CBOW  # type: ignore
 from ensmallen_graph import EnsmallenGraph  # type: ignore
 import numpy as np  # type: ignore
 import pandas as pd  # type: ignore
@@ -62,7 +62,7 @@ def make_graph_embeddings(main_graph_args: dict,
 
     """
     # load main graph
-    graph: EnsmallenGraph = EnsmallenGraph.from_unsorted_csv(**main_graph_args)
+    graph: EnsmallenGraph = EnsmallenGraph.from_csv(**main_graph_args)
     graph_sequence = Node2VecSequence(graph, **embiggen_seq_args)
 
     # embed columns with BERT first (if we're gonna)
