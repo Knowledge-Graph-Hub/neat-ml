@@ -74,12 +74,9 @@ class TestYamlHelper(TestCase):
              'destinations_column': 'object',
              'directed': False,
              'edge_path': 'tests/resources/test_graphs/pos_train_edges.tsv',
-             'ignore_duplicated_edges': True,
-             'ignore_duplicated_nodes': True,
              'node_path': 'tests/resources/test_graphs/pos_train_nodes.tsv',
              'node_types_column': 'category',
              'nodes_column': 'id',
-             'skip_self_loops': False,
              'sources_column': 'subject',
              'verbose': True}),
         ('pos_valid_graph_args', {'edge_path':
