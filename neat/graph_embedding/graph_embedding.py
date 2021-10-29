@@ -2,7 +2,7 @@ import copy
 import re
 
 from embiggen import SkipGram, CBOW  # type: ignore
-from ensmallen_graph import EnsmallenGraph  # type: ignore
+from ensmallen import Graph  # type: ignore
 import numpy as np  # type: ignore
 import pandas as pd  # type: ignore
 from tensorflow.python.keras.callbacks import EarlyStopping  # type: ignore
@@ -62,7 +62,7 @@ def make_graph_embeddings(main_graph_args: dict,
 
     """
     # load main graph
-    graph: EnsmallenGraph = EnsmallenGraph.from_csv(**main_graph_args)
+    graph: Graph = Graph.from_csv(**main_graph_args)
     graph_sequence = Node2VecSequence(graph, **embiggen_seq_args)
 
     # embed columns with BERT first (if we're gonna)
@@ -100,7 +100,7 @@ def make_graph_embeddings(main_graph_args: dict,
     if use_pos_valid_for_early_stopping:
         gih_params = copy.deepcopy(**main_graph_args)
         gih_params.update(**pos_valid_graph_args)
-        pos_validation_graph = EnsmallenGraph.from_unsorted_csv(**gih_params)
+        pos_validation_graph = Graph.from_unsorted_csv(**gih_params)
         graph_incl_training = graph + pos_validation_graph
         gih_sequence = Node2VecSequence(graph_incl_training, **embiggen_seq_args)
 

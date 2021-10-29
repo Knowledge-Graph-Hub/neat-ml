@@ -5,7 +5,7 @@ import copy
 import pandas as pd  # type: ignore
 from typing import Tuple
 from embiggen import LinkPredictionTransformer  # type: ignore
-from ensmallen_graph import EnsmallenGraph  # type: ignore
+from ensmallen import Graph  # type: ignore
 import sklearn   # type: ignore
 import tensorflow  # type: ignore
 from sklearn.tree import DecisionTreeClassifier  # type: ignore
