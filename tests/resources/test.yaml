@@ -59,7 +59,7 @@ embeddings:
   use_pos_valid_for_early_stopping: True # if True, must specify pos_validation_graph above
   embiggen_params:
     epochs: 1 # typically more than this
-    seq_params:  # these params are passed to Node2VecSequence()
+    seq_params:
       walk_length: 10 # typically 100 or so
       batch_size: 128 # typically 512? or more
       window_size: 4
