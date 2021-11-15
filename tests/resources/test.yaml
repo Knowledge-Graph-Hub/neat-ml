@@ -38,12 +38,17 @@ graph_data:
   #
   # (when making a classifier, positive training graph is assumed to be 'graph' above)
   # all params below override those in 'graph' above
-  pos_validation:
-    edge_path: tests/resources/test_graphs/pos_valid_edges.tsv
-  neg_training:
-    edge_path: tests/resources/test_graphs/neg_train_edges.tsv
-  neg_validation:
-    edge_path: tests/resources/test_graphs/neg_valid_edges.tsv
+  predefined_holdouts:
+    pos_validation:
+      edge_path: tests/resources/test_graphs/pos_valid_edges.tsv
+    neg_training:
+      edge_path: tests/resources/test_graphs/neg_train_edges.tsv
+    neg_validation:
+      edge_path: tests/resources/test_graphs/neg_valid_edges.tsv
+  # OR
+  # ensmallen_holdouts:
+    # params for holdouts, passed to Ensmallen
+    # need to save holdouts as artefacts probably
 
 embeddings:
   resume: True
@@ -73,7 +78,7 @@ embeddings:
     optimizer:  # hard-coded to Nadam for now
       learning_rate: 0.1
   bert_params:
-    node_columns:
+    node_columns:  # ideally these would have more text than category or ID (description)
       - category
       - id
   metrics:  # these can be tensorflow.keras.metrics
@@ -148,7 +153,7 @@ classifier:
               parameters:
                 monitor: val_loss
                 patience: 5
-                min_delta: 0.001  # min improvement to be considered progres
+                min_delta: 0.001  # min improvement to be considered progress
             - type: tensorflow.keras.callbacks.ReduceLROnPlateau
     - type: Decision Tree
       model:
