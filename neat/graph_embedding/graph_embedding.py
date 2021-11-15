@@ -9,6 +9,7 @@ from tensorflow.python.keras.callbacks import EarlyStopping  # type: ignore
 from tensorflow.keras.optimizers import Nadam  # type: ignore
 from tqdm.auto import tqdm  # type: ignore
 from transformers import BertModel, BertTokenizer  # type: ignore
+from embiggen.pipelines import compute_node_embedding
 
 
 def get_node_data(file: str, sep="\t") -> pd.DataFrame:
@@ -63,7 +64,12 @@ def make_graph_embeddings(main_graph_args: dict,
     """
     # load main graph
     graph: Graph = Graph.from_csv(**main_graph_args)
-    graph_sequence = Node2VecSequence(graph, **embiggen_seq_args)
+    # graph_sequence = Node2VecSequence(graph, **embiggen_seq_args)
+
+    node_embedding, training_history = compute_node_embedding(
+        graph,
+        **embiggen_seq_args
+    )
 
     # embed columns with BERT first (if we're gonna)
     bert_embeddings = pd.DataFrame()
@@ -90,62 +96,58 @@ def make_graph_embeddings(main_graph_args: dict,
             for ids in tqdm(node_text_tokenized, "extracting embeddings for tokens")]
 
         bert_embeddings = pd.DataFrame(node_text_tensors, index=graph.get_node_names())
+    #
+    # fit_args = {
+    #     'steps_per_epoch': graph_sequence.steps_per_epoch,
+    #     'callbacks': [],
+    #     'epochs': epochs
+    # }
 
-    fit_args = {
-        'steps_per_epoch': graph_sequence.steps_per_epoch,
-        'callbacks': [],
-        'epochs': epochs
-    }
-
-    if use_pos_valid_for_early_stopping:
-        gih_params = copy.deepcopy(**main_graph_args)
-        gih_params.update(**pos_valid_graph_args)
-        pos_validation_graph = Graph.from_unsorted_csv(**gih_params)
-        graph_incl_training = graph + pos_validation_graph
-        gih_sequence = Node2VecSequence(graph_incl_training, **embiggen_seq_args)
-
-        # also need to add these to be passed to model.fit()
-        fit_args['validation_data'] = gih_sequence
-        fit_args['validation_steps'] = gih_sequence.steps_per_epoch
-
-    if early_stopping_args:
-        es = EarlyStopping(**early_stopping_args)
-        fit_args['callbacks'] = [es]
-
-    lr = Nadam(learning_rate=learning_rate)
-    word2vec_model = None
-    if re.search('skipgram', model, re.IGNORECASE):
-        word2vec_model = SkipGram(vocabulary_size=graph.get_nodes_number(), optimizer=lr,
-                         **node2vec_params)
+    # if use_pos_valid_for_early_stopping:
+    #     gih_params = copy.deepcopy(**main_graph_args)
+    #     gih_params.update(**pos_valid_graph_args)
+    #     pos_validation_graph = Graph.from_unsorted_csv(**gih_params)
+    #     graph_incl_training = graph + pos_validation_graph
+    #     gih_sequence = Node2VecSequence(graph_incl_training, **embiggen_seq_args)
+    #
+    #     # also need to add these to be passed to model.fit()
+    #     fit_args['validation_data'] = gih_sequence
+    #     fit_args['validation_steps'] = gih_sequence.steps_per_epoch
+    #
+    # if early_stopping_args:
+    #     es = EarlyStopping(**early_stopping_args)
+    #     fit_args['callbacks'] = [es]
+    #
+    # lr = Nadam(learning_rate=learning_rate)
+    # word2vec_model = None
+    # if re.search('skipgram', model, re.IGNORECASE):
+    #     word2vec_model = SkipGram(vocabulary_size=graph.get_nodes_number(), optimizer=lr,
+    #                      **node2vec_params)
     elif re.search('CBOW', model, re.IGNORECASE):
         word2vec_model = CBOW(vocabulary_size=graph.get_nodes_number(), optimizer=lr,
                      **node2vec_params)
     else:
         raise NotImplementedError(f"{model} isn't implemented yet")
 
-    import yaml
-    with open('tests/resources/test.yaml', 'r') as stream:
-        y = yaml.load(stream, Loader=yaml.FullLoader)
+    # if metrics_class_list:
+    #     word2vec_model._model.compile(metrics=metrics_class_list)
 
-    if metrics_class_list:
-        word2vec_model._model.compile(metrics=metrics_class_list)
+    # ## TODO: deal with GloVe
+    # history = word2vec_model.fit(graph_sequence, **fit_args)
 
-    ## TODO: deal with GloVe
-    history = word2vec_model.fit(graph_sequence, **fit_args)
-
-    if embedding_history_outfile:
-        with open(embedding_history_outfile, 'w') as f:
-            f.write(history.to_json())
-
-    these_embeddings = pd.DataFrame(word2vec_model.embedding,
-                                    index=graph.get_node_names())
+    # if embedding_history_outfile:
+    #     with open(embedding_history_outfile, 'w') as f:
+    #         f.write(history.to_json())
+    #
+    # these_embeddings = pd.DataFrame(word2vec_model.embedding,
+    #                                 index=graph.get_node_names())
 
     if not bert_embeddings.empty:
-        these_embeddings = pd.concat([these_embeddings, bert_embeddings],
-                                     axis=1,
-                                     ignore_index=False)
+        node_embedding = pd.concat([node_embedding, bert_embeddings],
+                                   axis=1,
+                                   ignore_index=False)
 
-    these_embeddings.to_csv(embedding_outfile, header=False)
+    node_embedding.to_csv(embedding_outfile, header=False)
     word2vec_model.save_weights(model_outfile)
     return None
 
