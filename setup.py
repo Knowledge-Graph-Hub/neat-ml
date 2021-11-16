@@ -32,6 +32,7 @@ test_deps = [
     'coveralls',
     'validate_version_code',
     'codacy-coverage',
+    'parameterized'
 ]
 
 extras = {
@@ -65,7 +66,6 @@ setup(
         'pyyaml',
         'embiggen==0.9.3',
         'ensmallen==0.6.6',
-        # 'numpy<1.19.0',
         'numpy',
         'matplotlib',
         'sanitize_ml_labels',
