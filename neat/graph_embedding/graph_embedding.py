@@ -134,17 +134,14 @@ def make_graph_embeddings(main_graph_args: dict,
     # ## TODO: deal with GloVe
     # history = word2vec_model.fit(graph_sequence, **fit_args)
 
-    # if embedding_history_outfile:
-    #     with open(embedding_history_outfile, 'w') as f:
-    #         f.write(history.to_json())
-    #
-    # these_embeddings = pd.DataFrame(word2vec_model.embedding,
-    #                                 index=graph.get_node_names())
-
     if not bert_embeddings.empty:
         node_embedding = pd.concat([node_embedding, bert_embeddings],
                                    axis=1,
                                    ignore_index=False)
+
+    if training_history:
+        with open(embedding_history_outfile, 'w') as f:
+            f.write(training_history.to_json())
 
     node_embedding.to_csv(embedding_outfile, header=False)
     return None
