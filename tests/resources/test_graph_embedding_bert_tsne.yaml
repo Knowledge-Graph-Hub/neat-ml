@@ -37,19 +37,18 @@ graph_data:
 embeddings:
   resume: True
   embedding_file_name: test_embeddings.tsv
-  model_file_name: embedding_model.h5
   embedding_history_file_name: embedding_history.json
   use_pos_valid_for_early_stopping: True # if True, must specify pos_validation_graph above
   embiggen_params:
     epochs: 1 # typically more than this
     seq_params:  # these params are passed to Node2VecSequence()
+      node_embedding_method_name: SkipGram # one of 'CBOW', 'GloVe', 'SkipGram', 'Siamese', 'TransE', 'SimplE', 'TransH', 'TransR'
       walk_length: 10 # typically 100 or so
       batch_size: 64 # typically 512? or more
       window_size: 4
       return_weight: 1.0  # 1/p
       explore_weight: 1.0  # 1/q
       iterations: 5 # typically 20
-    model: skipgram # or CBOW
     node2vec_params:  # these params are passed to SkipGram() or CBOW()
       embedding_size: 100
       negative_samples: 30

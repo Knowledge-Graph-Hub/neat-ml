@@ -30,7 +30,6 @@ def make_graph_embeddings(main_graph_args: dict,
                           early_stopping_args: dict,
                           model: str,
                           embedding_outfile: str,
-                          model_outfile: str,
                           embedding_history_outfile: str,
                           metrics_class_list: list,
                           use_pos_valid_for_early_stopping: bool = False,
@@ -123,11 +122,11 @@ def make_graph_embeddings(main_graph_args: dict,
     # if re.search('skipgram', model, re.IGNORECASE):
     #     word2vec_model = SkipGram(vocabulary_size=graph.get_nodes_number(), optimizer=lr,
     #                      **node2vec_params)
-    elif re.search('CBOW', model, re.IGNORECASE):
-        word2vec_model = CBOW(vocabulary_size=graph.get_nodes_number(), optimizer=lr,
-                     **node2vec_params)
-    else:
-        raise NotImplementedError(f"{model} isn't implemented yet")
+    # elif re.search('CBOW', model, re.IGNORECASE):
+    #     word2vec_model = CBOW(vocabulary_size=graph.get_nodes_number(), optimizer=lr,
+    #                  **node2vec_params)
+    # else:
+    #     raise NotImplementedError(f"{model} isn't implemented yet")
 
     # if metrics_class_list:
     #     word2vec_model._model.compile(metrics=metrics_class_list)
@@ -148,7 +147,6 @@ def make_graph_embeddings(main_graph_args: dict,
                                    ignore_index=False)
 
     node_embedding.to_csv(embedding_outfile, header=False)
-    word2vec_model.save_weights(model_outfile)
     return None
 
 

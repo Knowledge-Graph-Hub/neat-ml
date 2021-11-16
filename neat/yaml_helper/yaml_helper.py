@@ -104,10 +104,6 @@ class YamlHelper:
         return os.path.join(self.outdir(),
                             self.yaml['embeddings']['embedding_file_name'])
 
-    def model_outfile(self) -> str:
-        return os.path.join(self.outdir(),
-                            self.yaml['embeddings']['model_file_name'])
-
     @catch_keyerror
     def embedding_history_outfile(self):
         return os.path.join(self.outdir(),
@@ -137,9 +133,8 @@ class YamlHelper:
             'node2vec_params': self.yaml['embeddings']['embiggen_params']['node2vec_params'],
             'epochs': self.yaml['embeddings']['embiggen_params']['epochs'],
             'early_stopping_args': self.yaml['embeddings']['embiggen_params']['early_stopping'],
-            'model': self.yaml['embeddings']['embiggen_params']['model'],
+            'model': self.yaml['embeddings']['embiggen_params']['seq_params']['node_embedding_method_name'],
             'embedding_outfile': self.embedding_outfile(),
-            'model_outfile': self.model_outfile(),
             'embedding_history_outfile': self.embedding_history_outfile(),
             'metrics_class_list': self.make_embeddings_metrics_class_list(),
             'use_pos_valid_for_early_stopping': 'use_pos_valid_for_early_stopping' in self.yaml,

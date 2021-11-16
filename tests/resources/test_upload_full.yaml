@@ -19,7 +19,6 @@ graph_data:
 embeddings:
   resume: True
   embedding_file_name: test_embeddings_test_yaml.tsv
-  model_file_name: embedding_model_test_yaml.h5
   use_pos_valid_for_early_stopping: True # if True, must specify pos_validation_graph above
   embiggen_params:
     epochs: 1 # typically more than this
