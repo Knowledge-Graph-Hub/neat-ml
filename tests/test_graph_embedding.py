@@ -3,7 +3,7 @@ from unittest import TestCase
 import json
 from neat.yaml_helper.yaml_helper import YamlHelper
 
-from neat.graph_embedding.graph_embedding import get_node_data, make_graph_embeddings
+from neat.graph_embedding.graph_embedding import get_node_data, make_node_embeddings
 import pandas as pd
 
 
@@ -29,8 +29,8 @@ class TestGraphEmbedding(TestCase):
 
     def test_make_graph_embeddings(self):
         yhelp = YamlHelper("tests/resources/test_graph_embedding_bert_tsne.yaml")
-        embed_kwargs = yhelp.make_embedding_args()
-        make_graph_embeddings(**embed_kwargs)
+        embed_kwargs = yhelp.make_node_embeddings_args()
+        make_node_embeddings(**embed_kwargs)
         self.assertTrue(os.path.exists(self.expected_embedding_file))
 
         self.assertTrue(os.path.exists(self.expected_history_file))

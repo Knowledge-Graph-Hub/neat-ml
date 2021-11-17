@@ -12,7 +12,7 @@ class TestYamlHelper(TestCase):
     def setUpClass(cls) -> None:
         cls.test_yaml = "tests/resources/test.yaml"
         cls.yh = YamlHelper(cls.test_yaml)
-        cls.embedding_args = cls.yh.make_embedding_args()
+        cls.embedding_args = cls.yh.make_node_embeddings_args()
 
     def setUp(self) -> None:
         self.test_yaml_upload_good = 'tests/resources/test_good_upload_info.yaml'

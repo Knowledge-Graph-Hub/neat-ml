@@ -127,8 +127,8 @@ class YamlHelper:
                     metrics_class_list.append([m['type']])
         return metrics_class_list
 
-    def make_embedding_args(self) -> dict:
-        make_embedding_args = {
+    def make_node_embeddings_args(self) -> dict:
+        node_embedding_args = {
             'main_graph_args': self.main_graph_args(),
             'embiggen_seq_args': self.yaml['embeddings']['embiggen_params']['seq_params'],
             'node2vec_params': self.yaml['embeddings']['embiggen_params']['node2vec_params'],
@@ -142,7 +142,7 @@ class YamlHelper:
             'bert_columns': self.yaml['embeddings']['bert_params']['node_columns']
             if 'bert_params' in self.yaml['embeddings'] else None
         }
-        return make_embedding_args
+        return node_embedding_args
 
     #
     # tSNE stuff

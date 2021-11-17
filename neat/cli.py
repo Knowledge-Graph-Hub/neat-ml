@@ -7,7 +7,7 @@ from neat.link_prediction.mlp_model import MLPModel
 
 from tqdm import tqdm  # type: ignore
 
-from neat.graph_embedding.graph_embedding import make_graph_embeddings
+from neat.graph_embedding.graph_embedding import make_node_embeddings
 from neat.upload.upload import upload_dir_to_s3
 from neat.visualization.visualization import make_tsne
 from neat.yaml_helper.yaml_helper import YamlHelper
@@ -36,8 +36,8 @@ def run(config: str) -> None:
 
     # generate embeddings if config has 'embeddings' block
     if yhelp.do_embeddings() and not os.path.exists(yhelp.embedding_outfile()):
-        embed_kwargs = yhelp.make_embedding_args()
-        make_graph_embeddings(**embed_kwargs)
+        embed_kwargs = yhelp.make_node_embeddings_args()
+        make_node_embeddings(**embed_kwargs)
 
     if yhelp.do_tsne() and not os.path.exists(yhelp.tsne_outfile()):
         main_graph_args = yhelp.main_graph_args()

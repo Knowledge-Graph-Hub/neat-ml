@@ -22,19 +22,19 @@ def get_node_data(file: str, sep="\t") -> pd.DataFrame:
     return pd.read_csv(file, sep=sep)
 
 
-def make_graph_embeddings(main_graph_args: dict,
-                          embiggen_seq_args: dict,
-                          node2vec_params: dict,
-                          epochs: int,
-                          early_stopping_args: dict,
-                          embedding_outfile: str,
-                          embedding_history_outfile: str,
-                          metrics_class_list: list,
-                          use_pos_valid_for_early_stopping: bool = False,
-                          learning_rate: float = 0.1,
-                          bert_columns: list = None,
-                          bert_pretrained_model: str = "allenai/scibert_scivocab_uncased"
-                          ) -> None:
+def make_node_embeddings(main_graph_args: dict,
+                         embiggen_seq_args: dict,
+                         node2vec_params: dict,
+                         epochs: int,
+                         early_stopping_args: dict,
+                         embedding_outfile: str,
+                         embedding_history_outfile: str,
+                         metrics_class_list: list,
+                         use_pos_valid_for_early_stopping: bool = False,
+                         learning_rate: float = 0.1,
+                         bert_columns: list = None,
+                         bert_pretrained_model: str = "allenai/scibert_scivocab_uncased"
+                         ) -> None:
     """Make embeddings and output embeddings and model file
 
     Args:
