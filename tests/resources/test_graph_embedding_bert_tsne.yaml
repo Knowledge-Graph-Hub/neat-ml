@@ -49,13 +49,3 @@ embeddings:
     node_columns:
       - category
       - id
-  metrics:  # these can be anything from tensorflow.keras.metrics
-    - type: tensorflow.keras.metrics.AUC
-      parameters:
-        name: AUC
-    - type: tensorflow.keras.metrics.Recall
-      parameters:
-        name: Recall
-    - type: tensorflow.keras.metrics.Precision
-      parameters:
-        name: Precision
