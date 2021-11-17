@@ -1,9 +1,7 @@
-# Neural network Embedding All the Things (NEAT)
+# Network Embedding All the Things (NEAT)
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Knowledge-Graph-Hub_NEAT&metric=alert_status)](https://sonarcloud.io/dashboard?id=Knowledge-Graph-Hub_NEAT) [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=Knowledge-Graph-Hub_NEAT&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=Knowledge-Graph-Hub_NEAT) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Knowledge-Graph-Hub_NEAT&metric=coverage)](https://sonarcloud.io/dashboard?id=Knowledge-Graph-Hub_NEAT)
 
-
-    
 NEAT is a flexible pipeline for:
 - Parsing a graph serialization
 - Generating embeddings
@@ -25,7 +23,7 @@ neat run --config tests/resources/test.yaml # example
 neat run --config [your yaml]
 ```
 
-This pipeline has [KGX](https://github.com/biolink/kgx) and [Embiggen](https://github.com/monarch-initiative/embiggen) as major dependencies.
+This pipeline has [Embiggen](https://github.com/monarch-initiative/embiggen) and [tensorflow](https://github.com/tensorflow/tensorflow) as major dependencies.
 
 The pipeline is driven by a YAML file (e.g. `tests/resources/test.yaml`), which contains all parameters needed to complete the pipeline.
 This includes hyperparameters for machine learning and also things like files/paths to output results.
