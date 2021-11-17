@@ -23,8 +23,8 @@ class TestTsne(TestCase):
             nodes_column="id",
             node_list_node_types_column="category",
             default_node_type="biolink:NamedThing",
-            node_path=yhelp.yaml['graph_data']['graph']['node_path'],
-            edge_path=yhelp.yaml['graph_data']['graph']['edge_path'],
+            node_path=os.path.join(yhelp.yaml['input_directory'], yhelp.yaml['graph_data']['graph']['node_path']),
+            edge_path=os.path.join(yhelp.yaml['input_directory'], yhelp.yaml['graph_data']['graph']['edge_path']),
             sources_column="subject",
             destinations_column="object",
             directed=False
