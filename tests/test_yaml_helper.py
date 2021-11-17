@@ -81,13 +81,13 @@ class TestYamlHelper(TestCase):
                              'sources_column': 'subject',
                              'verbose': True}),
         ('node_embedding_params', {
-                               'node_embedding_method_name': 'SkipGram',
-                               'batch_size': 128,
-                               'explore_weight': 1.0,
-                               'iterations': 5,
-                               'return_weight': 1.0,
-                               'walk_length': 10,
-                               'window_size': 4}),
+            'node_embedding_method_name': 'SkipGram',
+            'batch_size': 128,
+            'explore_weight': 1.0,
+            'iterations': 5,
+            'return_weight': 1.0,
+            'walk_length': 10,
+            'window_size': 4}),
         ('embedding_outfile', 'output_data/test_embeddings_test_yaml.tsv'),
         ('embedding_history_outfile', 'output_data/embedding_history.json'),
         ('bert_columns', ['category', 'id']),
@@ -96,3 +96,16 @@ class TestYamlHelper(TestCase):
         self.assertTrue(key in self.embedding_args,
                         msg=f"can't find key {key} in output of make_embedding_args()")
         self.assertEqual(value, self.embedding_args[key])
+
+    def test_make_embeddings_metrics_class_list(self):
+        self.assertTrue(hasattr(YamlHelper, 'make_embeddings_metrics_class_list'))
+        yh = YamlHelper("tests/resources/test_make_embeddings_metrics.yaml")
+        cl = yh.make_embeddings_metrics_class_list()
+        self.assertEqual(3, len(cl))
+        self.assertCountEqual(["<class 'keras.metrics.AUC'>",
+                               "<class 'keras.metrics.Recall'>",
+                               "<class 'keras.metrics.Precision'>"],
+                              [str(klass.__class__) for klass in cl])
+
+
+
