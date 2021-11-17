@@ -80,7 +80,7 @@ class TestYamlHelper(TestCase):
                              'nodes_column': 'id',
                              'sources_column': 'subject',
                              'verbose': True}),
-        ('embiggen_seq_args', {
+        ('node_embedding_params', {
                                'node_embedding_method_name': 'SkipGram',
                                'batch_size': 128,
                                'explore_weight': 1.0,
@@ -88,16 +88,8 @@ class TestYamlHelper(TestCase):
                                'return_weight': 1.0,
                                'walk_length': 10,
                                'window_size': 4}),
-        ('node2vec_params', {'embedding_size': 100, 'negative_samples': 30}),
-        ('epochs', 1),
-        ('early_stopping_args', {'min_delta': 0.0001,
-                                 'monitor': 'loss',
-                                 'patience': 5,
-                                 'restore_best_weights': True}),
         ('embedding_outfile', 'output_data/test_embeddings_test_yaml.tsv'),
         ('embedding_history_outfile', 'output_data/embedding_history.json'),
-        ('use_pos_valid_for_early_stopping', False),
-        ('learning_rate', 0.1),
         ('bert_columns', ['category', 'id']),
     ])
     def test_make_embedding_args(self, key, value):

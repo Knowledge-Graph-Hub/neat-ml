@@ -22,39 +22,23 @@ def get_node_data(file: str, sep="\t") -> pd.DataFrame:
     return pd.read_csv(file, sep=sep)
 
 
-def make_node_embeddings(main_graph_args: dict,
-                         embiggen_seq_args: dict,
-                         node2vec_params: dict,
-                         epochs: int,
-                         early_stopping_args: dict,
+def make_node_embeddings(
                          embedding_outfile: str,
                          embedding_history_outfile: str,
-                         metrics_class_list: list,
-                         use_pos_valid_for_early_stopping: bool = False,
-                         learning_rate: float = 0.1,
-                         bert_columns: list = None,
+                         main_graph_args: dict,
+                         node_embedding_params: dict,
+                         bert_columns: dict,
                          bert_pretrained_model: str = "allenai/scibert_scivocab_uncased"
                          ) -> None:
-    """Make embeddings and output embeddings and model file
+    """Make embeddings and output embeddings and training history
 
     Args:
+        embedding_outfile: outfile to write out embeddings
+        embedding_history_outfile: outfile to write out training history
         main_graph_args: arguments passed to ensmallen_graph for graph loading
-        pos_valid_graph_args: arguments passed to ensmallen_graph for positive validation graph
-        embiggen_seq_args: arguments passed to Node2VecSequence() for random walk
-        node2vec_params: arguments for embedding size and negative samples, passed to
-            SkipGram() or CBOW()
-        epochs: number of epochs to train
-        use_pos_valid_for_early_stopping: should we use the positive validation graph
-            for early stopping? [False]
-        early_stopping_args: if we want to do early stopping, args to use
-            (patience, delta, etc)
-        learning_rate: learning rate passed to Nadam [0.1]
-        model: SkipGram or CBOW (TODO: Glove)
-        embedding_outfile: outfile for embeddings
-        model_outfile: outfile for model
-        embedding_history_outfile: outfile for history
-        metrics_class_list: list of metrics to output in embedding_history_outfile
-        bert_columns: list of columns from bert_node_file to embed
+        node_embedding_params: args passed to compute_node_embeddings() in Embiggen
+        bert_columns: columns containing text info to use to make embeddings from Bert
+                pretrained embeddings
     Returns:
         None.
 
@@ -63,7 +47,7 @@ def make_node_embeddings(main_graph_args: dict,
     graph: Graph = Graph.from_csv(**main_graph_args)
     node_embedding, training_history = compute_node_embedding(
         graph,
-        **embiggen_seq_args
+        **node_embedding_params
     )
 
     # embed columns with BERT first (if we're gonna)

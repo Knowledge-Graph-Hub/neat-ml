@@ -18,29 +18,26 @@ graph_data:
     default_edge_type: 'biolink:related_to'
 
 embeddings:
-  resume: True
   embedding_file_name: test_embeddings.tsv
   embedding_history_file_name: embedding_history.json
-  use_pos_valid_for_early_stopping: True # if True, must specify pos_validation_graph above
-  embiggen_params:
-    epochs: 1 # typically more than this
-    seq_params:  # these params are passed to Node2VecSequence()
+  node_embedding_params:
       node_embedding_method_name: SkipGram # one of 'CBOW', 'GloVe', 'SkipGram', 'Siamese', 'TransE', 'SimplE', 'TransH', 'TransR'
+      # graph: Graph,
+      # node_embedding_method_name: str,
+      # use_mirrored_strategy: bool = True,
+      # devices: Union[List[str], str] = None,
+      # fit_kwargs: Dict = None,
+      # verbose: Union[bool, int] = True,
+      # automatically_drop_unsupported_parameters: bool = False,
+      # automatically_enable_time_memory_tradeoffs: bool = True,
+      # automatically_sort_by_decreasing_outbound_node_degree: bool = True,
+      # ** kwargs: Dict
       walk_length: 10 # typically 100 or so
-      batch_size: 64 # typically 512? or more
+      batch_size: 128 # typically 512? or more
       window_size: 4
       return_weight: 1.0  # 1/p
       explore_weight: 1.0  # 1/q
       iterations: 5 # typically 20
-    node2vec_params:  # these params are passed to SkipGram() or CBOW()
-      embedding_size: 100
-      negative_samples: 30
-    early_stopping:  # optional
-      patience: 5
-      min_delta: 0.0001
-      restore_best_weights: True
-    optimizer:  # hard-coded to Nadam for now
-      learning_rate: 0.1
   tsne:  # comment this out if you don't want a TSNE plot
     n: 230 # how many processors to use
     tsne_file_name: test_embedding_tsne.png
