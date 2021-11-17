@@ -4,6 +4,8 @@ import os
 from typing import Optional
 
 import yaml
+from ensmallen import Graph
+
 from neat.link_prediction.model import Model
 
 
@@ -149,18 +151,12 @@ class YamlHelper:
     def do_tsne(self) -> bool:
         return 'tsne' in self.yaml['embeddings']
 
-    def make_tsne_args(self) -> dict:
+    def make_tsne_args(self, graph: Graph) -> dict:
         make_tsne_args = {
+            'graph': graph,
             'tsne_outfile': self.tsne_outfile(),
             'embedding_file': self.embedding_outfile(),
-            'num_processors': self.yaml['embeddings']['tsne']['n'],
-            'scatter_params': self.yaml['embeddings']['tsne']['scatter_params'],
-            'color_nodes': 'node_property_for_color' in self.yaml['embeddings']['tsne']
         }
-        if 'node_property_for_color' in self.yaml['embeddings']['tsne']:
-            make_tsne_args['node_file'] = os.path.join(self.indir(), self.yaml['graph_data']['graph']['node_path'])
-            make_tsne_args['node_property_for_color'] = \
-                self.yaml['embeddings']['tsne']['node_property_for_color']
         return make_tsne_args
 
     def tsne_outfile(self) -> str:

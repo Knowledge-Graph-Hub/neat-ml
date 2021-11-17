@@ -21,8 +21,8 @@ graph_data:
     destinations_column: 'object'
     # edge_types_column: 'weight'  # fix this
     default_edge_type: 'biolink:related_to'
-    node_path: test_small_nodes.tsv
-    edge_path: test_small_edges.tsv
+    node_path: tests/resources/test_graphs/test_small_nodes.tsv
+    edge_path: tests/resources/test_graphs/test_small_edges.tsv
     # edge_header: str
     # edge_rows_to_skip: int = 0,
     # sources_column_number: int = 0
