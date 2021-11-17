@@ -1,10 +1,10 @@
 import functools
 import logging
 import os
-from typing import Optional
+from typing import Optional, Callable, Any
 
-import yaml
-from ensmallen import Graph
+import yaml  # type: ignore
+from ensmallen import Graph  # type: ignore
 
 from neat.link_prediction.model import Model
 
@@ -88,12 +88,16 @@ class YamlHelper:
         return self.add_indir_to_graph_data(self.yaml['graph_data']['predefined_holdouts'])
 
     @catch_keyerror
+    def pos_val_graph_args(self) -> dict:
+        return self.add_indir_to_graph_data(self.yaml['graph_data']['predefined_holdouts']['pos_validation'])
+
+    @catch_keyerror
     def neg_val_graph_args(self) -> dict:
-        return self.add_indir_to_graph_data(self.yaml['graph_data']['neg_validation'])
+        return self.add_indir_to_graph_data(self.yaml['graph_data']['predefined_holdouts']['neg_validation'])
 
     @catch_keyerror
     def neg_train_graph_args(self) -> dict:
-        return self.add_indir_to_graph_data(self.yaml['graph_data']['neg_training'])
+        return self.add_indir_to_graph_data(self.yaml['graph_data']['predefined_holdouts']['neg_training'])
 
     #
     # embedding stuff
@@ -121,7 +125,7 @@ class YamlHelper:
                 if m['type'].startswith('tensorflow.keras'):
                     m_class = Model.dynamically_import_class(m['type'])
                     m_parameters = m['parameters']
-                    m_instance = m_class(**m_parameters)
+                    m_instance = m_class(**m_parameters)  # type: ignore
                     metrics_class_list.append(m_instance)
                 else:
                     metrics_class_list.append([m['type']])

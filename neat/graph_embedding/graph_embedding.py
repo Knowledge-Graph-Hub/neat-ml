@@ -9,7 +9,7 @@ from tensorflow.python.keras.callbacks import EarlyStopping  # type: ignore
 from tensorflow.keras.optimizers import Nadam  # type: ignore
 from tqdm.auto import tqdm  # type: ignore
 from transformers import BertModel, BertTokenizer  # type: ignore
-from embiggen.pipelines import compute_node_embedding
+from embiggen.pipelines import compute_node_embedding  # type: ignore
 
 
 def get_node_data(file: str, sep="\t") -> pd.DataFrame:

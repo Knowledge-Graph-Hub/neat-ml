@@ -1,5 +1,7 @@
 import os
 import click
+from ensmallen import Graph  # type: ignore
+
 from neat.link_prediction.sklearn_model import SklearnModel
 from neat.link_prediction.mlp_model import MLPModel
 
@@ -38,7 +40,9 @@ def run(config: str) -> None:
         make_graph_embeddings(**embed_kwargs)
 
     if yhelp.do_tsne() and not os.path.exists(yhelp.tsne_outfile()):
-        tsne_kwargs = yhelp.make_tsne_args()
+        main_graph_args = yhelp.main_graph_args()
+        graph: Graph = Graph.from_csv(**main_graph_args)
+        tsne_kwargs = yhelp.make_tsne_args(graph)
         make_tsne(**tsne_kwargs)
 
     if yhelp.do_classifier():
@@ -63,7 +67,7 @@ def run(config: str) -> None:
             history = model.fit(train_data, validation_data)
 
             if yhelp.classifier_history_file_name(classifier):
-                with open(yhelp.classifier_history_file_name(classifier), 'w') as f:
+                with open(yhelp.classifier_history_file_name(classifier), 'w') as f:  # type: ignore
                     f.write(history.to_json())
 
             model.save()
