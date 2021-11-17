@@ -23,12 +23,10 @@ def get_node_data(file: str, sep="\t") -> pd.DataFrame:
 
 
 def make_graph_embeddings(main_graph_args: dict,
-                          pos_valid_graph_args: dict,
                           embiggen_seq_args: dict,
                           node2vec_params: dict,
                           epochs: int,
                           early_stopping_args: dict,
-                          model: str,
                           embedding_outfile: str,
                           embedding_history_outfile: str,
                           metrics_class_list: list,
@@ -63,8 +61,6 @@ def make_graph_embeddings(main_graph_args: dict,
     """
     # load main graph
     graph: Graph = Graph.from_csv(**main_graph_args)
-    # graph_sequence = Node2VecSequence(graph, **embiggen_seq_args)
-
     node_embedding, training_history = compute_node_embedding(
         graph,
         **embiggen_seq_args
@@ -131,15 +127,12 @@ def make_graph_embeddings(main_graph_args: dict,
     # if metrics_class_list:
     #     word2vec_model._model.compile(metrics=metrics_class_list)
 
-    # ## TODO: deal with GloVe
-    # history = word2vec_model.fit(graph_sequence, **fit_args)
-
     if not bert_embeddings.empty:
         node_embedding = pd.concat([node_embedding, bert_embeddings],
                                    axis=1,
                                    ignore_index=False)
 
-    if training_history:
+    if not training_history.empty:
         with open(embedding_history_outfile, 'w') as f:
             f.write(training_history.to_json())
 

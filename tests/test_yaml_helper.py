@@ -65,35 +65,35 @@ class TestYamlHelper(TestCase):
     def test_classifier_history_file_name(self):
         self.assertTrue(hasattr(YamlHelper, 'classifier_history_file_name'))
         yg = YamlHelper(self.test_yaml)
-        self.assertEqual(yg.classifier_history_file_name(yg.yaml['classifier']['classifiers'][0]),
-                         "mlp_classifier_history.json")
+        self.assertEqual(
+            yg.classifier_history_file_name(yg.yaml['classifier']['classifiers'][0]),
+            "mlp_classifier_history.json")
 
     @parameterized.expand([
         ('main_graph_args', {'default_edge_type': 'biolink:related_to',
-             'default_node_type': 'biolink:NamedThing',
-             'destinations_column': 'object',
-             'directed': False,
-             'edge_path': 'tests/resources/test_graphs/pos_train_edges.tsv',
-             'node_path': 'tests/resources/test_graphs/pos_train_nodes.tsv',
-             'node_types_column': 'category',
-             'nodes_column': 'id',
-             'sources_column': 'subject',
-             'verbose': True}),
-        ('pos_valid_graph_args', {'edge_path':
-                                  'tests/resources/test_graphs/pos_valid_edges.tsv'}),
-        ('embiggen_seq_args', {'batch_size': 128,
-                         'explore_weight': 1.0,
-                         'iterations': 5,
-                         'return_weight': 1.0,
-                         'walk_length': 10,
-                         'window_size': 4}),
+                             'default_node_type': 'biolink:NamedThing',
+                             'destinations_column': 'object',
+                             'directed': False,
+                             'edge_path': 'tests/resources/test_graphs/pos_train_edges.tsv',
+                             'node_path': 'tests/resources/test_graphs/pos_train_nodes.tsv',
+                             'node_types_column': 'category',
+                             'nodes_column': 'id',
+                             'sources_column': 'subject',
+                             'verbose': True}),
+        ('embiggen_seq_args', {
+                               'node_embedding_method_name': 'SkipGram',
+                               'batch_size': 128,
+                               'explore_weight': 1.0,
+                               'iterations': 5,
+                               'return_weight': 1.0,
+                               'walk_length': 10,
+                               'window_size': 4}),
         ('node2vec_params', {'embedding_size': 100, 'negative_samples': 30}),
         ('epochs', 1),
         ('early_stopping_args', {'min_delta': 0.0001,
-             'monitor': 'loss',
-             'patience': 5,
-             'restore_best_weights': True}),
-        ('model', 'SkipGram'),
+                                 'monitor': 'loss',
+                                 'patience': 5,
+                                 'restore_best_weights': True}),
         ('embedding_outfile', 'output_data/test_embeddings_test_yaml.tsv'),
         ('embedding_history_outfile', 'output_data/embedding_history.json'),
         ('use_pos_valid_for_early_stopping', False),
@@ -103,5 +103,4 @@ class TestYamlHelper(TestCase):
     def test_make_embedding_args(self, key, value):
         self.assertTrue(key in self.embedding_args,
                         msg=f"can't find key {key} in output of make_embedding_args()")
-        self.assertEqual(self.embedding_args[key], value)
-
+        self.assertEqual(value, self.embedding_args[key])

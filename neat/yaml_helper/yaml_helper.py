@@ -82,8 +82,8 @@ class YamlHelper:
         return self.add_indir_to_graph_data(self.yaml['graph_data']['graph'])
 
     @catch_keyerror
-    def pos_val_graph_args(self) -> dict:
-        return self.add_indir_to_graph_data(self.yaml['graph_data']['pos_validation'])
+    def predefined_holdouts_graph_args(self) -> dict:
+        return self.add_indir_to_graph_data(self.yaml['graph_data']['predefined_holdouts'])
 
     @catch_keyerror
     def neg_val_graph_args(self) -> dict:
@@ -128,12 +128,10 @@ class YamlHelper:
     def make_embedding_args(self) -> dict:
         make_embedding_args = {
             'main_graph_args': self.main_graph_args(),
-            'pos_valid_graph_args': self.pos_val_graph_args(),
             'embiggen_seq_args': self.yaml['embeddings']['embiggen_params']['seq_params'],
             'node2vec_params': self.yaml['embeddings']['embiggen_params']['node2vec_params'],
             'epochs': self.yaml['embeddings']['embiggen_params']['epochs'],
             'early_stopping_args': self.yaml['embeddings']['embiggen_params']['early_stopping'],
-            'model': self.yaml['embeddings']['embiggen_params']['seq_params']['node_embedding_method_name'],
             'embedding_outfile': self.embedding_outfile(),
             'embedding_history_outfile': self.embedding_history_outfile(),
             'metrics_class_list': self.make_embeddings_metrics_class_list(),

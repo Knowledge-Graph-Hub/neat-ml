@@ -38,4 +38,4 @@ class TestGraphEmbedding(TestCase):
             data = f.read()
             obj = json.loads(data)
             self.assertListEqual(list(obj.keys()),
-                                 ['loss', 'AUC', 'Recall', 'Precision'])
+                                 ['loss', 'lr'])
