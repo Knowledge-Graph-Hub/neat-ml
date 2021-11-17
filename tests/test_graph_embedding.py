@@ -29,8 +29,8 @@ class TestGraphEmbedding(TestCase):
 
     def test_make_graph_embeddings(self):
         yhelp = YamlHelper("tests/resources/test_graph_embedding_bert_tsne.yaml")
-        embed_kwargs = yhelp.make_node_embeddings_args()
-        make_node_embeddings(**embed_kwargs)
+        node_embedding_args = yhelp.make_node_embeddings_args()
+        make_node_embeddings(**node_embedding_args)
         self.assertTrue(os.path.exists(self.expected_embedding_file))
 
         self.assertTrue(os.path.exists(self.expected_history_file))

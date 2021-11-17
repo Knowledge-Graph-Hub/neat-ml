@@ -36,8 +36,8 @@ def run(config: str) -> None:
 
     # generate embeddings if config has 'embeddings' block
     if yhelp.do_embeddings() and not os.path.exists(yhelp.embedding_outfile()):
-        embed_kwargs = yhelp.make_node_embeddings_args()
-        make_node_embeddings(**embed_kwargs)
+        node_embedding_args = yhelp.make_node_embeddings_args()
+        make_node_embeddings(**node_embedding_args)
 
     if yhelp.do_tsne() and not os.path.exists(yhelp.tsne_outfile()):
         main_graph_args = yhelp.main_graph_args()

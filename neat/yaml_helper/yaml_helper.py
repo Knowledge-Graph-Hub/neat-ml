@@ -128,6 +128,17 @@ class YamlHelper:
         return metrics_class_list
 
     def make_node_embeddings_args(self) -> dict:
+        # graph: Graph,
+        # node_embedding_method_name: str,
+        # use_mirrored_strategy: bool = True,
+        # devices: Union[List[str], str] = None,
+        # fit_kwargs: Dict = None,
+        # verbose: Union[bool, int] = True,
+        # automatically_drop_unsupported_parameters: bool = False,
+        # automatically_enable_time_memory_tradeoffs: bool = True,
+        # automatically_sort_by_decreasing_outbound_node_degree: bool = True,
+        # ** kwargs: Dict
+
         node_embedding_args = {
             'main_graph_args': self.main_graph_args(),
             'embiggen_seq_args': self.yaml['embeddings']['embiggen_params']['seq_params'],

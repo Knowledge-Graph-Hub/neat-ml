@@ -91,41 +91,6 @@ def make_node_embeddings(main_graph_args: dict,
             for ids in tqdm(node_text_tokenized, "extracting embeddings for tokens")]
 
         bert_embeddings = pd.DataFrame(node_text_tensors, index=graph.get_node_names())
-    #
-    # fit_args = {
-    #     'steps_per_epoch': graph_sequence.steps_per_epoch,
-    #     'callbacks': [],
-    #     'epochs': epochs
-    # }
-
-    # if use_pos_valid_for_early_stopping:
-    #     gih_params = copy.deepcopy(**main_graph_args)
-    #     gih_params.update(**pos_valid_graph_args)
-    #     pos_validation_graph = Graph.from_unsorted_csv(**gih_params)
-    #     graph_incl_training = graph + pos_validation_graph
-    #     gih_sequence = Node2VecSequence(graph_incl_training, **embiggen_seq_args)
-    #
-    #     # also need to add these to be passed to model.fit()
-    #     fit_args['validation_data'] = gih_sequence
-    #     fit_args['validation_steps'] = gih_sequence.steps_per_epoch
-    #
-    # if early_stopping_args:
-    #     es = EarlyStopping(**early_stopping_args)
-    #     fit_args['callbacks'] = [es]
-    #
-    # lr = Nadam(learning_rate=learning_rate)
-    # word2vec_model = None
-    # if re.search('skipgram', model, re.IGNORECASE):
-    #     word2vec_model = SkipGram(vocabulary_size=graph.get_nodes_number(), optimizer=lr,
-    #                      **node2vec_params)
-    # elif re.search('CBOW', model, re.IGNORECASE):
-    #     word2vec_model = CBOW(vocabulary_size=graph.get_nodes_number(), optimizer=lr,
-    #                  **node2vec_params)
-    # else:
-    #     raise NotImplementedError(f"{model} isn't implemented yet")
-
-    # if metrics_class_list:
-    #     word2vec_model._model.compile(metrics=metrics_class_list)
 
     if not bert_embeddings.empty:
         node_embedding = pd.concat([node_embedding, bert_embeddings],
