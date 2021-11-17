@@ -70,7 +70,6 @@ setup(
         'matplotlib',
         'sanitize_ml_labels',
         'sklearn',
-        'MulticoreTSNE',
         'pandas',
         'transformers',
         'torch',
