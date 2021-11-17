@@ -38,13 +38,12 @@ graph_data:
   #
   # (when making a classifier, positive training graph is assumed to be 'graph' above)
   # all params below override those in 'graph' above
-  predefined_holdouts:
-    pos_validation:
-      edge_path: tests/resources/test_graphs/pos_valid_edges.tsv
-    neg_training:
-      edge_path: tests/resources/test_graphs/neg_train_edges.tsv
-    neg_validation:
-      edge_path: tests/resources/test_graphs/neg_valid_edges.tsv
+  pos_validation:
+    edge_path: tests/resources/test_graphs/pos_valid_edges.tsv
+  neg_training:
+    edge_path: tests/resources/test_graphs/neg_train_edges.tsv
+  neg_validation:
+    edge_path: tests/resources/test_graphs/neg_valid_edges.tsv
   # OR
   # ensmallen_holdouts:
     # params for holdouts, passed to Ensmallen
