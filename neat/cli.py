@@ -1,3 +1,4 @@
+import json
 import os
 import click
 from ensmallen import Graph  # type: ignore
@@ -64,11 +65,11 @@ def run(config: str) -> None:
                                                 yhelp.neg_train_graph_args(),
                                                 yhelp.neg_val_graph_args(),
                                                 yhelp.edge_embedding_method())
-            history = model.fit(train_data, validation_data)
+            history_obj = model.fit(train_data, validation_data)
 
             if yhelp.classifier_history_file_name(classifier):
                 with open(yhelp.classifier_history_file_name(classifier), 'w') as f:  # type: ignore
-                    f.write(history.to_json())
+                    json.dump(history_obj.history, f)
 
             model.save()
 

@@ -65,8 +65,10 @@ setup(
         'tqdm',
         'click',
         'pyyaml',
-        'embiggen==0.9.3',
+        'tensorflow',
         'ensmallen==0.6.6',
+        'opencv-python',  # for embiggen's 4d tSNEs
+        'embiggen==0.9.3',
         'numpy',
         'matplotlib',
         'sanitize_ml_labels',

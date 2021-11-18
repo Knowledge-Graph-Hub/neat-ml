@@ -74,7 +74,7 @@ class MLPModel(Model):
                 callback_list.append(c_instance)
             del classifier_params['callbacks']
 
-        self.model.fit(*train_data, validation_data=validation_data,
-                       **classifier_params, callbacks=callback_list)
-
+        history = self.model.fit(*train_data, validation_data=validation_data,
+                                 **classifier_params, callbacks=callback_list)
+        return history
 
