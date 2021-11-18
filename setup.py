@@ -32,6 +32,8 @@ test_deps = [
     'coveralls',
     'validate_version_code',
     'codacy-coverage',
+    'parameterized',
+    'mypy'
 ]
 
 extras = {
@@ -63,14 +65,12 @@ setup(
         'tqdm',
         'click',
         'pyyaml',
-        'embiggen',  # currently this needs to be installed from github master, not pypi
-        'ensmallen_graph',
-        # 'numpy<1.19.0',
+        'embiggen==0.9.3',
+        'ensmallen==0.6.6',
         'numpy',
         'matplotlib',
         'sanitize_ml_labels',
         'sklearn',
-        'MulticoreTSNE',
         'pandas',
         'transformers',
         'torch',

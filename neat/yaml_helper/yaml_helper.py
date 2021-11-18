@@ -1,9 +1,11 @@
 import functools
 import logging
 import os
-from typing import Optional
+from typing import Optional, Callable, Any
 
-import yaml
+import yaml  # type: ignore
+from ensmallen import Graph  # type: ignore
+
 from neat.link_prediction.model import Model
 
 
@@ -104,10 +106,6 @@ class YamlHelper:
         return os.path.join(self.outdir(),
                             self.yaml['embeddings']['embedding_file_name'])
 
-    def model_outfile(self) -> str:
-        return os.path.join(self.outdir(),
-                            self.yaml['embeddings']['model_file_name'])
-
     @catch_keyerror
     def embedding_history_outfile(self):
         return os.path.join(self.outdir(),
@@ -123,31 +121,22 @@ class YamlHelper:
                 if m['type'].startswith('tensorflow.keras'):
                     m_class = Model.dynamically_import_class(m['type'])
                     m_parameters = m['parameters']
-                    m_instance = m_class(**m_parameters)
+                    m_instance = m_class(**m_parameters)  # type: ignore
                     metrics_class_list.append(m_instance)
                 else:
                     metrics_class_list.append([m['type']])
         return metrics_class_list
 
-    def make_embedding_args(self) -> dict:
-        make_embedding_args = {
-            'main_graph_args': self.main_graph_args(),
-            'pos_valid_graph_args': self.pos_val_graph_args(),
-            'embiggen_seq_args': self.yaml['embeddings']['embiggen_params']['seq_params'],
-            'node2vec_params': self.yaml['embeddings']['embiggen_params']['node2vec_params'],
-            'epochs': self.yaml['embeddings']['embiggen_params']['epochs'],
-            'early_stopping_args': self.yaml['embeddings']['embiggen_params']['early_stopping'],
-            'model': self.yaml['embeddings']['embiggen_params']['model'],
+    def make_node_embeddings_args(self) -> dict:
+        node_embedding_args = {
             'embedding_outfile': self.embedding_outfile(),
-            'model_outfile': self.model_outfile(),
             'embedding_history_outfile': self.embedding_history_outfile(),
-            'metrics_class_list': self.make_embeddings_metrics_class_list(),
-            'use_pos_valid_for_early_stopping': 'use_pos_valid_for_early_stopping' in self.yaml,
-            'learning_rate': self.yaml['embeddings']['embiggen_params']['optimizer']['learning_rate'],
+            'main_graph_args': self.main_graph_args(),
+            'node_embedding_params': self.yaml['embeddings']['node_embedding_params'],
             'bert_columns': self.yaml['embeddings']['bert_params']['node_columns']
             if 'bert_params' in self.yaml['embeddings'] else None
         }
-        return make_embedding_args
+        return node_embedding_args
 
     #
     # tSNE stuff
@@ -156,18 +145,12 @@ class YamlHelper:
     def do_tsne(self) -> bool:
         return 'tsne' in self.yaml['embeddings']
 
-    def make_tsne_args(self) -> dict:
+    def make_tsne_args(self, graph: Graph) -> dict:
         make_tsne_args = {
+            'graph': graph,
             'tsne_outfile': self.tsne_outfile(),
             'embedding_file': self.embedding_outfile(),
-            'num_processors': self.yaml['embeddings']['tsne']['n'],
-            'scatter_params': self.yaml['embeddings']['tsne']['scatter_params'],
-            'color_nodes': 'node_property_for_color' in self.yaml['embeddings']['tsne']
         }
-        if 'node_property_for_color' in self.yaml['embeddings']['tsne']:
-            make_tsne_args['node_file'] = os.path.join(self.indir(), self.yaml['graph_data']['graph']['node_path'])
-            make_tsne_args['node_property_for_color'] = \
-                self.yaml['embeddings']['tsne']['node_property_for_color']
         return make_tsne_args
 
     def tsne_outfile(self) -> str:

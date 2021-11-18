@@ -1,21 +1,16 @@
-from typing import Any, Optional
-
 import pandas as pd  # type: ignore
-from MulticoreTSNE import MulticoreTSNE as TSNE  # type: ignore
+from ensmallen import Graph  # type: ignore
 from matplotlib import pyplot as plt  # type: ignore
+from embiggen.visualizations import GraphVisualization  # type: ignore
 
 
 def make_tsne(
+        graph: Graph,
         tsne_outfile: str,
         embedding_file: str,
-        num_processors: int,
-        scatter_params: dict,
-        color_nodes: bool,
-        node_file: str,
-        node_property_for_color: str
 ) -> None:
     """
-
+    :param graph: Ensmallen graph object
     :param tsne_outfile: where to output tSNE file
     :param embedding_file: file containing embeddings (in numpy format) to use to
         generate the tSNE plot
@@ -30,24 +25,30 @@ def make_tsne(
     :return:
     """
     # fail early here while debugging:
-    category_names: Optional[Any] = None
-    colors: Optional[Any] = None
-    cmap: Optional[Any] = None
-    ticks: Optional[Any] = None
-    if color_nodes:
-        nodes = pd.read_csv(node_file, sep='\t')
-        categories = nodes[node_property_for_color].astype(str)
-        category_names = list(set(categories))
-        category_names.sort()
-        colors = [category_names.index(i) for i in categories]
-        cmap = plt.cm.get_cmap('jet', len(category_names))
-        ticks = list(range(len(category_names)))
+    # category_names: Optional[Any] = None
+    # colors: Optional[Any] = None
+    # cmap: Optional[Any] = None
+    # ticks: Optional[Any] = None
+    # if color_nodes:
+    #     nodes = pd.read_csv(node_file, sep='\t')
+    #     categories = nodes[node_property_for_color].astype(str)
+    #     category_names = list(set(categories))
+    #     category_names.sort()
+    #     colors = [category_names.index(i) for i in categories]
+    #     cmap = plt.cm.get_cmap('jet', len(category_names))
+    #     ticks = list(range(len(category_names)))
 
     node_embeddings = pd.read_csv(embedding_file, index_col=0, header=None)
-    tsne_embeddings = TSNE(n_jobs=num_processors).fit_transform(node_embeddings)
-    x = tsne_embeddings[:, 0]
-    y = tsne_embeddings[:, 1]
-    plt.scatter(x, y, c=colors, cmap=cmap, **scatter_params)
-    formatter = plt.FuncFormatter(lambda val, loc: category_names[val] if val in category_names else None)  # type: ignore
-    plt.colorbar(ticks=ticks, format=formatter)
-    plt.savefig(tsne_outfile)
+    # tsne_embeddings = TSNE(n_jobs=num_processors).fit_transform(node_embeddings)
+    # x = tsne_embeddings[:, 0]
+    # y = tsne_embeddings[:, 1]
+    # plt.scatter(x, y, c=colors, cmap=cmap, **scatter_params)
+    # formatter = plt.FuncFormatter(lambda val, loc: category_names[val] if val in category_names else None)  # type: ignore
+    # plt.colorbar(ticks=ticks, format=formatter)
+    # plt.savefig(tsne_outfile)
+
+    visualizer = GraphVisualization(graph)
+    visualizer.fit_transform_nodes(node_embeddings)
+
+    figure, _ = visualizer.plot_node_types(show_legend=False)
+    figure.savefig(tsne_outfile)

@@ -1,11 +1,13 @@
 import os
 import click
+from ensmallen import Graph  # type: ignore
+
 from neat.link_prediction.sklearn_model import SklearnModel
 from neat.link_prediction.mlp_model import MLPModel
 
 from tqdm import tqdm  # type: ignore
 
-from neat.graph_embedding.graph_embedding import make_graph_embeddings
+from neat.graph_embedding.graph_embedding import make_node_embeddings
 from neat.upload.upload import upload_dir_to_s3
 from neat.visualization.visualization import make_tsne
 from neat.yaml_helper.yaml_helper import YamlHelper
@@ -34,11 +36,13 @@ def run(config: str) -> None:
 
     # generate embeddings if config has 'embeddings' block
     if yhelp.do_embeddings() and not os.path.exists(yhelp.embedding_outfile()):
-        embed_kwargs = yhelp.make_embedding_args()
-        make_graph_embeddings(**embed_kwargs)
+        node_embedding_args = yhelp.make_node_embeddings_args()
+        make_node_embeddings(**node_embedding_args)
 
     if yhelp.do_tsne() and not os.path.exists(yhelp.tsne_outfile()):
-        tsne_kwargs = yhelp.make_tsne_args()
+        main_graph_args = yhelp.main_graph_args()
+        graph: Graph = Graph.from_csv(**main_graph_args)
+        tsne_kwargs = yhelp.make_tsne_args(graph)
         make_tsne(**tsne_kwargs)
 
     if yhelp.do_classifier():
@@ -63,7 +67,7 @@ def run(config: str) -> None:
             history = model.fit(train_data, validation_data)
 
             if yhelp.classifier_history_file_name(classifier):
-                with open(yhelp.classifier_history_file_name(classifier), 'w') as f:
+                with open(yhelp.classifier_history_file_name(classifier), 'w') as f:  # type: ignore
                     f.write(history.to_json())
 
             model.save()

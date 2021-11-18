@@ -5,7 +5,7 @@ import copy
 import pandas as pd  # type: ignore
 from typing import Tuple
 from embiggen import LinkPredictionTransformer  # type: ignore
-from ensmallen_graph import EnsmallenGraph  # type: ignore
+from ensmallen import Graph  # type: ignore
 import sklearn   # type: ignore
 import tensorflow  # type: ignore
 from sklearn.tree import DecisionTreeClassifier  # type: ignore
@@ -63,13 +63,13 @@ class Model:
                                 header=None)
 
         # load graphs
-        graphs = {'pos_training': EnsmallenGraph.from_unsorted_csv(**training_graph_args)}
+        graphs = {'pos_training': Graph.from_csv(**training_graph_args)}
         for name, graph_args in [('pos_validation', pos_validation_args),
                                  ('neg_training', neg_training_args),
                                  ('neg_validation', neg_validation_args)]:
             these_params = copy.deepcopy(training_graph_args)
             these_params.update(graph_args)
-            graphs[name] = EnsmallenGraph.from_unsorted_csv(**these_params)
+            graphs[name] = Graph.from_csv(**these_params)
 
         # create transformer object to convert graphs into edge embeddings
         lpt = LinkPredictionTransformer(method=edge_method)
