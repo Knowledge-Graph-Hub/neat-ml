@@ -65,7 +65,7 @@ setup(
         'tqdm',
         'click',
         'pyyaml',
-        'tensorflow'
+        'tensorflow',
         'embiggen==0.9.3',
         'ensmallen==0.6.6',
         'numpy',
