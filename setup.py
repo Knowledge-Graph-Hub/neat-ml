@@ -73,6 +73,7 @@ setup(
         'sanitize_ml_labels',
         'sklearn',
         'pandas',
+        'urllib3==1.25.11',
         'transformers',
         'torch',
         'boto3',
