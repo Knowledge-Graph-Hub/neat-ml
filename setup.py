@@ -75,7 +75,7 @@ setup(
         'pandas',
         # 'urllib3==1.25.11',
         # 'pyyaml>=5.1',
-        'cv2',
+        'opencv-python',
         'transformers',
         'torch',
         'boto3',
