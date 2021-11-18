@@ -12,27 +12,6 @@ graph_data:
     destinations_column: 'object'
     default_edge_type: 'biolink:related_to'
 
-embeddings:
-  embedding_file_name: test_embeddings_test_yaml.tsv
-  embedding_history_file_name: embedding_history.json
-  node_embedding_params:
-      node_embedding_method_name: SkipGram # one of 'CBOW', 'GloVe', 'SkipGram', 'Siamese', 'TransE', 'SimplE', 'TransH', 'TransR'
-      # graph: Graph,
-      # node_embedding_method_name: str,
-      # use_mirrored_strategy: bool = True,
-      # devices: Union[List[str], str] = None,
-      # fit_kwargs: Dict = None,
-      # verbose: Union[bool, int] = True,
-      # automatically_drop_unsupported_parameters: bool = False,
-      # automatically_enable_time_memory_tradeoffs: bool = True,
-      # automatically_sort_by_decreasing_outbound_node_degree: bool = True,
-      # ** kwargs: Dict
-      walk_length: 10 # typically 100 or so
-      batch_size: 128 # typically 512? or more
-      window_size: 4
-      return_weight: 1.0  # 1/p
-      explore_weight: 1.0  # 1/q
-      iterations: 5 # typically 20
 
 output_directory: tests/resources/test_output_data_dir/
 upload:
