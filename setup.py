@@ -74,6 +74,7 @@ setup(
         'sklearn',
         'pandas',
         'urllib3==1.25.11',
+        'pyyaml>=5.1',
         'transformers',
         'torch',
         'boto3',
