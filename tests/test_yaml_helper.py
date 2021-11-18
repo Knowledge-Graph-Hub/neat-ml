@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from parameterized import parameterized
 
-from neat.yaml_helper.yaml_helper import YamlHelper
+from neat.yaml_helper.yaml_helper import YamlHelper, catch_keyerror
 
 
 class TestYamlHelper(TestCase):
@@ -107,5 +107,6 @@ class TestYamlHelper(TestCase):
                                "<class 'keras.metrics.Precision'>"],
                               [str(klass.__class__) for klass in cl])
 
-
-
+    def test_catch_keyerror(self):
+        yh = YamlHelper("tests/resources/test_no_graph.yaml")
+        yh.pos_val_graph_args() # no assertion needed, just testing for no exception
