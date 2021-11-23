@@ -24,4 +24,4 @@ def upload_dir_to_s3(local_directory: str, s3_bucket: str, s3_bucket_dir: str,
             except ClientError:  # Exception abuse
                 logging.info(f"Uploading {s3_path}")
                 client.upload_file(local_path, s3_bucket, s3_path,
-                                   extra_args=extra_args)
+                                   ExtraArgs=extra_args)
