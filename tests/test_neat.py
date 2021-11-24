@@ -42,7 +42,10 @@ class TestRun(TestCase):
     @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_tsne")
     @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_embeddings")
     @mock.patch("neat.graph_embedding.graph_embedding.make_node_embeddings")
-    def test_run_do_embeddings(self, mock_make_node_embeddings,
+    @mock.patch("boto3.client")
+    def test_run_do_embeddings(self,
+                               mock_boto,
+                               mock_make_node_embeddings,
                                mock_do_embeddings, mock_do_tsne, mock_do_classifier,
                                mock_do_upload):
         mock_do_embeddings.return_value = True
@@ -60,7 +63,10 @@ class TestRun(TestCase):
     @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_tsne")
     @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_embeddings")
     @mock.patch("neat.visualization.visualization.make_tsne")
-    def test_run_do_embeddings(self, mock_make_tnse,
+    @mock.patch("boto3.client")
+    def test_run_do_embeddings(self,
+                               mock_boto,
+                               mock_make_tnse,
                                mock_do_embeddings, mock_do_tsne, mock_do_classifier,
                                mock_do_upload):
         mock_do_embeddings.return_value = False
@@ -77,7 +83,9 @@ class TestRun(TestCase):
     @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_classifier")
     @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_tsne")
     @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_embeddings")
+    @mock.patch("boto3.client")
     def test_run_do_classifiers(self,
+                                mock_boto,
                                 mock_do_embeddings, mock_do_tsne, mock_do_classifier,
                                 mock_do_upload):
         mock_do_embeddings.return_value = False
