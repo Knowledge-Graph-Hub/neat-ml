@@ -78,8 +78,8 @@ class TestRun(TestCase):
     @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_tsne")
     @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_embeddings")
     def test_run_do_classifiers(self,
-                               mock_do_embeddings, mock_do_tsne, mock_do_classifier,
-                               mock_do_upload):
+                                mock_do_embeddings, mock_do_tsne, mock_do_classifier,
+                                mock_do_upload):
         mock_do_embeddings.return_value = False
         mock_do_tsne.return_value = False
         mock_do_classifier.return_value = True
