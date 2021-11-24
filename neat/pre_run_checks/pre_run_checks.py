@@ -1,7 +1,7 @@
 import warnings
 
-import boto3
-from botocore.exceptions import ClientError
+import boto3  # type: ignore
+from botocore.exceptions import ClientError  # type: ignore
 from neat.yaml_helper.yaml_helper import YamlHelper
 
 
