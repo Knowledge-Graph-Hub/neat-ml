@@ -102,7 +102,7 @@ class TestRun(TestCase):
     @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_classifier")
     @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_tsne")
     @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_embeddings")
-    @mock.patch("neat.pre_run_checks.pre_run_checks.pre_run_checks")
+    @mock.patch("neat.cli.pre_run_checks")
     @mock.patch("boto3.client")
     def test_run_pre_run_checks(self,
                                 mock_boto,
