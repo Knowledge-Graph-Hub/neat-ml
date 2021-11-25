@@ -29,7 +29,7 @@ def pre_run_checks(yhelp: YamlHelper,
             client.list_buckets()  # to check credentials
         except ClientError as ce:
             warnings.warn(f"Client error when trying S3 credentials: {ce}")
-            if yhelp.do_upload:
+            if yhelp.do_upload():
                 return_val = False
             else:
                 warnings.warn("YAML contains no upload block - continuing")
