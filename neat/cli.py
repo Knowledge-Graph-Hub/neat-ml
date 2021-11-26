@@ -9,6 +9,7 @@ from neat.link_prediction.mlp_model import MLPModel
 from tqdm import tqdm  # type: ignore
 
 from neat.graph_embedding.graph_embedding import make_node_embeddings
+from neat.pre_run_checks.pre_run_checks import pre_run_checks
 from neat.upload.upload import upload_dir_to_s3
 from neat.visualization.visualization import make_tsne
 from neat.yaml_helper.yaml_helper import YamlHelper
@@ -34,6 +35,10 @@ def run(config: str) -> None:
     """
 
     yhelp = YamlHelper(config)
+
+    # pre run checks for failing early
+    if not pre_run_checks(yhelp=yhelp):
+        raise RuntimeError("Failed pre_run_check")
 
     # generate embeddings if config has 'embeddings' block
     if yhelp.do_embeddings() and not os.path.exists(yhelp.embedding_outfile()):
