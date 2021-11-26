@@ -16,7 +16,7 @@ def pre_run_checks(yhelp: YamlHelper,
         yhelp: YamlHelper object
         check_s3_credentials: should we check S3 credentials (true). Note that if no
             upload dir exists, this will pass
-        check_s3_bucket: check that s3 bucket is valid
+        check_s3_bucket: check that s3 bucket exists on s3
         check_s3_bucket_dir: check that s3 bucket directory doesn't already exist
 
     Returns:
@@ -35,7 +35,21 @@ def pre_run_checks(yhelp: YamlHelper,
                 warnings.warn("YAML contains no upload block - continuing")
 
     if check_s3_bucket:
-        pass
+        if yhelp.do_upload():  # make sure we are going to upload
+            upload_args = yhelp.make_upload_args()
+            try:
+                client = boto3.client('s3')
+                buckets = client.list_buckets()  # to check credentials
+                if 's3_bucket' not in upload_args:
+                    warnings.warn("No 's3_bucket' in upload block")
+                    return_val = False
+                elif upload_args['s3_bucket'] not in buckets:
+                    warnings.warn("No 's3_bucket' in upload block")
+                    return_val = False
+            except ClientError as ce:
+                warnings.warn(f"Client error when trying S3 credentials: {ce}")
+                return_val = False
+
     if check_s3_bucket_dir:
         pass
 

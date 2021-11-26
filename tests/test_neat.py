@@ -22,13 +22,17 @@ class TestRun(TestCase):
     @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_tsne")
     @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_embeddings")
     @mock.patch("boto3.client")
-    def test_run_do_upload(self, mock_boto3_client,
+    @mock.patch("neat.cli.pre_run_checks")
+    def test_run_do_upload(self,
+                           mock_pre_run_checks,
+                           mock_boto3_client,
                            mock_do_embeddings, mock_do_tsne, mock_do_classifier,
                            mock_do_upload):
         mock_do_embeddings.return_value = False
         mock_do_tsne.return_value = False
         mock_do_classifier.return_value = False
         mock_do_upload.return_value = True
+        mock_pre_run_checks.return_value = True
         result = self.runner.invoke(catch_exceptions=False,
                                     cli=run,
                                     args=['--config',
