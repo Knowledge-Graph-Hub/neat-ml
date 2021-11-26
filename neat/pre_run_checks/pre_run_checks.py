@@ -65,7 +65,7 @@ def pre_run_checks(yhelp: YamlHelper,
                         warnings.warn(
                             f"There are already objects in remote s3 directory: "
                             f"{upload_args['s3_bucket_dir']}")
-                    return_val = False
+                        return_val = False
             except ClientError as ce:
                 warnings.warn(f"Client error when trying S3 credentials: {ce}")
                 return_val = False
