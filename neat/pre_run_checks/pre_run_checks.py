@@ -51,6 +51,23 @@ def pre_run_checks(yhelp: YamlHelper,
                 return_val = False
 
     if check_s3_bucket_dir:
-        pass
+        if yhelp.do_upload():  # make sure we are going to upload
+            upload_args = yhelp.make_upload_args()
+            try:
+                client = boto3.client('s3')
+                if 's3_bucket_dir' not in upload_args:
+                    warnings.warn("No 's3_bucket_dir' in upload block")
+                    return_val = False
+                else:
+                    result = client.list_objects(Bucket="Bucket",
+                                                 Prefix=upload_args['s3_bucket_dir'])
+                    if 'Contents' in result:
+                        warnings.warn(
+                            f"There are already objects in remote s3 directory: "
+                            f"{upload_args['s3_bucket_dir']}")
+                    return_val = False
+            except ClientError as ce:
+                warnings.warn(f"Client error when trying S3 credentials: {ce}")
+                return_val = False
 
     return return_val
