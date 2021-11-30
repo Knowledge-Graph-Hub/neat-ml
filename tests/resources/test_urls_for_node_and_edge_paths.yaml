@@ -2,8 +2,8 @@
 graph_data:
   graph:
     directed: False
-    node_path: https://some_remote_url.com/nodes.tsv
-    edge_path: https://some_remote_url.com/edges.tsv
+    node_path: https://someremoteurl.com/nodes.tsv
+    edge_path: https://someremoteurl.com/edges.tsv
     verbose: True
     nodes_column: 'id'
     node_types_column: 'category'

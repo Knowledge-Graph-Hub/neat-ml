@@ -206,3 +206,13 @@ class YamlHelper:
             'extra_args': self.yaml['upload']['extra_args'] if 'extra_args' in self.yaml['upload'] else None
         }
         return make_upload_args
+
+    #
+    # deal with edge/node paths that are URLs
+    #
+    def deal_with_url_node_edge_paths(self):
+        gd = self.yaml['graph_data']['graph']
+        if 'node_path' in gd and is_url(gd['node_path']):
+            gd['node_path'] = "some/path"
+        if 'edge_path' in gd and is_url(gd['edge_path']):
+            gd['edge_path'] = "some/path"

@@ -107,7 +107,7 @@ class TestYamlHelper(TestCase):
 
     def test_catch_keyerror(self):
         yh = YamlHelper("tests/resources/test_no_graph.yaml")
-        yh.pos_val_graph_args() # no assertion needed, just testing for no exception
+        yh.pos_val_graph_args()  # no assertion needed, just testing for no exception
 
     @parameterized.expand([
         ('http://foobar.com', True),
@@ -118,3 +118,16 @@ class TestYamlHelper(TestCase):
     ])
     def test_is_url(self, string, expected_is_url_value):
         self.assertEqual(expected_is_url_value, is_url(string))
+
+    def test_deal_with_url_node_edge_paths_no_urls(self):
+        orig_graph_args = self.yh.main_graph_args()
+        self.yh.deal_with_url_node_edge_paths()
+        self.assertEqual(orig_graph_args, self.yh.main_graph_args())
+
+    def test_deal_with_url_node_edge_urls_for_node_edge_urls_converted_to_path(self):
+        this_yh = YamlHelper('tests/resources/test_urls_for_node_and_edge_paths.yaml')
+        self.assertTrue(is_url(this_yh.main_graph_args()['node_path']))
+        self.assertTrue(is_url(this_yh.main_graph_args()['edge_path']))
+        this_yh.deal_with_url_node_edge_paths()
+        self.assertFalse(is_url(this_yh.main_graph_args()['node_path']))
+        self.assertFalse(is_url(this_yh.main_graph_args()['edge_path']))
