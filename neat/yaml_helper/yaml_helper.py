@@ -5,8 +5,7 @@ from typing import Optional, Callable, Any
 import yaml  # type: ignore
 from ensmallen import Graph  # type: ignore
 from neat.link_prediction.model import Model
-import re
-import validators
+import validators  # type: ignore
 
 
 def parse_yaml(file: str) -> dict:
