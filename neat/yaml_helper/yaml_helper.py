@@ -2,16 +2,26 @@ import functools
 import logging
 import os
 from typing import Optional, Callable, Any
-
 import yaml  # type: ignore
 from ensmallen import Graph  # type: ignore
-
 from neat.link_prediction.model import Model
+import re
+import validators
 
 
 def parse_yaml(file: str) -> dict:
     with open(file, 'r') as stream:
         return yaml.load(stream, Loader=yaml.FullLoader)
+
+
+def is_url(string_to_check: str) -> bool:
+    """Helper function to decide if a string is a URL (used for example for deciding
+    whether we need to download a file for a given node_path or edge_path
+
+    :param string_to_check: string to check
+    :return: True/False is this a URL
+    """
+    return bool(validators.url(string_to_check))
 
 
 def catch_keyerror(f):

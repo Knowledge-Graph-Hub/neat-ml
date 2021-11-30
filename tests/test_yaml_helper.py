@@ -1,9 +1,7 @@
-import math
 from unittest import TestCase
-
 from parameterized import parameterized
 
-from neat.yaml_helper.yaml_helper import YamlHelper, catch_keyerror
+from neat.yaml_helper.yaml_helper import YamlHelper, catch_keyerror, is_url
 
 
 class TestYamlHelper(TestCase):
@@ -110,3 +108,13 @@ class TestYamlHelper(TestCase):
     def test_catch_keyerror(self):
         yh = YamlHelper("tests/resources/test_no_graph.yaml")
         yh.pos_val_graph_args() # no assertion needed, just testing for no exception
+
+    @parameterized.expand([
+        ('http://foobar.com', True),
+        ('https://foobar.com/somefile.tsv', True),
+        ('ftp://foobar.com/somefile.tsv', True),
+        ('somepath/to/a/file/somefile.tsv', False),
+        ('somefile.tsv', False),
+    ])
+    def test_is_url(self, string, expected_is_url_value):
+        self.assertEqual(expected_is_url_value, is_url(string))
