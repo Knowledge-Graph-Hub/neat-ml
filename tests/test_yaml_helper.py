@@ -1,9 +1,9 @@
-import math
-from unittest import TestCase
-
+from unittest import TestCase, skip, mock
 from parameterized import parameterized
 
-from neat.yaml_helper.yaml_helper import YamlHelper, catch_keyerror
+from neat.yaml_helper.yaml_helper import YamlHelper, catch_keyerror, is_url, \
+    download_file
+import os
 
 
 class TestYamlHelper(TestCase):
@@ -109,4 +109,50 @@ class TestYamlHelper(TestCase):
 
     def test_catch_keyerror(self):
         yh = YamlHelper("tests/resources/test_no_graph.yaml")
-        yh.pos_val_graph_args() # no assertion needed, just testing for no exception
+        yh.pos_val_graph_args()  # no assertion needed, just testing for no exception
+
+    @parameterized.expand([
+        ('http://foobar.com', True),
+        ('https://foobar.com/somefile.tsv', True),
+        ('ftp://foobar.com/somefile.tsv', True),
+        ('somepath/to/a/file/somefile.tsv', False),
+        ('somefile.tsv', False),
+    ])
+    def test_is_url(self, string, expected_is_url_value):
+        self.assertEqual(expected_is_url_value, is_url(string))
+
+    def test_deal_with_url_node_edge_paths_no_urls(self):
+        orig_graph_args = self.yh.main_graph_args()
+        self.yh.deal_with_url_node_edge_paths()
+        self.assertEqual(orig_graph_args, self.yh.main_graph_args())
+
+    @mock.patch('neat.yaml_helper.yaml_helper.download_file')
+    def test_node_edge_urls_converted_to_path(self, mock_download_file):
+        this_yh = YamlHelper('tests/resources/test_urls_for_node_and_edge_paths.yaml')
+        self.assertTrue(is_url(this_yh.main_graph_args()['node_path']))
+        self.assertTrue(is_url(this_yh.main_graph_args()['edge_path']))
+
+        this_yh.deal_with_url_node_edge_paths()
+
+        self.assertFalse(is_url(this_yh.main_graph_args()['node_path']))
+        self.assertEqual('output_data/https___someremoteurl.com_nodes.tsv',
+                         this_yh.main_graph_args()['node_path'])
+        self.assertFalse(is_url(this_yh.main_graph_args()['edge_path']))
+        self.assertEqual('output_data/https___someremoteurl.com_edges.tsv',
+                         this_yh.main_graph_args()['edge_path'])
+
+    @mock.patch('neat.yaml_helper.yaml_helper.download_file')
+    def test_node_edge_urls_file_downloaded(self, mock_download_file):
+        this_yh = YamlHelper('tests/resources/test_urls_for_node_and_edge_paths.yaml')
+        this_yh.deal_with_url_node_edge_paths()
+        self.assertTrue(mock_download_file.called)
+        self.assertEqual(2, mock_download_file.call_count)
+
+    @mock.patch('neat.yaml_helper.yaml_helper.Request')
+    @mock.patch('neat.yaml_helper.yaml_helper.urlopen')
+    @mock.patch('neat.yaml_helper.yaml_helper.open')
+    def test_download_file(self, mock_open, mock_urlopen, mock_Request):
+        download_file("https://someurl.com/file.txt", outfile="someoutfile")
+        for this_mock in [mock_open, mock_urlopen, mock_Request]:
+            self.assertTrue(this_mock.called)
+            self.assertEqual(1, this_mock.call_count)

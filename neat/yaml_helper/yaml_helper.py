@@ -1,17 +1,37 @@
 import functools
 import logging
 import os
+import string
+import urllib
 from typing import Optional, Callable, Any
+from urllib.request import Request, urlopen
 
 import yaml  # type: ignore
 from ensmallen import Graph  # type: ignore
-
 from neat.link_prediction.model import Model
+import validators  # type: ignore
 
 
 def parse_yaml(file: str) -> dict:
     with open(file, 'r') as stream:
         return yaml.load(stream, Loader=yaml.FullLoader)
+
+
+def is_url(string_to_check: str) -> bool:
+    """Helper function to decide if a string is a URL (used for example for deciding
+    whether we need to download a file for a given node_path or edge_path
+
+    :param string_to_check: string to check
+    :return: True/False is this a URL
+    """
+    return bool(validators.url(string_to_check))
+
+
+def download_file(url: str, outfile: str) -> None:
+    req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+    with urlopen(req) as response, open(outfile, 'wb') as fh:  # type: ignore
+        data = response.read()  # a `bytes` object
+        fh.write(data)
 
 
 def catch_keyerror(f):
@@ -197,3 +217,19 @@ class YamlHelper:
             'extra_args': self.yaml['upload']['extra_args'] if 'extra_args' in self.yaml['upload'] else None
         }
         return make_upload_args
+
+    #
+    # deal with edge/node paths that are URLs
+    #
+    def deal_with_url_node_edge_paths(self):
+        gd = self.yaml['graph_data']['graph']
+        valid_chars = "-_.() %s%s" % (string.ascii_letters, string.digits)
+
+        for item in ['node_path', 'edge_path']:
+            if item in gd and is_url(gd[item]):
+                url_as_filename = \
+                    ''.join(c if c in valid_chars else "_" for c in gd[item])
+                outfile = os.path.join(self.outdir(), url_as_filename)
+                download_file(gd[item], outfile)
+                gd[item] = outfile
+

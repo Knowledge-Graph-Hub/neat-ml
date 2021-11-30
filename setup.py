@@ -77,7 +77,8 @@ setup(
         'transformers',
         'torch',
         'boto3',
-        'botocore'
+        'botocore',
+        'validators'
     ],
     extras_require=extras,
 )
