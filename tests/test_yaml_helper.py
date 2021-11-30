@@ -134,10 +134,10 @@ class TestYamlHelper(TestCase):
         this_yh.deal_with_url_node_edge_paths()
 
         self.assertFalse(is_url(this_yh.main_graph_args()['node_path']))
-        self.assertEqual('output_data/httpssomeremoteurl.comnodes.tsv',
+        self.assertEqual('output_data/https___someremoteurl.com_nodes.tsv',
                          this_yh.main_graph_args()['node_path'])
         self.assertFalse(is_url(this_yh.main_graph_args()['edge_path']))
-        self.assertEqual('output_data/httpssomeremoteurl.comedges.tsv',
+        self.assertEqual('output_data/https___someremoteurl.com_edges.tsv',
                          this_yh.main_graph_args()['edge_path'])
 
     @mock.patch('neat.yaml_helper.yaml_helper.download_file')

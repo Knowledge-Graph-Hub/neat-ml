@@ -227,7 +227,8 @@ class YamlHelper:
 
         for item in ['node_path', 'edge_path']:
             if item in gd and is_url(gd[item]):
-                url_as_filename = ''.join(c for c in gd[item] if c in valid_chars)
+                url_as_filename = \
+                    ''.join(c if c in valid_chars else "_" for c in gd[item])
                 outfile = os.path.join(self.outdir(), url_as_filename)
                 download_file(gd[item], outfile)
                 gd[item] = outfile
