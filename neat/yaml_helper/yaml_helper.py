@@ -1,7 +1,11 @@
 import functools
 import logging
 import os
+import string
+import urllib
 from typing import Optional, Callable, Any
+from urllib.request import Request, urlopen
+
 import yaml  # type: ignore
 from ensmallen import Graph  # type: ignore
 from neat.link_prediction.model import Model
@@ -21,6 +25,13 @@ def is_url(string_to_check: str) -> bool:
     :return: True/False is this a URL
     """
     return bool(validators.url(string_to_check))
+
+
+def download_file(url: str, outfile: str) -> None:
+    req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+    with urlopen(req) as response, open(outfile, 'wb') as outfile:  # type: ignore
+        data = response.read()  # a `bytes` object
+        outfile.write(data)
 
 
 def catch_keyerror(f):
@@ -212,7 +223,12 @@ class YamlHelper:
     #
     def deal_with_url_node_edge_paths(self):
         gd = self.yaml['graph_data']['graph']
-        if 'node_path' in gd and is_url(gd['node_path']):
-            gd['node_path'] = "some/path"
-        if 'edge_path' in gd and is_url(gd['edge_path']):
-            gd['edge_path'] = "some/path"
+        valid_chars = "-_.() %s%s" % (string.ascii_letters, string.digits)
+
+        for item in ['node_path', 'edge_path']:
+            if item in gd and is_url(gd[item]):
+                url_as_filename = ''.join(c for c in gd[item] if c in valid_chars)
+                outfile = os.path.join(self.outdir(), url_as_filename)
+                download_file(gd[item], outfile)
+                gd[item] = outfile
+
