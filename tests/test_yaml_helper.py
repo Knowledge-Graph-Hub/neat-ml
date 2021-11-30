@@ -1,7 +1,8 @@
 from unittest import TestCase, skip, mock
 from parameterized import parameterized
 
-from neat.yaml_helper.yaml_helper import YamlHelper, catch_keyerror, is_url
+from neat.yaml_helper.yaml_helper import YamlHelper, catch_keyerror, is_url, \
+    download_file
 import os
 
 
@@ -146,3 +147,12 @@ class TestYamlHelper(TestCase):
         this_yh.deal_with_url_node_edge_paths()
         self.assertTrue(mock_download_file.called)
         self.assertEqual(2, mock_download_file.call_count)
+
+    @mock.patch('neat.yaml_helper.yaml_helper.Request')
+    @mock.patch('neat.yaml_helper.yaml_helper.urlopen')
+    @mock.patch('neat.yaml_helper.yaml_helper.open')
+    def test_download_file(self, mock_open, mock_urlopen, mock_Request):
+        download_file("https://someurl.com/file.txt", outfile="someoutfile")
+        for this_mock in [mock_open, mock_urlopen, mock_Request]:
+            self.assertTrue(this_mock.called)
+            self.assertEqual(1, this_mock.call_count)

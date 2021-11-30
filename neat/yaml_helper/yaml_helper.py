@@ -29,9 +29,9 @@ def is_url(string_to_check: str) -> bool:
 
 def download_file(url: str, outfile: str) -> None:
     req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-    with urlopen(req) as response, open(outfile, 'wb') as outfile:  # type: ignore
+    with urlopen(req) as response, open(outfile, 'wb') as fh:  # type: ignore
         data = response.read()  # a `bytes` object
-        outfile.write(data)
+        fh.write(data)
 
 
 def catch_keyerror(f):
