@@ -1,7 +1,8 @@
-from unittest import TestCase
+from unittest import TestCase, skip
 from parameterized import parameterized
 
 from neat.yaml_helper.yaml_helper import YamlHelper, catch_keyerror, is_url
+import os
 
 
 class TestYamlHelper(TestCase):
@@ -131,3 +132,10 @@ class TestYamlHelper(TestCase):
         this_yh.deal_with_url_node_edge_paths()
         self.assertFalse(is_url(this_yh.main_graph_args()['node_path']))
         self.assertFalse(is_url(this_yh.main_graph_args()['edge_path']))
+
+    @skip
+    def test_deal_with_url_node_edge_urls_for_node_edge_urls_file_downloaded(self):
+        this_yh = YamlHelper('tests/resources/test_urls_for_node_and_edge_paths.yaml')
+        this_yh.deal_with_url_node_edge_paths()
+        self.assertTrue(os.path.exists(this_yh.main_graph_args()['node_path']))
+        self.assertTrue(os.path.exists(this_yh.main_graph_args()['edge_path']))
