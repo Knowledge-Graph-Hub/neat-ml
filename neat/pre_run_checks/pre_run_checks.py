@@ -38,7 +38,13 @@ def pre_run_checks(yhelp: YamlHelper,
         upload_args = yhelp.make_upload_args()
         try:
             client = boto3.client('s3')
-            buckets = [this_dict['Name'] for this_dict in client.list_buckets()['Buckets']]
+            buckets = []
+            bucket_info = client.list_buckets()
+            if 'Buckets' in bucket_info:
+                buckets = [this_dict['Name'] for this_dict in bucket_info['Buckets']]
+            else:
+                warnings.warn(
+                    "Can't find 'Buckets' key in output of client.list_buckets()")
             if 's3_bucket' not in upload_args:
                 warnings.warn("No 's3_bucket' in upload block")
                 return_val = False
