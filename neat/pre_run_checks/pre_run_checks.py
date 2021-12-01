@@ -38,7 +38,7 @@ def pre_run_checks(yhelp: YamlHelper,
         upload_args = yhelp.make_upload_args()
         try:
             client = boto3.client('s3')
-            buckets = client.list_buckets()  # to check credentials
+            buckets = [this_dict['Name'] for this_dict in client.list_buckets()['Buckets']]
             if 's3_bucket' not in upload_args:
                 warnings.warn("No 's3_bucket' in upload block")
                 return_val = False
