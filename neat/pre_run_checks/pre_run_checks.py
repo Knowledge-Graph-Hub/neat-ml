@@ -64,7 +64,7 @@ def pre_run_checks(yhelp: YamlHelper,
                 warnings.warn("No 's3_bucket_dir' in upload block")
                 return_val = False
             else:
-                result = client.list_objects(Bucket="Bucket",
+                result = client.list_objects(Bucket=upload_args['s3_bucket'],
                                              Prefix=upload_args['s3_bucket_dir'])
                 if 'Contents' in result:
                     warnings.warn(
