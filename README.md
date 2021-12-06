@@ -40,7 +40,14 @@ neat run --config [your yaml]
 
 The pipeline is driven by a YAML file (e.g. `tests/resources/test.yaml`), which contains all parameters needed to complete the pipeline.
 This includes hyperparameters for machine learning and also things like files/paths to output results.
-Please note that the input path may be a local filepath OR a URL.
+Please note that the input paths in `node_path` and `edge_path`
+```
+graph_data:
+  graph:
+    node_path: 
+    edge_path: 
+```
+may be local filepaths **OR** URLs.
 
 A diagram explaining the design a bit is [here](https://app.diagrams.net/#G1XLKYf9ZiBfWmjfAIeI9yYv_CycE8GmIQ).
 
