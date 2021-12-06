@@ -14,6 +14,8 @@ To install:
 ```
 git clone https://github.com/Knowledge-Graph-Hub/NEAT.git
 cd NEAT
+# install tensorflow - if you need GPUs, consult this reference to install the version appropriate for you:
+# https://www.tensorflow.org/install/source#gpu
 pip install .
 ```
 
