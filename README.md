@@ -9,7 +9,22 @@ NEAT is a flexible pipeline for:
 - Making predictions
 - Creating well formatted output and metrics for the predictions
 
-To install:
+## Requirements
+
+This pipeline has [Embiggen](https://github.com/monarch-initiative/embiggen) and [tensorflow](https://github.com/tensorflow/tensorflow) as major dependencies.
+Please install the versions of `tensorflow`, `CUDA`, and `cudnn` compatible with your system and with each other prior to installing NEAT.
+
+On Linux, this may be easiest using `conda` as follows:
+```
+wget https://repo.anaconda.com/archive/Anaconda3-2020.02-Linux-x86_64.sh -O anaconda.sh
+bash ./anaconda.sh -b
+echo "export PATH=\$PATH:$HOME/anaconda3/bin" >> $HOME/.bashrc
+conda init
+conda install cudnn
+conda install tensorflow
+```
+
+## Installation
 
 ```
 git clone https://github.com/Knowledge-Graph-Hub/NEAT.git
@@ -17,16 +32,15 @@ cd NEAT
 pip install .
 ```
 
-To run:
+## Running NEAT
 ```
 neat run --config tests/resources/test.yaml # example
 neat run --config [your yaml]
 ```
 
-This pipeline has [Embiggen](https://github.com/monarch-initiative/embiggen) and [tensorflow](https://github.com/tensorflow/tensorflow) as major dependencies.
-
 The pipeline is driven by a YAML file (e.g. `tests/resources/test.yaml`), which contains all parameters needed to complete the pipeline.
 This includes hyperparameters for machine learning and also things like files/paths to output results.
+Please note that the input path may be a local filepath OR a URL.
 
 A diagram explaining the design a bit is [here](https://app.diagrams.net/#G1XLKYf9ZiBfWmjfAIeI9yYv_CycE8GmIQ).
 
