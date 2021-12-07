@@ -9,6 +9,7 @@ Will not replace keys found multiple times in the YAML.
 Ignores keys in lists, even if they're dicts in lists.
 """
 
+
 @click.command()
 @click.option("--input_path",
                nargs=1,
@@ -43,6 +44,7 @@ def run(input_path, keys, values):
     with open(input_path, 'w') as yaml_file:
         yaml_file.write(yaml.dump(contents, default_flow_style=False, sort_keys=False))
 
+
 def update_keyvalue(input_dict, keyname, newvalue):
     """Function to update a provided key with a value.
     """
@@ -56,9 +58,10 @@ def update_keyvalue(input_dict, keyname, newvalue):
             if new_dict[key] != nested_dict:
                 new_dict[key] = nested_dict
                 return new_dict
-    
+
+
 def get_all_keyvalues(input_dict, keyname):
-    """Generator function to iteratively search through 
+    """Generator function to iteratively search through
     all dict key value pairs.
     Returns all values for the given key.
     Useful for knowing if multiple values are present!
@@ -70,6 +73,7 @@ def get_all_keyvalues(input_dict, keyname):
         if isinstance(value, dict):
             for item in get_all_keyvalues(value, keyname):
                 yield item
+
 
 if __name__ == '__main__':
   run()
