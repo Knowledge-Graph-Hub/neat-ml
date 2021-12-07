@@ -10,6 +10,7 @@ from tqdm import tqdm  # type: ignore
 
 from neat.graph_embedding.graph_embedding import make_node_embeddings
 from neat.pre_run_checks.pre_run_checks import pre_run_checks
+from neat.update_yaml.update_yaml import do_update_yaml
 from neat.upload.upload import upload_dir_to_s3
 from neat.visualization.visualization import make_tsne
 from neat.yaml_helper.yaml_helper import YamlHelper
@@ -87,4 +88,22 @@ def run(config: str) -> None:
 
     return None
 
+@click.command()
+@click.option("--input_path",
+              nargs=1,
+              help="The path to the yaml to update.")
+@click.option("--keys",
+              callback=lambda _,__,x: x.split(',') if x else [],
+              help="One or more keys to update the values for, comma-delimited.")
+@click.option("--values",
+               callback=lambda _,__,x: x.split(',') if x else [],
+               help="One or more values, in the same order as keys, comma-delimited.")
+def update_yaml(input_path, keys, values):
+    """
+    Updates one or more values for a one or more keys,
+    with a provided path to a YAML file.
+    Will not replace keys found multiple times in the YAML.
+    Ignores keys in lists, even if they're dicts in lists.
+    """
+    do_update_yaml(input_path, keys, values)
 
