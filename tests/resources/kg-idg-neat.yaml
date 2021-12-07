@@ -1,6 +1,6 @@
 name: kg-idg
 description: kg-idg
-output_directory: 20211202/graph_ml_artifacts
+output_directory: output_dir_xxx
 graph_data:
   graph:
     node_path: ./merged-kg_nodes.tsv
@@ -13,12 +13,9 @@ graph_data:
     sources_column: subject
     destinations_column: object
     default_edge_type: biolink:related_to
-  pos_validation:
-    edge_path: ./merged-kg_edges.tsv
-  neg_training:
-    edge_path: ./neg_train_edges.tsv
-  neg_validation:
-    edge_path: ./neg_valid_edges.tsv
+  pos_validation_edge_path: ./merged-kg_edges.tsv
+  neg_training_edge_path: ./neg_train_edges.tsv
+  neg_validation_edge_path: ./neg_valid_edges.tsv
 embeddings:
   embedding_file_name: embeddings_skipgram.tsv
   embedding_history_file_name: embedding_skipgram_history.json
