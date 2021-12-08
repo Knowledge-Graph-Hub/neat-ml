@@ -100,11 +100,13 @@ def run(config: str) -> None:
                callback=lambda _,__,x: x.split(',') if x else [],
                help="One or more values, in the same order as keys, comma-delimited.")
 def update_yaml(input_path, keys, values):
-    """
+    """Update a YAML file with specified key/value pairs
+    \f
     Updates one or more values for a one or more keys,
     with a provided path to a YAML file.
     Will not replace keys found multiple times in the YAML.
     Ignores keys in lists, even if they're dicts in lists.
     """
     do_update_yaml(input_path, keys, values)
+
 
