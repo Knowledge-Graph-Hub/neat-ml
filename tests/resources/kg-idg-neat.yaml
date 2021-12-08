@@ -1,0 +1,34 @@
+name: kg-idg
+description: kg-idg
+output_directory: output_dir_xxx
+graph_data:
+  graph:
+    node_path: ./merged-kg_nodes.tsv
+    edge_path: ./merged-kg_edges.tsv
+    directed: false
+    verbose: true
+    nodes_column: id
+    node_types_column: category
+    default_node_type: biolink:NamedThing
+    sources_column: subject
+    destinations_column: object
+    default_edge_type: biolink:related_to
+  pos_validation_edge_path: ./merged-kg_edges.tsv
+  neg_training_edge_path: ./neg_train_edges.tsv
+  neg_validation_edge_path: ./neg_valid_edges.tsv
+embeddings:
+  embedding_file_name: embeddings_skipgram.tsv
+  embedding_history_file_name: embedding_skipgram_history.json
+  node_embedding_params:
+    node_embedding_method_name: SkipGram
+    walk_length: 10
+    batch_size: 512
+    window_size: 3
+    return_weight: 1.0
+    explore_weight: 1.0
+    iterations: 1
+upload:
+  s3_bucket: kg-hub-public-data
+  s3_bucket_dir: target_dir_xxx
+  extra_args:
+    ACL: public-read
