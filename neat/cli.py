@@ -89,7 +89,7 @@ def run(config: str) -> None:
     return None
 
 
-@click.command()
+@cli.command()
 @click.option("--input_path",
               nargs=1,
               help="The path to the yaml to update.")
@@ -99,7 +99,7 @@ def run(config: str) -> None:
 @click.option("--values",
                callback=lambda _,__,x: x.split(',') if x else [],
                help="One or more values, in the same order as keys, comma-delimited.")
-def update_yaml(input_path, keys, values):
+def updateyaml(input_path, keys, values):
     """Update a YAML file with specified key/value pairs
     \f
     Updates one or more values for a one or more keys,
