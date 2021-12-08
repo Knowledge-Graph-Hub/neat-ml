@@ -1,5 +1,5 @@
 import os
-from unittest import TestCase
+from unittest import TestCase, skip
 from parameterized import parameterized
 import tempfile
 from shutil import copyfile
@@ -33,3 +33,19 @@ class TestDoUpdateYaml(TestCase):
         new_yaml = parse_yaml_file(self.yaml_file)
         self.assertEqual(new_graph_node_path,
                          new_yaml['graph_data']['graph']['node_path'])
+
+    @skip
+    def test_key_multiple_replacements(self):
+        keys = ['description', 'output_directory', 'node_path', 'edge_path',
+                's3_bucket_dir']
+        values = ['kg-idg','20211202/graph_ml_artifacts','20211202/merged-kg_nodes.tsv',
+                  '20211202/merged-kg_edges.tsv', 'kg-idg/20211202/graph_ml_artifacts']
+        do_update_yaml(self.yaml_file, keys=keys, values=values)
+        new_yaml = parse_yaml_file(self.yaml_file)
+        self.assertEqual(values[0], new_yaml[keys[0]])
+        self.assertEqual(values[1], new_yaml[keys[1]])
+        self.assertTrue('graph' in new_yaml['graph_data'])
+        self.assertNotEqual(None, new_yaml['graph_data']['graph'])
+        self.assertEqual(values[2], new_yaml['graph_data']['graph'][keys[2]])
+        self.assertEqual(values[3], new_yaml['graph_data']['graph'][keys[3]])
+        self.assertEqual(values[4], new_yaml['upload'][keys[4]])
