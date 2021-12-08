@@ -95,7 +95,9 @@ def run(config: str) -> None:
               help="The path to the yaml to update.")
 @click.option("--keys",
               callback=lambda _,__,x: x.split(',') if x else [],
-              help="One or more keys to update the values for, comma-delimited.")
+              help="One or more keys to update the values for, comma-delimited. "
+                    "Nested keys (i.e., keys under other keys) must be delimited "
+                    "with colons, e.g. key1:key2:key3.")
 @click.option("--values",
                callback=lambda _,__,x: x.split(',') if x else [],
                help="One or more values, in the same order as keys, comma-delimited.")

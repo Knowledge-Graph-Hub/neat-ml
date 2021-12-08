@@ -7,49 +7,49 @@ def do_update_yaml(input_path: str, keys: list, values: list) -> None:
 
     newkeyvalues = tuple(zip(keys, values))
     for key, newvalue in newkeyvalues:
-        oldvalues = []
         print(f"Will set \"{key}\" to \"{newvalue}\".")
-        for oldvalue in get_all_keyvalues(contents,key):
-            oldvalues.append(oldvalue)
-        if len(oldvalues) > 1:
-            print(f"Found more than one value for \"{key}\"! Skipping.")
+
+        try:
+            # Parse the input key
+            if len(key.split(":")) == 1:
+                contents = update_keyvalue(contents, [key], newvalue)
+            else:
+                keylist = key.split(":")
+                contents = update_keyvalue(contents, keylist, newvalue)
+        except KeyError:
+            print(f"Could not find \"{key}\"! Skipping.")
             continue
-        elif len(oldvalues) == 0:
-            print(f"Found no values for \"{key}\" in this yaml! Skipping.")
-            continue
-        else:
-            contents = update_keyvalue(contents, key, newvalue)
-            print("Done.")
+
+        print("Done.")
 
     with open(input_path, 'w') as yaml_file:
         yaml_file.write(yaml.dump(contents, default_flow_style=False, sort_keys=False))
 
 
-def update_keyvalue(input_dict, keyname, newvalue):
-    """Function to update a provided key with a value.
+def update_keyvalue(input_dict, keys, newvalue):
+    """
+    Function to update a provided key with a value.
+    :param input_dict: YAML dict representation to be updated
+    :param keys: list containing one or more keys. 
+                    Multiple keys are nested, e.g. input_dict[key1][key2[key3].
+    :param newvalue: value to set key to.
+    :return: dict
     """
     new_dict = input_dict.copy()
-    if keyname in new_dict:
-        new_dict[keyname] = newvalue
+
+    if len(keys) == 1 and keys[0] in new_dict:
+        new_dict[keys[0]] = newvalue
         return new_dict
-    for key, value in new_dict.items():
-        if isinstance(value, dict):
-            nested_dict = update_keyvalue(value, keyname, newvalue)
-            if new_dict[key] != nested_dict:
-                new_dict[key] = nested_dict
+    else:
+        i = 0
+        current_dict = new_dict[keys[i]]
+        while True:
+            if i == len(keys)-2:
+                current_dict[keys[i+1]] = newvalue
                 return new_dict
+            else:
+                i = i+1
+                current_dict = current_dict[keys[i]]
+                
+                
 
-
-def get_all_keyvalues(input_dict, keyname):
-    """Generator function to iteratively search through
-    all dict key value pairs.
-    Returns all values for the given key.
-    Useful for knowing if multiple values are present!
-    Does not look within lists.
-    """
-    if keyname in input_dict:
-        yield input_dict[keyname]
-    for key, value in input_dict.items():
-        if isinstance(value, dict):
-            for item in get_all_keyvalues(value, keyname):
-                yield item
