@@ -23,6 +23,7 @@ jobs:
           pip install pytest
           pip install --upgrade pytest
           pip install --upgrade mypy
+          mypy --install-types
           pip install --upgrade pylint
           pip install yamllint
           pip install coveralls
