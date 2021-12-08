@@ -2,7 +2,7 @@ import re
 from unittest import TestCase, mock
 from click.testing import CliRunner
 
-from neat.cli import run
+from neat.cli import run, update_yaml
 
 
 class TestRun(TestCase):
@@ -148,4 +148,15 @@ class TestRun(TestCase):
                                     args=['--config',
                                           'tests/resources/test_neat.yaml'])
         self.assertTrue(mock_deal_with_url_node_edge_paths.called)
+        self.assertEqual(result.exit_code, 0)
+
+
+    @mock.patch("neat.cli.do_update_yaml")
+    def test_run_pre_run_checks(self,
+                                mock_do_update_yaml):
+        result = self.runner.invoke(catch_exceptions=False,
+                                    cli=update_yaml,
+                                    args=['--input_path',
+                                          'tests/resources/test_neat.yaml'])
+        self.assertTrue(mock_do_update_yaml.called)
         self.assertEqual(result.exit_code, 0)

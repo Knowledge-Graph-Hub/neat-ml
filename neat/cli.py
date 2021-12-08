@@ -88,6 +88,7 @@ def run(config: str) -> None:
 
     return None
 
+
 @click.command()
 @click.option("--input_path",
               nargs=1,
