@@ -1,19 +1,18 @@
 import json
 import os
 import click
-from ensmallen import Graph  # type: ignore
-
-from neat.link_prediction.sklearn_model import SklearnModel
-from neat.link_prediction.mlp_model import MLPModel
+# from ensmallen import Graph  # type: ignore
+# from neat.link_prediction.sklearn_model import SklearnModel
+# from neat.link_prediction.mlp_model import MLPModel
 
 from tqdm import tqdm  # type: ignore
 
-from neat.graph_embedding.graph_embedding import make_node_embeddings
-from neat.pre_run_checks.pre_run_checks import pre_run_checks
+# from neat.graph_embedding.graph_embedding import make_node_embeddings
+# from neat.pre_run_checks.pre_run_checks import pre_run_checks
 from neat.update_yaml.update_yaml import do_update_yaml
-from neat.upload.upload import upload_dir_to_s3
-from neat.visualization.visualization import make_tsne
-from neat.yaml_helper.yaml_helper import YamlHelper
+# from neat.upload.upload import upload_dir_to_s3
+# from neat.visualization.visualization import make_tsne
+# from neat.yaml_helper.yaml_helper import YamlHelper
 
 
 @click.group()
