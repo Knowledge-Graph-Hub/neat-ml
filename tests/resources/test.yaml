@@ -142,3 +142,11 @@ classifier:
           random_state: 42
           max_iter: 1000
 
+run_link_prediction_classifier:
+   classifier_model_file: model_mlp_test_yaml.h5
+   link_node_types:
+      -
+         - 'biolink:Drug'
+         - 'biolink:Protein'
+   cutoff: 0.9
+   outfile: mlp_classifier_predictions.tsv
