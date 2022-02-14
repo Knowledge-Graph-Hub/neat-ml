@@ -22,7 +22,12 @@ def cli():
 
 
 @cli.command()
-@click.option("--config", required=True, default="config.yaml", type=click.Path(exists=True))
+@click.option(
+    "--config",
+    required=True,
+    default="config.yaml",
+    type=click.Path(exists=True),
+)
 def run(config: str) -> None:
     """Run a NEAT pipeline using the given YAML file [neat.yaml]
     \f
@@ -58,33 +63,37 @@ def run(config: str) -> None:
     if yhelp.do_classifier():
         for classifier in tqdm(yhelp.classifiers()):
             model: object = None
-            if classifier['type'] == 'neural network':
+            if classifier["type"] == "neural network":
                 model = MLPModel(classifier, outdir=yhelp.outdir())
-            elif classifier['type'] in \
-                    ['Decision Tree', 'Logistic Regression', 'Random Forest']:
+            elif classifier["type"] in [
+                "Decision Tree",
+                "Logistic Regression",
+                "Random Forest",
+            ]:
                 model = SklearnModel(classifier, outdir=yhelp.outdir())
             else:
                 raise NotImplementedError(f"{model} isn't implemented yet")
 
             model.compile()
-            train_data, validation_data = \
-                model.make_link_prediction_data(yhelp.embedding_outfile(),
-                                                yhelp.main_graph_args(),
-                                                yhelp.pos_val_graph_args(),
-                                                yhelp.neg_train_graph_args(),
-                                                yhelp.neg_val_graph_args(),
-                                                yhelp.edge_embedding_method())
+            train_data, validation_data = model.make_link_prediction_data(
+                yhelp.embedding_outfile(),
+                yhelp.main_graph_args(),
+                yhelp.pos_val_graph_args(),
+                yhelp.neg_train_graph_args(),
+                yhelp.neg_val_graph_args(),
+                yhelp.edge_embedding_method(),
+            )
             history_obj = model.fit(train_data, validation_data)
 
             if yhelp.classifier_history_file_name(classifier):
-                with open(yhelp.classifier_history_file_name(classifier), 'w') as f:  # type: ignore
+                with open(yhelp.classifier_history_file_name(classifier), "w") as f:  # type: ignore
                     json.dump(history_obj.history, f)
 
             model.save()
 
-    if yhelp.apply_classifier():
-        # take graph, classifier, and optionally some biolink node types, threshold
-        pass
+    # if yhelp.apply_classifier():
+    #     # take graph, classifier, and optionally some biolink node types, threshold
+    #     pass
 
     if yhelp.do_upload():
         upload_kwargs = yhelp.make_upload_args()
@@ -94,17 +103,19 @@ def run(config: str) -> None:
 
 
 @cli.command()
-@click.option("--input_path",
-              nargs=1,
-              help="The path to the yaml to update.")
-@click.option("--keys",
-              callback=lambda _,__,x: x.split(',') if x else [],
-              help="One or more keys to update the values for, comma-delimited. "
-                    "Nested keys (i.e., keys under other keys) must be delimited "
-                    "with colons, e.g. key1:key2:key3.")
-@click.option("--values",
-               callback=lambda _,__,x: x.split(',') if x else [],
-               help="One or more values, in the same order as keys, comma-delimited.")
+@click.option("--input_path", nargs=1, help="The path to the yaml to update.")
+@click.option(
+    "--keys",
+    callback=lambda _, __, x: x.split(",") if x else [],
+    help="One or more keys to update the values for, comma-delimited. "
+    "Nested keys (i.e., keys under other keys) must be delimited "
+    "with colons, e.g. key1:key2:key3.",
+)
+@click.option(
+    "--values",
+    callback=lambda _, __, x: x.split(",") if x else [],
+    help="One or more values, in the same order as keys, comma-delimited.",
+)
 def updateyaml(input_path, keys, values):
     """Update a YAML file with specified key/value pairs
     \f
@@ -114,5 +125,3 @@ def updateyaml(input_path, keys, values):
     Ignores keys in lists, even if they're dicts in lists.
     """
     do_update_yaml(input_path, keys, values)
-
-
