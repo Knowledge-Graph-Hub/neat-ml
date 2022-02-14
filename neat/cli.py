@@ -82,6 +82,10 @@ def run(config: str) -> None:
 
             model.save()
 
+    if yhelp.apply_classifier():
+        # take graph, classifier, and optionally some biolink node types, threshold
+        pass
+
     if yhelp.do_upload():
         upload_kwargs = yhelp.make_upload_args()
         upload_dir_to_s3(**upload_kwargs)
