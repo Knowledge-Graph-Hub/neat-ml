@@ -66,3 +66,14 @@ upload:
   s3_bucket_dir: some/remote/directory/
   extra_args:
     'ACL': 'public-read'
+
+run_link_prediction_classifier:
+   classifier_model_file: model_lr_test_yaml.h5
+   link_node_types:
+      source:
+         - 'biolink:Drug'
+         - 'biolink:ChemicalSubstance'
+      destination:
+         - 'biolink:Protein'
+   cutoff: 0.9
+   outfile: mlp_classifier_predictions.tsv

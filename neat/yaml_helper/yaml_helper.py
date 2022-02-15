@@ -1,6 +1,7 @@
 import functools
 import logging
 import os
+import pickle
 import string
 import urllib
 from typing import Optional, Callable, Any
@@ -266,21 +267,30 @@ class YamlHelper:
                 download_file(gd[item], outfile)
                 gd[item] = outfile
 
-    def apply_classifier(
-        self,
-        graph: Graph,
-        model: dict,
-        node_types: list,
-        threshold: float,
-    ):
-        """Performs link prediction over provided graph nodes.
+    def apply_classifier(self):
+        return "run_link_prediction_classifier" in self.yaml
 
-        :param graph: Graph of nodes.
-        :param classifier: _description_
-        :type classifier: _type_
-        :param node_types: _description_
-        :type node_types: _type_
-        :param threshold: _description_
-        :type threshold: _type_
-        """
-        pass
+    def make_classifier_args(self):
+
+        classifier_args = self.yaml["run_link_prediction_classifier"]
+        classifier_args_dict = {}
+        classifier_args_dict["graph"] = Graph.from_csv(
+            **self.yaml["graph_data"]["graph"]
+        )
+        classifier_args_dict["model"] = pickle.load(
+            open(
+                os.path.join(
+                    self.outdir(), classifier_args["classifier_model_file"]
+                ),
+                "rb",
+            ),
+        )
+
+        classifier_args_dict["node_types"] = classifier_args["link_node_types"]
+
+        classifier_args_dict["cutoff"] = classifier_args["cutoff"]
+        classifier_args_dict["output_file"] = os.path.join(
+            self.outdir(), classifier_args["outfile"]
+        )
+
+        return classifier_args_dict

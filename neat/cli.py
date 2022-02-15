@@ -13,6 +13,7 @@ from neat.pre_run_checks.pre_run_checks import pre_run_checks
 from neat.update_yaml.update_yaml import do_update_yaml
 from neat.upload.upload import upload_dir_to_s3
 from neat.visualization.visualization import make_tsne
+from neat.run_classifier.run_classifier import predict_links
 from neat.yaml_helper.yaml_helper import YamlHelper
 
 
@@ -91,9 +92,10 @@ def run(config: str) -> None:
 
             model.save()
 
-    # if yhelp.apply_classifier():
-    #     # take graph, classifier, and optionally some biolink node types, threshold
-    #     pass
+    if yhelp.apply_classifier():
+        # take graph, classifier, biolink node types and cutoff
+        classifier_kwargs = yhelp.make_classifier_args()
+        predict_links(**classifier_kwargs)
 
     if yhelp.do_upload():
         upload_kwargs = yhelp.make_upload_args()
