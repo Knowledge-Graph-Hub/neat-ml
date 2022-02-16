@@ -12,6 +12,7 @@ def pre_run_checks(
     check_s3_credentials: bool = True,
     check_s3_bucket: bool = True,
     check_s3_bucket_dir: bool = True,
+    check_classifiers: bool = True,
 ) -> bool:
     """Some checks before run, to prevent frustrating failure at the end of long runs
 
@@ -90,13 +91,13 @@ def pre_run_checks(
             warnings.warn(f"Client error when trying S3 credentials: {ce}")
             return_val = False
 
-    # PSEUDOCODE
-    # if classifiers:
-    # Then make sure id-s aren't clashing
-    # &
-    # classifier_model_id is calling a valid id.
+    if check_classifiers and yhelp.classifiers():
+        # PSEUDOCODE
+        # if classifiers:
+        # Then make sure id-s aren't clashing
+        # &
+        # classifier_model_id is calling a valid id.
 
-    if yhelp.classifiers():
         all_classifier_ids = yhelp.get_all_classifier_ids()
         if len(all_classifier_ids) != len(set(all_classifier_ids)):
             dup_ids = [
@@ -111,14 +112,17 @@ def pre_run_checks(
                 f"Same 'classifier_id' represents multiple classes in the yaml provided: {dup_ids}"
             )
 
-    if yhelp.do_apply_classifier():
-        if not yhelp.get_classifier_id_for_prediction() in all_classifier_ids:
-            return_val = False
-            raise ValueError(
-                f"The 'classifier_id' used for prediction does "
-                "not map to any classifier in the yaml provided:"
-                "{yhelp.get_classifier_id_for_prediction()}"
-            )
+        if yhelp.do_apply_classifier():
+            if (
+                not yhelp.get_classifier_id_for_prediction()
+                in all_classifier_ids
+            ):
+                return_val = False
+                raise ValueError(
+                    f"The 'classifier_id' used for prediction does "
+                    "not map to any classifier in the yaml provided:"
+                    "{yhelp.get_classifier_id_for_prediction()}"
+                )
 
     return return_val
 

@@ -270,6 +270,9 @@ class YamlHelper:
                 download_file(gd[item], outfile)
                 gd[item] = outfile
 
+    #
+    # applying trained model to fresh data for predictions
+    #
     def do_apply_classifier(self):
         return "apply_trained_classifier" in self.yaml
 
