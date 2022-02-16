@@ -3,7 +3,6 @@ import logging
 import os
 import pickle
 import string
-import urllib
 from typing import Optional, Callable, Any
 from urllib.request import Request, urlopen
 
@@ -11,6 +10,7 @@ import yaml  # type: ignore
 from ensmallen import Graph  # type: ignore
 from neat.link_prediction.model import Model
 import validators  # type: ignore
+import pandas as pd
 
 
 def parse_yaml(file: str) -> dict:
@@ -213,17 +213,20 @@ class YamlHelper:
         return "classifier" in self.yaml
 
     def classifier_type(self) -> str:
-        return self.yaml["classifier"]["type"]
+        return self.yaml["classifiers"]["type"]
 
     def classifiers(self) -> list:
         """From the YAML, extract a list of classifiers to be trained
 
         :return: list of classifiers to be trained
         """
-        return self.yaml["classifier"]["classifiers"]
+        return self.yaml["classifiers"]
 
-    def edge_embedding_method(self) -> str:
-        return self.yaml["classifier"]["edge_method"]
+    def get_all_classifier_ids(self):
+        return [c["classifier_id"] for c in self.yaml["classifiers"]]
+
+    def get_edge_embedding_method(self, classifier: dict) -> str:
+        return classifier["edge_method"]
 
     def classifier_history_file_name(self, classifier: dict) -> Optional[str]:
         return (
@@ -267,21 +270,35 @@ class YamlHelper:
                 download_file(gd[item], outfile)
                 gd[item] = outfile
 
-    def apply_classifier(self):
-        return "run_link_prediction_classifier" in self.yaml
+    def do_apply_classifier(self):
+        return "apply_trained_classifier" in self.yaml
+
+    def get_classifier_id_for_prediction(self):
+        return self.yaml["apply_trained_classifier"]["classifier_model_id"]
+
+    def get_classifier_from_id(self, classifier_id: str):
+
+        return [
+            x
+            for x in self.classifiers()
+            if x["classifier_id"] == classifier_id
+        ][0]
 
     def make_classifier_args(self):
 
-        classifier_args = self.yaml["run_link_prediction_classifier"]
+        classifier_args = self.yaml["apply_trained_classifier"]
+
+        model = self.get_classifier_from_id(
+            classifier_args["classifier_model_id"]
+        )
+        model_filename = model["model"]["outfile"]
         classifier_args_dict = {}
         classifier_args_dict["graph"] = Graph.from_csv(
-            **self.yaml["graph_data"]["graph"]
+            **self.main_graph_args()
         )
         classifier_args_dict["model"] = pickle.load(
             open(
-                os.path.join(
-                    self.outdir(), classifier_args["classifier_model_file"]
-                ),
+                os.path.join(self.outdir(), model_filename),
                 "rb",
             ),
         )
@@ -292,5 +309,10 @@ class YamlHelper:
         classifier_args_dict["output_file"] = os.path.join(
             self.outdir(), classifier_args["outfile"]
         )
+
+        classifier_args_dict["embeddings"] = pd.read_csv(
+            self.embedding_outfile(), sep=",", header=None
+        )
+        classifier_args_dict["edge_method"] = model["edge_method"]
 
         return classifier_args_dict

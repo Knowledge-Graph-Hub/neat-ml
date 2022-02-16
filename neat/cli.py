@@ -82,7 +82,7 @@ def run(config: str) -> None:
                 yhelp.pos_val_graph_args(),
                 yhelp.neg_train_graph_args(),
                 yhelp.neg_val_graph_args(),
-                yhelp.edge_embedding_method(),
+                yhelp.get_edge_embedding_method(classifier),
             )
             history_obj = model.fit(train_data, validation_data)
 
@@ -92,7 +92,7 @@ def run(config: str) -> None:
 
             model.save()
 
-    if yhelp.apply_classifier():
+    if yhelp.do_apply_classifier():
         # take graph, classifier, biolink node types and cutoff
         classifier_kwargs = yhelp.make_classifier_args()
         predict_links(**classifier_kwargs)

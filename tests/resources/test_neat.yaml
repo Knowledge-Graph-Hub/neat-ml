@@ -1,4 +1,6 @@
 ---
+output_directory: tests/resources/test_output_data_dir/
+
 graph_data:
   graph:
     directed: False
@@ -25,7 +27,7 @@ graph_data:
     edge_path: tests/resources/test_graphs/neg_valid_edges.tsv
 
 embeddings:
-  embedding_file_name: test_embeddings_test_yaml.tsv
+  embedding_file_name: test_embeddings_test_yaml.csv
   embedding_history_file_name: embedding_history.json
   node_embedding_params:
       node_embedding_method_name: SkipGram # one of 'CBOW', 'GloVe', 'SkipGram', 'Siamese', 'TransE', 'SimplE', 'TransH', 'TransR'
@@ -49,26 +51,30 @@ embeddings:
   tsne:
     tsne_file_name: tsne.png
 
-classifier:
-  edge_method: Average # one of EdgeTransformer.methods: Hadamard, Sum, Average, L1, AbsoluteL1, L2, or alternatively a lambda
-  classifiers:  # a list of classifiers to be trained
-    - type: Logistic Regression
-      model:
-        outfile: "model_lr_test_yaml.h5"
-        type: sklearn.linear_model.LogisticRegression
-        parameters:
-          random_state: 42
-          max_iter: 1000
+classifiers:
+  -
+    classifier_id: lr_0
+    type: Logistic Regression
+    edge_method: Average # one of EdgeTransformer.methods: Hadamard, Sum, Average, L1, AbsoluteL1, L2, or alternatively a lambda
+    model:
+      outfile: "model_lr_test_yaml.h5"
+      type: sklearn.linear_model.LogisticRegression
+      parameters:
+        random_state: 42
+        max_iter: 1000
+  -
+    classifier_id: dt_0
+    type: Decision Tree
+    edge_method: Average
+    model:
+      outfile: "model_decision_tree_test_yaml.h5"
+      type: sklearn.tree.DecisionTreeClassifier
+      parameters:
+        max_depth: 30
+        random_state: 42
 
-output_directory: tests/resources/test_output_data_dir/
-upload:
-  s3_bucket: some_bucket
-  s3_bucket_dir: some/remote/directory/
-  extra_args:
-    'ACL': 'public-read'
-
-run_link_prediction_classifier:
-   classifier_model_file: model_lr_test_yaml.h5
+apply_trained_classifier:
+   classifier_model_id: lr_0
    link_node_types:
       source:
          - 'biolink:Drug'
@@ -76,4 +82,10 @@ run_link_prediction_classifier:
       destination:
          - 'biolink:Protein'
    cutoff: 0.9
-   outfile: mlp_classifier_predictions.tsv
+   outfile: lr_classifier_predictions_kgx.tsv
+
+upload:
+  s3_bucket: some_bucket
+  s3_bucket_dir: some/remote/directory/
+  extra_args:
+    'ACL': 'public-read'
