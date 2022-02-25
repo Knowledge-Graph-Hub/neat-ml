@@ -210,7 +210,7 @@ class YamlHelper:
     #
 
     def do_classifier(self) -> bool:
-        return "classifier" in self.yaml
+        return "classifiers" in self.yaml
 
     def classifier_type(self) -> str:
         return self.yaml["classifiers"]["type"]

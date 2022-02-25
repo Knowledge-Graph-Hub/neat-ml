@@ -7,8 +7,6 @@ from neat.yaml_helper.yaml_helper import (
     is_url,
     download_file,
 )
-import os
-
 
 class TestYamlHelper(TestCase):
     @classmethod
@@ -80,7 +78,7 @@ class TestYamlHelper(TestCase):
         yg = YamlHelper(self.test_yaml)
         self.assertEqual(
             yg.classifier_history_file_name(
-                yg.yaml["classifier"]["classifiers"][0]
+                yg.yaml["classifiers"][0]
             ),
             "mlp_classifier_history.json",
         )
