@@ -47,8 +47,8 @@ setup(
     long_description=long_description,
     url='https://github.com/Knowledge-Graph-Hub/NEAT',
     author='deepak.unni3@lbl.gov, justaddcoffee+github@gmail.com',
-    author_email='Deepak Unni, Justin Reese',
-    python_requires='>=3.7',
+    author_email='Deepak Unni, Justin Reese, Harry Caufield, Luca Cappelletti, Tommaso Fontana',
+    python_requires='>=3.6',
     license='BSD-3',
     include_package_data=True,
     classifiers=[
@@ -65,7 +65,6 @@ setup(
         'tqdm',
         'click',
         'pyyaml',
-        'tensorflow',
         'ensmallen==0.6.6',
         'opencv-python',  # for embiggen's 4d tSNEs
         'embiggen==0.9.3',
