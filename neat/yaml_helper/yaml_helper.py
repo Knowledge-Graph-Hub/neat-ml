@@ -215,6 +215,7 @@ class YamlHelper:
     def classifier_type(self) -> str:
         return self.yaml["classifiers"]["type"]
 
+    @catch_keyerror
     def classifiers(self) -> list:
         """From the YAML, extract a list of classifiers to be trained
 

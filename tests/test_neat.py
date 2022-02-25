@@ -1,8 +1,8 @@
 import re
 from unittest import TestCase, mock
 from click.testing import CliRunner
-
 from neat.cli import run, updateyaml
+from neat.link_prediction.model import Model
 
 
 class TestRun(TestCase):
@@ -104,8 +104,14 @@ class TestRun(TestCase):
     @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_tsne")
     @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_embeddings")
     @mock.patch("boto3.client")
+    # @mock.patch("neat.cli.MLPModel")
+    # @mock.patch("neat.cli.SklearnModel")
+    # @mock.patch("neat.link_prediction.model.Model.make_link_prediction_data")
     def test_run_do_classifiers(
         self,
+        # mock_make_link_prediction_data,
+        # mock_sklearn_model,
+        # mock_mlp_model,
         mock_boto,
         mock_do_embeddings,
         mock_do_tsne,
@@ -116,6 +122,18 @@ class TestRun(TestCase):
         mock_do_tsne.return_value = False
         mock_do_classifier.return_value = True
         mock_do_upload.return_value = False
+
+        # # * TEST CODE ####################################
+        # # mock_model = Model()
+        # mock_sklearn_model.make_link_prediction_data = mock.MagicMock(
+        #     name="make_link_prediction_data"
+        # )
+        # mock_sklearn_model.make_link_prediction_data.return_value = (
+        #     self.mock_train,
+        #     self.mock_valid,
+        # # )
+        # # * ################################################
+
         result = self.runner.invoke(
             catch_exceptions=False,
             cli=run,
