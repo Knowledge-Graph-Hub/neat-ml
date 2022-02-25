@@ -6,7 +6,6 @@ import pandas as pd
 from itertools import combinations, permutations, product  # [READ DOCS]
 import numpy as np
 from scipy.fft import dst
-from sympy.utilities.iterables import multiset_permutations
 
 
 def predict_links(
