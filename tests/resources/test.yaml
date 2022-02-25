@@ -29,7 +29,7 @@ graph_data:
     edge_path: tests/resources/test_graphs/neg_valid_edges.tsv
 
 embeddings:
-  embedding_file_name: test_embeddings_test_yaml.tsv
+  embedding_file_name: test_embeddings_test_yaml.csv
   embedding_history_file_name: embedding_history.json
   node_embedding_params:
       node_embedding_method_name: SkipGram # one of 'CBOW', 'GloVe', 'SkipGram', 'Siamese', 'TransE', 'SimplE', 'TransH', 'TransR'
@@ -55,77 +55,86 @@ embeddings:
       - category
       - id
 
-classifier:
-  edge_method: Average # one of EdgeTransformer.methods: Hadamard, Sum, Average, L1, AbsoluteL1, L2, or alternatively a lambda
-  classifiers:  # a list of classifiers to be trained
-    - type: neural network
-      model:
-        outfile: "model_mlp_test_yaml.h5"
-        classifier_history_file_name: "mlp_classifier_history.json"
-        type: tensorflow.keras.models.Sequential
-        layers:
-          - type: tensorflow.keras.layers.Input
+classifiers:
+  -
+    classifier_id: mlp_0
+    type: neural network
+    edge_method: Average # one of EdgeTransformer.methods: Hadamard, Sum, Average, L1, AbsoluteL1, L2, or alternatively a lambda
+    model:
+      outfile: "model_mlp_test_yaml.h5"
+      classifier_history_file_name: "mlp_classifier_history.json"
+      type: tensorflow.keras.models.Sequential
+      layers:
+        - type: tensorflow.keras.layers.Input
+          parameters:
+            shape: 868   # must match embedding_size up above
+        - type: tensorflow.keras.layers.Dense
+          parameters:
+            units: 128
+            activation: relu
+        - type: tensorflow.keras.layers.Dense
+          parameters:
+            units: 32
+            activation: relu
+            # TODO: fix this:
+            # activity_regularizer: tensorflow.keras.regularizers.l1_l2(l1=1e-5, l2=1e-4)
+        - type: tensorflow.keras.layers.Dropout
+          parameters:
+            rate: 0.5
+        - type: tensorflow.keras.layers.Dense
+          parameters:
+            units: 16
+            activation: relu
+        - type: tensorflow.keras.layers.Dense
+          parameters:
+            units: 1
+            activation: sigmoid
+    model_compile:
+      loss: binary_crossentropy
+      optimizer: nadam
+      metrics:  # these can be tensorflow objects or a string that tensorflow understands, e.g. 'accuracy'
+        - type: tensorflow.keras.metrics.AUC
+          parameters:
+            curve: PR
+            name: auprc
+        - type: tensorflow.keras.metrics.AUC
+          parameters:
+            curve: ROC
+            name: auroc
+        - type: tensorflow.keras.metrics.Recall
+          parameters:
+            name: Recall
+        - type: tensorflow.keras.metrics.Precision
+          parameters:
+            name: Precision
+        - type: accuracy
+    model_fit:
+      parameters:
+        batch_size: 4096
+        epochs: 5  # typically much higher
+        callbacks:
+          - type: tensorflow.keras.callbacks.EarlyStopping
             parameters:
-              shape: 868   # must match embedding_size up above
-          - type: tensorflow.keras.layers.Dense
-            parameters:
-              units: 128
-              activation: relu
-          - type: tensorflow.keras.layers.Dense
-            parameters:
-              units: 32
-              activation: relu
-              # TODO: fix this:
-              # activity_regularizer: tensorflow.keras.regularizers.l1_l2(l1=1e-5, l2=1e-4)
-          - type: tensorflow.keras.layers.Dropout
-            parameters:
-              rate: 0.5
-          - type: tensorflow.keras.layers.Dense
-            parameters:
-              units: 16
-              activation: relu
-          - type: tensorflow.keras.layers.Dense
-            parameters:
-              units: 1
-              activation: sigmoid
-      model_compile:
-        loss: binary_crossentropy
-        optimizer: nadam
-        metrics:  # these can be tensorflow objects or a string that tensorflow understands, e.g. 'accuracy'
-          - type: tensorflow.keras.metrics.AUC
-            parameters:
-              curve: PR
-              name: auprc
-          - type: tensorflow.keras.metrics.AUC
-            parameters:
-              curve: ROC
-              name: auroc
-          - type: tensorflow.keras.metrics.Recall
-            parameters:
-              name: Recall
-          - type: tensorflow.keras.metrics.Precision
-            parameters:
-              name: Precision
-          - type: accuracy
-      model_fit:
-        parameters:
-          batch_size: 4096
-          epochs: 5  # typically much higher
-          callbacks:
-            - type: tensorflow.keras.callbacks.EarlyStopping
-              parameters:
-                monitor: val_loss
-                patience: 5
-                min_delta: 0.001  # min improvement to be considered progress
-            - type: tensorflow.keras.callbacks.ReduceLROnPlateau
-    - type: Decision Tree
+              monitor: val_loss
+              patience: 5
+              min_delta: 0.001  # min improvement to be considered progress
+          - type: tensorflow.keras.callbacks.ReduceLROnPlateau
+
+    - 
+      classifier_id: dt_0
+      type: Decision Tree
+      edge_method: Average
       model:
         outfile: "model_decision_tree_test_yaml.h5"
         type: sklearn.tree.DecisionTreeClassifier
         parameters:
           max_depth: 30
           random_state: 42
-    - type: Random Forest
+
+    - 
+      classifier_id: rf_0
+      type: Random Forest
+      edge_method: Average
       model:
         outfile: "model_random_forest_test_yaml.h5"
         type: sklearn.ensemble.RandomForestClassifier
@@ -134,7 +143,11 @@ classifier:
           max_depth: 30
           n_jobs: 8  # cpu count
           random_state: 42
-    - type: Logistic Regression
+
+    - 
+      classifier_id: lr_0
+      type: Logistic Regression
+      edge_method: Average
       model:
         outfile: "model_lr_test_yaml.h5"
         type: sklearn.linear_model.LogisticRegression
@@ -142,11 +155,13 @@ classifier:
           random_state: 42
           max_iter: 1000
 
-run_link_prediction_classifier:
-   classifier_model_file: model_mlp_test_yaml.h5
+apply_trained_classifier:
+   classifier_model_id: lr_0
    link_node_types:
-      -
+      source:
          - 'biolink:Drug'
+         - 'biolink:ChemicalSubstance'
+      destination:
          - 'biolink:Protein'
    cutoff: 0.9
-   outfile: mlp_classifier_predictions.tsv
+   outfile: lr_classifier_predictions_kgx.tsv
