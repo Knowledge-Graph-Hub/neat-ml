@@ -1,11 +1,11 @@
 from pathlib import Path
 from xmlrpc.client import boolean
-from embiggen import EdgeTransformer
+from embiggen import EdgeTransformer # type: ignore
 from ensmallen import Graph  # type: ignore
-import pandas as pd
+import pandas as pd # type: ignore
 from itertools import combinations, permutations, product  # [READ DOCS]
 import numpy as np
-from scipy.fft import dst
+from scipy.fft import dst # type: ignore
 
 
 def predict_links(

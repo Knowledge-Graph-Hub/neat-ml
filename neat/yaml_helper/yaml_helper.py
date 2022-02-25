@@ -10,7 +10,7 @@ import yaml  # type: ignore
 from ensmallen import Graph  # type: ignore
 from neat.link_prediction.model import Model
 import validators  # type: ignore
-import pandas as pd
+import pandas as pd # type: ignore
 
 
 def parse_yaml(file: str) -> dict:
