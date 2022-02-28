@@ -44,6 +44,19 @@ def predict_links(
     # TODO: Fix the next 2 lines once node_types bug is fixed in ensmallen
     # 1. Get source nodes for nodes of types: ['biolink:XXXX', 'biolink:XYXY']
     # 2. Get destination nodes for nodes of types: ['biolink:YYYY', 'biolink:YXYX']
+
+    # Need to add this stuff back in once we resolve the issue with retrieve node types
+    # # * ## Need to decide if this block is relevant or no.#####
+    # all_node_type_names = graph.get_node_type_names()
+    # unique_node_type_names = list(
+    #     set([x[0] for x in all_node_type_names if x])
+    # )
+    #
+    # for k, v in node_types.items():
+    #     if not all(unique_node_type_names) in v:
+    #         print(v)
+    # # * ######################################################
+
     source_node_ids = graph.get_random_nodes(10, random_state=1)
     destination_node_ids = graph.get_random_nodes(10, random_state=10)
 
@@ -62,18 +75,6 @@ def predict_links(
         destination_embed = np.array(
             embeddings.loc[embeddings[0] == destination_node]  # .iloc[:, 1:]
         )
-        # * Trying to get edge embeddings from source-dest node embeddings.
-        # edge_transformer = EdgeTransformer()
-        # edge_transformer.fit(embedding=embeddings)
-        # edge_transformer.transform()
 
-    # * ## Need to decide if this block is relevant or no.#####
-    all_node_type_names = graph.get_node_type_names()
-    unique_node_type_names = list(
-        set([x[0] for x in all_node_type_names if x])
-    )
-
-    for k, v in node_types.items():
-        if not all(unique_node_type_names) in v:
-            print(v)
-    # * ######################################################
+    predict_edges = model.make_link_prediction_predict_data()
+    return model.predict_proba(predict_edges)
