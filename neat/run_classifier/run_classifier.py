@@ -66,6 +66,7 @@ def predict_links(
         if not graph.has_edge_from_node_ids(combo[0], combo[1])
     ]
 
+    # TODO: make array-like to pass to make_link_prediction_predict_data
     for combo in non_existant_node_combo:
         source_node = graph.get_node_name_from_node_id(combo[0])
         destination_node = graph.get_node_name_from_node_id(combo[1])
