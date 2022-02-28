@@ -36,6 +36,9 @@ class Model:
     def predict(self, X) -> np.ndarray:
         pass
 
+    def predict_proba(self, X) -> np.ndarray:
+        pass
+
     @classmethod
     def make_link_prediction_data(self,
                                   embedding_file: str,
