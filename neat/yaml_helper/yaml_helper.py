@@ -10,7 +10,7 @@ import yaml  # type: ignore
 from ensmallen import Graph  # type: ignore
 from neat.link_prediction.model import Model
 import validators  # type: ignore
-import pandas as pd
+import pandas as pd # type: ignore
 
 
 def parse_yaml(file: str) -> dict:
@@ -210,11 +210,12 @@ class YamlHelper:
     #
 
     def do_classifier(self) -> bool:
-        return "classifier" in self.yaml
+        return "classifiers" in self.yaml
 
     def classifier_type(self) -> str:
         return self.yaml["classifiers"]["type"]
 
+    @catch_keyerror
     def classifiers(self) -> list:
         """From the YAML, extract a list of classifiers to be trained
 

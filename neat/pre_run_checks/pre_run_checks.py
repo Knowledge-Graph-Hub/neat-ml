@@ -2,7 +2,7 @@ import collections
 import warnings
 
 import boto3  # type: ignore
-from botocore.exceptions import ClientError
+from botocore.exceptions import ClientError # type: ignore
 import pytest  # type: ignore
 from neat.yaml_helper.yaml_helper import YamlHelper
 
@@ -101,8 +101,7 @@ def pre_run_checks(
         all_classifier_ids = yhelp.get_all_classifier_ids()
         if len(all_classifier_ids) != len(set(all_classifier_ids)):
             dup_ids = [
-                item
-                for item, count in collections.Counter(
+                item for item, count in collections.Counter( # type: ignore
                     all_classifier_ids
                 ).items()
                 if count > 1
@@ -128,4 +127,4 @@ def pre_run_checks(
 
 
 if __name__ == "__main__":
-    pre_run_checks()
+    pre_run_checks(yhelp = YamlHelper()) # type: ignore

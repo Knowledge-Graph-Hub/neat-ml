@@ -79,3 +79,8 @@ class TestPreRunChecks(TestCase):
             check_s3_bucket_dir=False,
             check_classifiers=True,
         )
+
+    # TODO:
+    # 1. Test wrong classifier_id
+    # 2. test duplicate ids for classifiers
+    # 3. Check mandatory properties exist.
