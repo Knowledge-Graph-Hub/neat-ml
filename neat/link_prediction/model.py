@@ -106,9 +106,9 @@ class Model:
         # create transformer object to convert graphs into edge embeddings
         lpt = LinkPredictionTransformer(method=edge_method)
         lpt.fit(embedding)  # pass node embeddings to be used to create edge embeddings
-        train_edges, train_labels = lpt.transform(positive_graph=graphs['trained_graph'],
-                                                  negative_graph=[[]])
-        return train_edges, train_labels
+        predict_edges, _ = lpt.transform(positive_graph=graphs['trained_graph'],
+                                         negative_graph=[[]])
+        return predict_edges, _
 
 
     @classmethod

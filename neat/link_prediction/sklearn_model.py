@@ -15,8 +15,8 @@ class SklearnModel(Model):
     def fit(self, train_data, _):
         self.model.fit(*train_data)
 
-    def predict(self, train_data, _):
-        self.model.predict(*train_data)
+    def predict(self, predict_data):
+        self.model.predict(*predict_data)
 
     def save(self):
         with open(os.path.join(self.outdir, self.config['model']['outfile']), 'wb') as f:
