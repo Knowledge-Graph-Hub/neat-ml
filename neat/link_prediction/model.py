@@ -81,6 +81,37 @@ class Model:
         return (train_edges, train_labels), (valid_edges, valid_labels)
 
     @classmethod
+    def make_link_prediction_predict_data(self,
+                                          embedding_file: str,
+                                          trained_graph_args: dict,
+                                          edge_method: str
+                                  ) -> Tuple:
+        """Prepare training and validation data for training link prediction classifers
+
+        Args:
+            embedding_file: path to embedding file for nodes in graph
+            trained_graph_args: EnsmallenGraph arguments to load training graph
+            edge_method: edge embedding method to use (average, L1, L2, etc)
+        Returns:
+            A tuple of tuples
+
+        """
+        embedding = pd.read_csv(embedding_file,
+                                index_col=0,
+                                header=None)
+
+        # load graphs
+        graphs = {'trained_graph': Graph.from_csv(**trained_graph_args)}
+
+        # create transformer object to convert graphs into edge embeddings
+        lpt = LinkPredictionTransformer(method=edge_method)
+        lpt.fit(embedding)  # pass node embeddings to be used to create edge embeddings
+        train_edges, train_labels = lpt.transform(positive_graph=graphs['trained_graph'],
+                                                  negative_graph=[[]])
+        return train_edges, train_labels
+
+
+    @classmethod
     def dynamically_import_class(self, reference) -> object:
         """Dynamically import a class based on its reference.
 
