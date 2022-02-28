@@ -18,6 +18,9 @@ class SklearnModel(Model):
     def predict(self, predict_data):
         self.model.predict(*predict_data)
 
+    def predict_proba(self, predict_data):
+        self.model.predict_proba(*predict_data)
+
     def save(self):
         with open(os.path.join(self.outdir, self.config['model']['outfile']), 'wb') as f:
              pickle.dump(self.model, f)
