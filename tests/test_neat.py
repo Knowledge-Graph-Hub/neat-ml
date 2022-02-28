@@ -117,7 +117,7 @@ class TestRun(TestCase):
         mock_do_classifier.return_value = True
         mock_do_upload.return_value = False
         result = self.runner.invoke(
-            catch_exceptions=False,
+            catch_exceptions=True,
             cli=run,
             args=["--config", "tests/resources/test_neat.yaml"],
         )
