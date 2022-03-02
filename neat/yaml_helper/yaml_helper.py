@@ -15,6 +15,8 @@ from pathlib import Path
 import pandas as pd
 import tempfile
 
+VALID_CHARS = "-_.() %s%s" % (string.ascii_letters, string.digits)
+
 def parse_yaml(file: str) -> dict:
     with open(file, 'r') as stream:
         return yaml.load(stream, Loader=yaml.FullLoader)
@@ -136,15 +138,21 @@ class YamlHelper:
         if graph_args_with_indir['node_types_column']:
             node_types_col = graph_args_with_indir['node_types_column']
 
-        for filepath in [nodepath, edgepath]:
+        # Make a copy to ensure we update the parameters,
+        # especially the paths to node and edgelists
+        graph_params = graph_args_with_indir.copy()
+
+        for pathtype in ['node_path', 'edge_path']:
+            filepath = graph_params[pathtype]
             if is_url(filepath):
-                # download
-                pass
+                url_as_filename = \
+                    ''.join(c if c in VALID_CHARS else "_" for c in filepath)
+                outfile = os.path.join(self.outdir(), url_as_filename)
+                download_file(filepath, outfile)
+                graph_params[pathtype] = outfile
             elif not is_valid_path(filepath):
                 break
         
-        graph_params = graph_args_with_indir.copy()
-
         # Generate the node type file, if node types exist
         # given a column with the header 
         if node_types_col:
@@ -294,12 +302,11 @@ class YamlHelper:
     #
     def deal_with_url_node_edge_paths(self):
         gd = self.yaml['graph_data']['graph']
-        valid_chars = "-_.() %s%s" % (string.ascii_letters, string.digits)
-
+        
         for item in ['node_path', 'edge_path']:
             if item in gd and is_url(gd[item]):
                 url_as_filename = \
-                    ''.join(c if c in valid_chars else "_" for c in gd[item])
+                    ''.join(c if c in VALID_CHARS else "_" for c in gd[item])
                 outfile = os.path.join(self.outdir(), url_as_filename)
                 download_file(gd[item], outfile)
                 gd[item] = outfile
