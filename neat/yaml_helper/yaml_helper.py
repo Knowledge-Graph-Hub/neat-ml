@@ -126,6 +126,7 @@ class YamlHelper:
         Creates a node type list, as Ensmallen
         requires this to parse node types.
         :param graph_args: dict, output of main_graph_args
+        :return: ensmallen Graph
         """
 
         graph_args_with_indir = self.main_graph_args()
@@ -142,21 +143,34 @@ class YamlHelper:
             elif not is_valid_path(filepath):
                 break
         
+        graph_params = graph_args_with_indir.copy()
+
         # Generate the node type file, if node types exist
         # given a column with the header 
         if node_types_col:
-            if graph_args_with_indir['sep']:
-                septype = graph_args_with_indir['sep']
+            if graph_params['sep']:
+                septype = graph_params['sep']
             else:
                 septype = "\t"
-            nodetypes = pd.read_csv(nodepath, sep=septype, usecols=[node_types_col])
+            nodetypes = pd.read_csv(nodepath, 
+                                    sep=septype, 
+                                    usecols=[node_types_col])
             nodetypes = nodetypes.drop_duplicates()
             temppath = tempfile.NamedTemporaryFile()
-            nodetypes.to_csv(temppath, index=None, header=False, sep = septype)
+            nodetypes.to_csv(temppath, 
+                                index=None, 
+                                header=False, 
+                                sep = septype)
+            graph_params["node_type_path"] = temppath
+            graph_params["node_types_column_number"] = 0
+            graph_params["node_type_list_is_correct"] = False # Need to check it
+            graph_params["node_type_list_separator"] = septype
 
         # Now load the Ensmallen graph
+        loaded_graph = Graph.from_csv(**graph_params)
 
-               
+        return loaded_graph
+           
     def main_graph_args(self) -> dict:
         return self.add_indir_to_graph_data(self.yaml['graph_data']['graph'])
 
