@@ -3,7 +3,7 @@ import logging
 import os
 import string
 import urllib
-from typing import Optional, Callable, Any
+from typing import Optional, Callable, Any, Union
 from urllib.request import Request, urlopen
 
 import yaml  # type: ignore
@@ -11,21 +11,41 @@ from ensmallen import Graph  # type: ignore
 from neat.link_prediction.model import Model
 import validators  # type: ignore
 
+from pathlib import Path
+import pandas as pd
+import tempfile
 
 def parse_yaml(file: str) -> dict:
     with open(file, 'r') as stream:
         return yaml.load(stream, Loader=yaml.FullLoader)
 
 
-def is_url(string_to_check: str) -> bool:
-    """Helper function to decide if a string is a URL (used for example for deciding
-    whether we need to download a file for a given node_path or edge_path
-
+def is_url(string_to_check: Union[str, Path]) -> bool:
+    """Helper function to decide if a string is a 
+    URL (used for example for deciding
+    whether we need to download a file for a given node_path or edge_path).
+    Raise exception if file path is invalid.
     :param string_to_check: string to check
-    :return: True/False is this a URL
+    :return: bool, True if string is URL
     """
+
     return bool(validators.url(string_to_check))
 
+def is_valid_path(string_to_check: Union[str, Path]) -> bool:
+    """Helper function to decide if a string is a
+    invalid filepath. 
+    Raise exception if file path is invalid.
+    :param string_to_check: string to check
+    :return: bool, True if string is valid filepath
+    """
+
+    if isinstance(string_to_check, Path):
+        if not string_to_check.is_file():
+            raise FileNotFoundError(f"{string_to_check} is not a valid file path or url.")
+    elif not os.path.exists(string_to_check):
+        raise FileNotFoundError(f"{string_to_check} is not a valid file path or url.")
+    else:
+        return True
 
 def download_file(url: str, outfile: str) -> None:
     req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
@@ -100,6 +120,43 @@ class YamlHelper:
     #
     # graph stuff
     #
+    def load_graph(self) -> Graph:
+        """
+        Loads graph nodes and edges into Ensmallen.
+        Creates a node type list, as Ensmallen
+        requires this to parse node types.
+        :param graph_args: dict, output of main_graph_args
+        """
+
+        graph_args_with_indir = self.main_graph_args()
+
+        nodepath = graph_args_with_indir['node_path']
+        edgepath = graph_args_with_indir['edge_path']
+        if graph_args_with_indir['node_types_column']:
+            node_types_col = graph_args_with_indir['node_types_column']
+
+        for filepath in [nodepath, edgepath]:
+            if is_url(filepath):
+                # download
+                pass
+            elif not is_valid_path(filepath):
+                break
+        
+        # Generate the node type file, if node types exist
+        # given a column with the header 
+        if node_types_col:
+            if graph_args_with_indir['sep']:
+                septype = graph_args_with_indir['sep']
+            else:
+                septype = "\t"
+            nodetypes = pd.read_csv(nodepath, sep=septype, usecols=[node_types_col])
+            nodetypes = nodetypes.drop_duplicates()
+            temppath = tempfile.NamedTemporaryFile()
+            nodetypes.to_csv(temppath, index=None, header=False, sep = septype)
+
+        # Now load the Ensmallen graph
+
+               
     def main_graph_args(self) -> dict:
         return self.add_indir_to_graph_data(self.yaml['graph_data']['graph'])
 
