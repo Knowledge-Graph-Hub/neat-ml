@@ -165,11 +165,11 @@ class YamlHelper:
                                     usecols=[node_types_col])
             nodetypes = nodetypes.drop_duplicates()
             temppath = tempfile.NamedTemporaryFile()
-            nodetypes.to_csv(temppath, 
+            nodetypes.to_csv(temppath.name, 
                                 index=None, 
                                 header=False, 
                                 sep = septype)
-            graph_params["node_type_path"] = temppath
+            graph_params["node_type_path"] = temppath.name
             graph_params["node_types_column_number"] = 0
             graph_params["node_type_list_is_correct"] = False # Need to check it
             graph_params["node_type_list_separator"] = septype
