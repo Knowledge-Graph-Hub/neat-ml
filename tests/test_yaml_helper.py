@@ -121,6 +121,16 @@ class TestYamlHelper(TestCase):
     def test_is_url(self, string, expected_is_url_value):
         self.assertEqual(expected_is_url_value, is_url(string))
 
+    @parameterized.expand([
+        ('tests/resources/test_graphs/pos_train_edges.tsv', True),
+        ('tests/resources/test_graphs/pos_train_nodes.tsv', True),
+        ('s3://bucket/file.tsv', False),
+        ('file', False),
+        ('pos_train_nodes.***', False),
+    ])
+    def is_valid_path(self, string, expected_is_url_value):
+        self.assertEqual(expected_is_url_value, is_url(string))
+
     # Update for new graph loading
     def test_deal_with_url_node_edge_paths_no_urls(self):
         orig_graph_args = self.yh.main_graph_args()
