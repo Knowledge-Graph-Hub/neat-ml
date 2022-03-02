@@ -12,7 +12,7 @@ from neat.link_prediction.model import Model
 import validators  # type: ignore
 
 from pathlib import Path
-import pandas as pd
+import pandas as pd # type: ignore
 import tempfile
 
 VALID_CHARS = "-_.() %s%s" % (string.ascii_letters, string.digits)
