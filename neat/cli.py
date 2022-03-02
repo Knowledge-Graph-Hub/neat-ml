@@ -37,9 +37,6 @@ def run(config: str) -> None:
 
     yhelp = YamlHelper(config)
 
-    # deal with node/edge paths that are URLs
-    yhelp.deal_with_url_node_edge_paths()
-
     # pre run checks for failing early
     if not pre_run_checks(yhelp=yhelp):
         raise RuntimeError("Failed pre_run_check")

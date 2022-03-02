@@ -297,17 +297,4 @@ class YamlHelper:
         }
         return make_upload_args
 
-    #
-    # deal with edge/node paths that are URLs
-    #
-    def deal_with_url_node_edge_paths(self):
-        gd = self.yaml['graph_data']['graph']
-        
-        for item in ['node_path', 'edge_path']:
-            if item in gd and is_url(gd[item]):
-                url_as_filename = \
-                    ''.join(c if c in VALID_CHARS else "_" for c in gd[item])
-                outfile = os.path.join(self.outdir(), url_as_filename)
-                download_file(gd[item], outfile)
-                gd[item] = outfile
 

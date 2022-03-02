@@ -121,11 +121,13 @@ class TestYamlHelper(TestCase):
     def test_is_url(self, string, expected_is_url_value):
         self.assertEqual(expected_is_url_value, is_url(string))
 
+    # Update for new graph loading
     def test_deal_with_url_node_edge_paths_no_urls(self):
         orig_graph_args = self.yh.main_graph_args()
         self.yh.deal_with_url_node_edge_paths()
         self.assertEqual(orig_graph_args, self.yh.main_graph_args())
 
+    # Update for new graph loading
     @mock.patch('neat.yaml_helper.yaml_helper.download_file')
     def test_node_edge_urls_converted_to_path(self, mock_download_file):
         this_yh = YamlHelper('tests/resources/test_urls_for_node_and_edge_paths.yaml')
@@ -141,6 +143,7 @@ class TestYamlHelper(TestCase):
         self.assertEqual('output_data/https___someremoteurl.com_edges.tsv',
                          this_yh.main_graph_args()['edge_path'])
 
+    # Update for new graph loading
     @mock.patch('neat.yaml_helper.yaml_helper.download_file')
     def test_node_edge_urls_file_downloaded(self, mock_download_file):
         this_yh = YamlHelper('tests/resources/test_urls_for_node_and_edge_paths.yaml')
