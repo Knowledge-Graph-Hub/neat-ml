@@ -156,7 +156,7 @@ class YamlHelper:
         # Generate the node type file, if node types exist
         # given a column with the header 
         if node_types_col:
-            if graph_params['sep']:
+            if 'sep' in graph_params:
                 septype = graph_params['sep']
             else:
                 septype = "\t"
