@@ -1,3 +1,4 @@
+import copy
 import functools
 import logging
 import os
@@ -135,47 +136,22 @@ class YamlHelper:
 
         nodepath = graph_args_with_indir['node_path']
         edgepath = graph_args_with_indir['edge_path']
-        if graph_args_with_indir['node_types_column']:
-            node_types_col = graph_args_with_indir['node_types_column']
-
-        # Make a copy to ensure we update the parameters,
-        # especially the paths to node and edgelists
-        graph_params = graph_args_with_indir.copy()
 
         for pathtype in ['node_path', 'edge_path']:
-            filepath = graph_params[pathtype]
+            filepath = graph_args_with_indir[pathtype]
             if is_url(filepath):
                 url_as_filename = \
                     ''.join(c if c in VALID_CHARS else "_" for c in filepath)
                 outfile = os.path.join(self.outdir(), url_as_filename)
                 download_file(filepath, outfile)
-                graph_params[pathtype] = outfile
+                graph_args_with_indir[pathtype] = outfile
             elif not is_valid_path(filepath):
-                break
+                raise FileNotFoundError(f"Please check path: {filepath}")
         
-        # Generate the node type file, if node types exist
-        # given a column with the header 
-        if node_types_col:
-            if 'sep' in graph_params:
-                septype = graph_params['sep']
-            else:
-                septype = "\t"
-            nodetypes = pd.read_csv(nodepath, 
-                                    sep=septype, 
-                                    usecols=[node_types_col])
-            nodetypes = nodetypes.drop_duplicates()
-            temppath = tempfile.NamedTemporaryFile()
-            nodetypes.to_csv(temppath.name, 
-                                index=None, 
-                                header=False, 
-                                sep = septype)
-            graph_params["node_type_path"] = temppath.name
-            graph_params["node_types_column_number"] = 0
-            graph_params["node_type_list_is_correct"] = False # Need to check it
-            graph_params["node_type_list_separator"] = septype
-
         # Now load the Ensmallen graph
-        loaded_graph = Graph.from_csv(**graph_params)
+        loaded_graph = Graph.from_csv(**graph_args_with_indir)
+
+
 
         return loaded_graph
            

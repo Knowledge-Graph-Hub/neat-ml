@@ -5,6 +5,7 @@ from neat.yaml_helper.yaml_helper import YamlHelper, catch_keyerror, is_url, \
     download_file
 import os
 
+from ensmallen import Graph  # type: ignore
 
 class TestYamlHelper(TestCase):
 
@@ -76,7 +77,7 @@ class TestYamlHelper(TestCase):
                              'directed': False,
                              'edge_path': 'tests/resources/test_graphs/pos_train_edges.tsv',
                              'node_path': 'tests/resources/test_graphs/pos_train_nodes.tsv',
-                             'node_types_column': 'category',
+                             'node_list_node_types_column': 'category',
                              'nodes_column': 'id',
                              'sources_column': 'subject',
                              'verbose': True}),
@@ -135,8 +136,16 @@ class TestYamlHelper(TestCase):
         self.yh.load_graph()
         # No assertion here - this will error if it fails
 
+    def test_graph_contains_node_types(self):
+        g = self.yh.load_graph()
+    
+        self.assertEqual(g.get_node_types_number(), 2)
+        self.assertCountEqual(g.get_unique_node_type_names(), 
+                                ['biolink:Gene', 'biolink:Protein'])
+
     @mock.patch('neat.yaml_helper.yaml_helper.download_file')
-    def test_node_edge_urls_converted_to_path(self, mock_download_file):
+    @mock.patch('ensmallen.Graph.from_csv')
+    def test_node_edge_urls_converted_to_path(self, mock_from_csv, mock_download_file):
         this_yh = YamlHelper('tests/resources/test_urls_for_node_and_edge_paths.yaml')
         self.assertTrue(is_url(this_yh.main_graph_args()['node_path']))
         self.assertTrue(is_url(this_yh.main_graph_args()['edge_path']))
@@ -151,7 +160,8 @@ class TestYamlHelper(TestCase):
                          this_yh.main_graph_args()['edge_path'])
 
     @mock.patch('neat.yaml_helper.yaml_helper.download_file')
-    def test_node_edge_urls_file_downloaded(self, mock_download_file):
+    @mock.patch('ensmallen.Graph.from_csv')
+    def test_node_edge_urls_file_downloaded(self, mock_from_csv, mock_download_file):
         this_yh = YamlHelper('tests/resources/test_urls_for_node_and_edge_paths.yaml')
         this_yh.load_graph()
         self.assertTrue(mock_download_file.called)
