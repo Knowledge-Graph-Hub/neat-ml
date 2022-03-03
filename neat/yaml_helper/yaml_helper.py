@@ -1,9 +1,10 @@
+import copy
 import functools
 import logging
 import os
 import string
 import urllib
-from typing import Optional, Callable, Any
+from typing import Optional, Callable, Any, Union
 from urllib.request import Request, urlopen
 
 import yaml  # type: ignore
@@ -11,21 +12,45 @@ from ensmallen import Graph  # type: ignore
 from neat.link_prediction.model import Model
 import validators  # type: ignore
 
+from pathlib import Path
+import pandas as pd # type: ignore
+import tempfile
+
+VALID_CHARS = "-_.() %s%s" % (string.ascii_letters, string.digits)
 
 def parse_yaml(file: str) -> dict:
     with open(file, 'r') as stream:
         return yaml.load(stream, Loader=yaml.FullLoader)
 
 
-def is_url(string_to_check: str) -> bool:
-    """Helper function to decide if a string is a URL (used for example for deciding
-    whether we need to download a file for a given node_path or edge_path
-
+def is_url(string_to_check: Union[str, Path]) -> bool:
+    """Helper function to decide if a string is a 
+    URL (used for example for deciding
+    whether we need to download a file for a given node_path or edge_path).
+    Raise exception if file path is invalid.
     :param string_to_check: string to check
-    :return: True/False is this a URL
+    :return: bool, True if string is URL
     """
+
     return bool(validators.url(string_to_check))
 
+def is_valid_path(string_to_check: Union[str, Path]) -> bool:
+    """Helper function to decide if a string is a
+    invalid filepath. 
+    Raise exception if file path is invalid.
+    :param string_to_check: string to check
+    :return: bool, True if string is valid filepath
+    """
+
+    if isinstance(string_to_check, Path):
+        if not string_to_check.is_file():
+            raise FileNotFoundError(f"{string_to_check} is not a valid file path or url.")
+    elif not os.path.exists(string_to_check):
+        raise FileNotFoundError(f"{string_to_check} is not a valid file path or url.")
+    else:
+        return True
+    
+    return False
 
 def download_file(url: str, outfile: str) -> None:
     req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
@@ -100,6 +125,33 @@ class YamlHelper:
     #
     # graph stuff
     #
+    def load_graph(self) -> Graph:
+        """
+        Loads graph nodes and edges into Ensmallen.
+        Creates a node type list, as Ensmallen
+        requires this to parse node types.
+        :param graph_args: dict, output of main_graph_args
+        :return: ensmallen Graph
+        """
+
+        graph_args_with_indir = self.main_graph_args()
+
+        for pathtype in ['node_path', 'edge_path']:
+            filepath = graph_args_with_indir[pathtype]
+            if is_url(filepath):
+                url_as_filename = \
+                    ''.join(c if c in VALID_CHARS else "_" for c in filepath)
+                outfile = os.path.join(self.outdir(), url_as_filename)
+                download_file(filepath, outfile)
+                graph_args_with_indir[pathtype] = outfile
+            elif not is_valid_path(filepath):
+                raise FileNotFoundError(f"Please check path: {filepath}")
+        
+        # Now load the Ensmallen graph
+        loaded_graph = Graph.from_csv(**graph_args_with_indir)
+
+        return loaded_graph
+           
     def main_graph_args(self) -> dict:
         return self.add_indir_to_graph_data(self.yaml['graph_data']['graph'])
 
@@ -218,18 +270,4 @@ class YamlHelper:
         }
         return make_upload_args
 
-    #
-    # deal with edge/node paths that are URLs
-    #
-    def deal_with_url_node_edge_paths(self):
-        gd = self.yaml['graph_data']['graph']
-        valid_chars = "-_.() %s%s" % (string.ascii_letters, string.digits)
-
-        for item in ['node_path', 'edge_path']:
-            if item in gd and is_url(gd[item]):
-                url_as_filename = \
-                    ''.join(c if c in valid_chars else "_" for c in gd[item])
-                outfile = os.path.join(self.outdir(), url_as_filename)
-                download_file(gd[item], outfile)
-                gd[item] = outfile
 

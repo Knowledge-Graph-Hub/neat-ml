@@ -37,9 +37,6 @@ def run(config: str) -> None:
 
     yhelp = YamlHelper(config)
 
-    # deal with node/edge paths that are URLs
-    yhelp.deal_with_url_node_edge_paths()
-
     # pre run checks for failing early
     if not pre_run_checks(yhelp=yhelp):
         raise RuntimeError("Failed pre_run_check")
@@ -50,8 +47,7 @@ def run(config: str) -> None:
         make_node_embeddings(**node_embedding_args)
 
     if yhelp.do_tsne() and not os.path.exists(yhelp.tsne_outfile()):
-        main_graph_args = yhelp.main_graph_args()
-        graph: Graph = Graph.from_csv(**main_graph_args)
+        graph: Graph = yhelp.load_graph()
         tsne_kwargs = yhelp.make_tsne_args(graph)
         make_tsne(**tsne_kwargs)
 

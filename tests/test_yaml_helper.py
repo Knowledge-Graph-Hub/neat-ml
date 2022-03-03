@@ -2,9 +2,10 @@ from unittest import TestCase, skip, mock
 from parameterized import parameterized
 
 from neat.yaml_helper.yaml_helper import YamlHelper, catch_keyerror, is_url, \
-    download_file
+    download_file, is_valid_path
 import os
 
+from ensmallen import Graph  # type: ignore
 
 class TestYamlHelper(TestCase):
 
@@ -76,7 +77,7 @@ class TestYamlHelper(TestCase):
                              'directed': False,
                              'edge_path': 'tests/resources/test_graphs/pos_train_edges.tsv',
                              'node_path': 'tests/resources/test_graphs/pos_train_nodes.tsv',
-                             'node_types_column': 'category',
+                             'node_list_node_types_column': 'category',
                              'nodes_column': 'id',
                              'sources_column': 'subject',
                              'verbose': True}),
@@ -121,18 +122,39 @@ class TestYamlHelper(TestCase):
     def test_is_url(self, string, expected_is_url_value):
         self.assertEqual(expected_is_url_value, is_url(string))
 
-    def test_deal_with_url_node_edge_paths_no_urls(self):
-        orig_graph_args = self.yh.main_graph_args()
-        self.yh.deal_with_url_node_edge_paths()
-        self.assertEqual(orig_graph_args, self.yh.main_graph_args())
+    @parameterized.expand([
+        ('tests/resources/test_graphs/pos_train_edges.tsv', True),
+        ('tests/resources/test_graphs/pos_train_nodes.tsv', True),
+        ('s3://bucket/file.tsv', False),
+        ('file', False),
+        ('pos_train_nodes.***', False),
+    ])
+    def test_is_valid_path(self, string, expected_value):
+        if not expected_value:
+             with self.assertRaises(FileNotFoundError):
+                 is_valid_path(string)
+        else:
+            self.assertEqual(expected_value, is_valid_path(string))
+
+    def test_load_graph(self):
+        self.yh.load_graph()
+        # No assertion here - this will error if it fails
+
+    def test_graph_contains_node_types(self):
+        g = self.yh.load_graph()
+    
+        self.assertEqual(g.get_node_types_number(), 2)
+        self.assertCountEqual(g.get_unique_node_type_names(), 
+                                ['biolink:Gene', 'biolink:Protein'])
 
     @mock.patch('neat.yaml_helper.yaml_helper.download_file')
-    def test_node_edge_urls_converted_to_path(self, mock_download_file):
+    @mock.patch('ensmallen.Graph.from_csv')
+    def test_node_edge_urls_converted_to_path(self, mock_from_csv, mock_download_file):
         this_yh = YamlHelper('tests/resources/test_urls_for_node_and_edge_paths.yaml')
         self.assertTrue(is_url(this_yh.main_graph_args()['node_path']))
         self.assertTrue(is_url(this_yh.main_graph_args()['edge_path']))
 
-        this_yh.deal_with_url_node_edge_paths()
+        this_yh.load_graph()
 
         self.assertFalse(is_url(this_yh.main_graph_args()['node_path']))
         self.assertEqual('output_data/https___someremoteurl.com_nodes.tsv',
@@ -142,9 +164,10 @@ class TestYamlHelper(TestCase):
                          this_yh.main_graph_args()['edge_path'])
 
     @mock.patch('neat.yaml_helper.yaml_helper.download_file')
-    def test_node_edge_urls_file_downloaded(self, mock_download_file):
+    @mock.patch('ensmallen.Graph.from_csv')
+    def test_node_edge_urls_file_downloaded(self, mock_from_csv, mock_download_file):
         this_yh = YamlHelper('tests/resources/test_urls_for_node_and_edge_paths.yaml')
-        this_yh.deal_with_url_node_edge_paths()
+        this_yh.load_graph()
         self.assertTrue(mock_download_file.called)
         self.assertEqual(2, mock_download_file.call_count)
 
