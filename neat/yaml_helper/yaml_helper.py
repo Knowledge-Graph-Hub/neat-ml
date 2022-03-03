@@ -49,6 +49,8 @@ def is_valid_path(string_to_check: Union[str, Path]) -> bool:
         raise FileNotFoundError(f"{string_to_check} is not a valid file path or url.")
     else:
         return True
+    
+    return False
 
 def download_file(url: str, outfile: str) -> None:
     req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
