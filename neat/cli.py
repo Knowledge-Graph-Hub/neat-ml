@@ -47,7 +47,6 @@ def run(config: str) -> None:
         make_node_embeddings(**node_embedding_args)
 
     if yhelp.do_tsne() and not os.path.exists(yhelp.tsne_outfile()):
-        main_graph_args = yhelp.main_graph_args()
         graph: Graph = yhelp.load_graph()
         tsne_kwargs = yhelp.make_tsne_args(graph)
         make_tsne(**tsne_kwargs)

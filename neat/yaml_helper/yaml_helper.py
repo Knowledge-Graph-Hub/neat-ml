@@ -136,9 +136,6 @@ class YamlHelper:
 
         graph_args_with_indir = self.main_graph_args()
 
-        nodepath = graph_args_with_indir['node_path']
-        edgepath = graph_args_with_indir['edge_path']
-
         for pathtype in ['node_path', 'edge_path']:
             filepath = graph_args_with_indir[pathtype]
             if is_url(filepath):
@@ -152,8 +149,6 @@ class YamlHelper:
         
         # Now load the Ensmallen graph
         loaded_graph = Graph.from_csv(**graph_args_with_indir)
-
-
 
         return loaded_graph
            
