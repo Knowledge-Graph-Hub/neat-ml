@@ -130,7 +130,11 @@ class TestYamlHelper(TestCase):
         ('pos_train_nodes.***', False),
     ])
     def test_is_valid_path(self, string, expected_value):
-        self.assertEqual(expected_value, is_valid_path(string))
+        if not expected_value:
+             with self.assertRaises(FileNotFoundError):
+                 is_valid_path(string)
+        else:
+            self.assertEqual(expected_value, is_valid_path(string))
 
     def test_load_graph(self):
         self.yh.load_graph()
