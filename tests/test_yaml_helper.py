@@ -93,7 +93,7 @@ class TestYamlHelper(TestCase):
                     "directed": False,
                     "edge_path": "tests/resources/test_graphs/pos_train_edges.tsv",
                     "node_path": "tests/resources/test_graphs/pos_train_nodes.tsv",
-                    "node_types_column": "category",
+                    "node_list_node_types_column": "category",
                     "nodes_column": "id",
                     "sources_column": "subject",
                     "verbose": True,
