@@ -141,7 +141,6 @@ class YamlHelper:
         Loads graph nodes and edges into Ensmallen.
         Creates a node type list, as Ensmallen
         requires this to parse node types.
-        :param graph_args: dict, output of main_graph_args
         :return: ensmallen Graph
         """
 
