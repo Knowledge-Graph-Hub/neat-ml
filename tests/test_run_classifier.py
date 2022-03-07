@@ -12,7 +12,8 @@ class TestRunClassifier(TestCase):
         cls.yaml_file = 'tests/resources/test.yaml'
         cls.yhelp = YamlHelper(cls.yaml_file)
         cls.graph = Graph.from_csv(**cls.yhelp.main_graph_args())
-        cls.test_embeddings = pd.read_csv('tests/resources/test_embeddings.tsv')
+        cls.test_embeddings = pd.read_csv('tests/resources/test_embeddings.tsv',
+                                          header=False)
 
     def setUp(self) -> None:
         pass
@@ -20,9 +21,7 @@ class TestRunClassifier(TestCase):
     def test_reality(self):
         self.assertEqual(1, 1)
 
-    @skip
     def test_run_classifier(self):
-        self.assertTrue(True)  # predict_links
         predict_links(graph=self.graph,
                       model='',
                       node_types=[['biolink:Gene'], ['biolink:Protein']],
