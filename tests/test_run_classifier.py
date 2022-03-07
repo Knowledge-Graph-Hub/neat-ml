@@ -13,7 +13,7 @@ class TestRunClassifier(TestCase):
         cls.yhelp = YamlHelper(cls.yaml_file)
         cls.graph = Graph.from_csv(**cls.yhelp.main_graph_args())
         cls.test_embeddings = pd.read_csv('tests/resources/test_embeddings.tsv',
-                                          header=False)
+                                          header=None)
 
     def setUp(self) -> None:
         pass
