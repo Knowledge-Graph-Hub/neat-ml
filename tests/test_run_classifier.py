@@ -1,3 +1,4 @@
+import tempfile
 from unittest import TestCase, skip
 from neat.run_classifier.run_classifier import predict_links
 from neat.yaml_helper.yaml_helper import YamlHelper
@@ -22,11 +23,13 @@ class TestRunClassifier(TestCase):
         self.assertEqual(1, 1)
 
     def test_run_classifier(self):
+        # temp = tempfile.NamedTemporaryFile().name  # once we have test firmed up
+        outfile = '/dev/null'
         predict_links(graph=self.graph,
                       model='',
                       node_types=[['biolink:Gene'], ['biolink:Protein']],
                       cutoff=0.8,
-                      output_file='/dev/null',
+                      output_file=outfile,
                       embeddings=self.test_embeddings,
                       edge_method='foo'
         )
