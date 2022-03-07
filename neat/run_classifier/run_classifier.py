@@ -41,15 +41,17 @@ def predict_links(
                     (graph.has_edge_from_node_ids(dst, src) and not graph.is_directed())) \
                         and ignore_existing_edges:
                     continue
-                # see if src and dst are actually in embedding.tsv:
 
+                src_name = graph.get_node_name_from_node_id(src)
+                dst_name = graph.get_node_name_from_node_id(dst)
+                # see if src and dst are actually in embedding.tsv:
                 if not graph.get_node_name_from_node_id(src) in embedding_node_names:
                     warn(f"Can't find {src} in embeddings - skipping")
-                    f.write("\t".join([src, dst, np.nan]))
+                    f.write("\t".join([src_name, dst_name, 'NaN']))
                     continue
                 elif not graph.get_node_name_from_node_id(dst) in embedding_node_names:
                     warn(f"Can't find {dst} in embeddings - skipping")
-                    f.write("\t".join([src, dst, np.nan]))
+                    f.write("\t".join([src_name, dst_name, 'NaN']))
                     continue
                 else:
                     source_embed = np.array(embeddings.loc[embeddings[0] == graph.get_node_name_from_node_id(src)])
