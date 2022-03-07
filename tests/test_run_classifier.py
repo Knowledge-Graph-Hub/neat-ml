@@ -31,5 +31,6 @@ class TestRunClassifier(TestCase):
                       cutoff=0.8,
                       output_file=outfile,
                       embeddings=self.test_embeddings,
-                      edge_method='foo'
+                      edge_method='foo',
+                      verbose=False
         )
