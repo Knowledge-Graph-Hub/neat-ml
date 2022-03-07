@@ -1,23 +1,22 @@
 from pathlib import Path
-from xmlrpc.client import boolean
+from typing import List
 from embiggen import EdgeTransformer # type: ignore
 from ensmallen import Graph  # type: ignore
-import pandas as pd # type: ignore
+import pandas as pd  # type: ignore
 from itertools import combinations, permutations, product  # [READ DOCS]
 import numpy as np
-from scipy.fft import dst # type: ignore
 
 
 def predict_links(
     graph: Graph,
     model: object,
-    node_types: dict,
+    node_types: List[List],
     cutoff: float,
     output_file: Path,
     embeddings: pd.DataFrame,
     edge_method: str,  # [Average etc.]
     ignore_existing_edges: bool = True,
-):
+) -> None:
     """Performs link prediction over provided graph nodes.
 
     Args:
@@ -27,55 +26,21 @@ def predict_links(
         cutoff (float): Cutoff point for filtering.
         output_file (Path): Results destination.
     """
+    source_node_ids = [i for i, nt in enumerate(graph.get_node_type_names())
+                       if any(x in nt for x in node_types[0])]
+    destination_node_ids = [i for i, nt in enumerate(graph.get_node_type_names())
+                            if any(x in nt for x in node_types[0])]
 
-    # generate every possible combo of nodes (source => dest) [need Graph object]
-    #   a. get_node_from .... => 2 lists => src_type and dest_type
-    #       -> graph.get_nodes_mappings()
-    #   b. combinations_with_replacement will give every combo # [READ DOCS]
-    #       - IF does not already exist in graph
-    #           graph.get_edge_node_ids(directed=False)
-    #           graph.get_edge_node_names(directed=False)
-    #   c. For each combo, retrieve src and dest embeddings & apply edge method => edge_embedding.
-    #       Give 2 node embeddings and retrieve the corresponding edge embedding
-    #   d. Feed edge_embedding => model == score
-    #   e. if score >= cutoff => accept.
-    #   Final O/p: "source_node" -> "edge" -> "dest_node" -> "score"[ONLY above & equal to cutoff]
+    with open(output_file, 'rw') as f:
+        for src in source_node_ids:
+            for dst in destination_node_ids:
+                if (graph.has_edge_from_node_ids(src, dst) or
+                    (graph.has_edge_from_node_ids(dst, src) and not graph.is_directed())) \
+                        and ignore_existing_edges:
+                    continue
+                source_embed = np.array(embeddings.loc[embeddings[0] == src])
+                destination_embed = np.array(embeddings.loc[embeddings[0] == dst])
+                predict_edges = model.make_link_prediction_predict_data()
+                p = model.predict_proba(predict_edges)
+                f.write("\t".join([src, dst, p]))
 
-    # TODO: Fix the next 2 lines once node_types bug is fixed in ensmallen
-    # 1. Get source nodes for nodes of types: ['biolink:XXXX', 'biolink:XYXY']
-    # 2. Get destination nodes for nodes of types: ['biolink:YYYY', 'biolink:YXYX']
-
-    # Need to add this stuff back in once we resolve the issue with retrieve node types
-    # # * ## Need to decide if this block is relevant or no.#####
-    # all_node_type_names = graph.get_node_type_names()
-    # unique_node_type_names = list(
-    #     set([x[0] for x in all_node_type_names if x])
-    # )
-    #
-    # for k, v in node_types.items():
-    #     if not all(unique_node_type_names) in v:
-    #         print(v)
-    # # * ######################################################
-
-    source_node_ids = graph.get_random_nodes(10, random_state=1)
-    destination_node_ids = graph.get_random_nodes(10, random_state=10)
-
-    non_existant_node_combo = [
-        combo
-        for combo in product(source_node_ids, destination_node_ids)
-        if not graph.has_edge_from_node_ids(combo[0], combo[1])
-    ]
-
-    # TODO: make array-like to pass to make_link_prediction_predict_data
-    for combo in non_existant_node_combo:
-        source_node = graph.get_node_name_from_node_id(combo[0])
-        destination_node = graph.get_node_name_from_node_id(combo[1])
-        source_embed = np.array(
-            embeddings.loc[embeddings[0] == source_node]  # .iloc[:, 1:]
-        )
-        destination_embed = np.array(
-            embeddings.loc[embeddings[0] == destination_node]  # .iloc[:, 1:]
-        )
-
-    predict_edges = model.make_link_prediction_predict_data()
-    return model.predict_proba(predict_edges)
