@@ -31,7 +31,7 @@ def predict_links(
     destination_node_ids = [i for i, nt in enumerate(graph.get_node_type_names())
                             if any(x in nt for x in node_types[0])]
 
-    with open(output_file, 'rw') as f:
+    with open(output_file, 'w') as f:
         for src in source_node_ids:
             for dst in destination_node_ids:
                 if (graph.has_edge_from_node_ids(src, dst) or
