@@ -38,7 +38,7 @@ def gen_src_dst_pair(
                     yield combo
             # INCLUDE Existing edges: yield every combo
             else:
-                continue
+                yield combo
 
         # Graph UNDIRECTED
         else:
@@ -50,8 +50,7 @@ def gen_src_dst_pair(
                     yield combo
             # INCLUDE Existing edges: yield every combo
             else:
-                continue
-        yield combo
+                yield combo
 
 
 def predict_links(
