@@ -1,12 +1,57 @@
+import itertools
 from pathlib import Path
 from typing import List
 from warnings import warn
 
-from embiggen import EdgeTransformer # type: ignore
+from embiggen import EdgeTransformer  # type: ignore
 from ensmallen import Graph  # type: ignore
 import pandas as pd  # type: ignore
-from itertools import combinations, permutations, product  # [READ DOCS]
+from itertools import combinations  # [READ DOCS]
 import numpy as np
+
+
+def gen_src_dst_pair(
+    graph: Graph,
+    ignore_existing_edges: bool = True,
+):
+
+    # Get all node ids
+    node_ids = graph.get_node_ids().tolist()[:100]
+    # Yield only the (src, dst) combo
+    # that does NOT exist in the graph.
+    for combo in list(combinations(node_ids, 2)):
+        # * 4 cases
+        # 1. Graph DIRECTED & IGNORE Existing edges
+        # 2. Graph DIRECTED & INCLUDE Existing edges
+        # 3. Graph UNDIRECTED & IGNORE Existing edges
+        # 4. Graph UNDIRECTED & INCLUDE Existing edges
+
+        # Graph DIRECTED
+        if graph.is_directed():
+            # IGNORE Existing edges: Neither combo exist.
+            if ignore_existing_edges:
+                if not graph.has_edge_from_node_ids(
+                    *combo
+                ) and not graph.has_edge_from_node_ids(
+                    *tuple(reversed(combo))
+                ):
+                    yield combo
+            # INCLUDE Existing edges: yield every combo
+            else:
+                continue
+
+        # Graph UNDIRECTED
+        else:
+            # IGNORE Existing edges:
+            if ignore_existing_edges:
+                if not graph.has_edge_from_node_ids(
+                    *combo
+                ) or not graph.has_edge_from_node_ids(*tuple(reversed(combo))):
+                    yield combo
+            # INCLUDE Existing edges: yield every combo
+            else:
+                continue
+        yield combo
 
 
 def predict_links(
@@ -18,6 +63,7 @@ def predict_links(
     embeddings: pd.DataFrame,
     edge_method: str,  # [Average etc.]
     ignore_existing_edges: bool = True,
+    verbose: bool = True,
 ) -> None:
     """Performs link prediction over provided graph nodes.
 
@@ -28,35 +74,55 @@ def predict_links(
         cutoff (float): Cutoff point for filtering.
         output_file (Path): Results destination.
     """
-    source_node_ids = [i for i, nt in enumerate(graph.get_node_type_names())
-                       if any(x in nt for x in node_types[0])]
-    destination_node_ids = [i for i, nt in enumerate(graph.get_node_type_names())
-                            if any(x in nt for x in node_types[0])]
+
+    # source_node_ids = [
+    #     i
+    #     for i, nt in enumerate(graph.get_node_type_names())
+    #     if any(x in nt for x in node_types[0])
+    # ]
+    # destination_node_ids = [
+    #     i
+    #     for i, nt in enumerate(graph.get_node_type_names())
+    #     if any(x in nt for x in node_types[0])
+    # ]
 
     embedding_node_names = list(embeddings[0])
-    with open(output_file, 'w') as f:
-        for src in source_node_ids:
-            for dst in destination_node_ids:
-                if (graph.has_edge_from_node_ids(src, dst) or
-                    (graph.has_edge_from_node_ids(dst, src) and not graph.is_directed())) \
-                        and ignore_existing_edges:
-                    continue
+    with open(output_file, "w") as f:
+        # for src in source_node_ids:
+        #     for dst in destination_node_ids:
+        #         if (
+        #             graph.has_edge_from_node_ids(src, dst)
+        #             or (
+        #                 graph.has_edge_from_node_ids(dst, src)
+        #                 and not graph.is_directed()
+        #             )
+        #         ) and ignore_existing_edges:
+        #             continue
+        for src, dst in gen_src_dst_pair(graph, ignore_existing_edges):
 
-                src_name = graph.get_node_name_from_node_id(src)
-                dst_name = graph.get_node_name_from_node_id(dst)
-                # see if src and dst are actually in embedding.tsv:
-                if not graph.get_node_name_from_node_id(src) in embedding_node_names:
-                    warn(f"Can't find {src} in embeddings - skipping")
-                    f.write("\t".join([src_name, dst_name, 'NaN']))
-                    continue
-                elif not graph.get_node_name_from_node_id(dst) in embedding_node_names:
-                    warn(f"Can't find {dst} in embeddings - skipping")
-                    f.write("\t".join([src_name, dst_name, 'NaN']))
-                    continue
-                else:
-                    source_embed = np.array(embeddings.loc[embeddings[0] == graph.get_node_name_from_node_id(src)])
-                    destination_embed = np.array(embeddings.loc[embeddings[0] == graph.get_node_name_from_node_id(dst)])
-                    predict_edges = model.make_link_prediction_predict_data()
-                    p = model.predict_proba(predict_edges)
-                    f.write("\t".join([src, dst, p]))
+            src_name = graph.get_node_name_from_node_id(src)
+            dst_name = graph.get_node_name_from_node_id(dst)
 
+            # see if src and dst are actually in embedding.tsv:
+            if not src_name in embedding_node_names:
+                warn(f"Can't find {src_name} in embeddings - skipping")
+                f.write("\t".join([src_name, dst_name, "NaN\n"]))
+                continue
+            elif not dst_name in embedding_node_names:
+                warn(f"Can't find {dst_name} in embeddings - skipping")
+                f.write("\t".join([src_name, dst_name, "NaN\n"]))
+                continue
+            else:
+                source_embed = np.array(
+                    embeddings.loc[
+                        embeddings[0] == graph.get_node_name_from_node_id(src)
+                    ]
+                )
+                destination_embed = np.array(
+                    embeddings.loc[
+                        embeddings[0] == graph.get_node_name_from_node_id(dst)
+                    ]
+                )
+                predict_edges = model.make_link_prediction_predict_data()
+                p = model.predict_proba(predict_edges)
+                f.write("\t".join([src, dst, p]) + "\n")
