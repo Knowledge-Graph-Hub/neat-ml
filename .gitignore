@@ -8,3 +8,4 @@ output_data
 input_data
 node_embeddings/*
 tests/resources/test_output_data_dir/*.pickle
+tests/resources/tmp/*
