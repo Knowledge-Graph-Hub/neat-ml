@@ -6,7 +6,7 @@ import pandas as pd  # type: ignore
 from typing import Tuple
 from embiggen import LinkPredictionTransformer  # type: ignore
 from ensmallen import Graph  # type: ignore
-import sklearn   # type: ignore
+import sklearn  # type: ignore
 import tensorflow  # type: ignore
 from sklearn.tree import DecisionTreeClassifier  # type: ignore
 from sklearn.ensemble import RandomForestClassifier  # type: ignore
@@ -19,7 +19,7 @@ class Model:
     def __init__(self, outdir=None):
         if outdir:
             os.makedirs(outdir, exist_ok=True)
-        self.outdir=outdir
+        self.outdir = outdir
 
     def fit(self, X, y):
         pass
@@ -31,7 +31,7 @@ class Model:
         pass
 
     def save(self) -> None:
-        self.model.save(os.path.join(self.outdir, self.config['model']['outfile']))  # type: ignore
+        self.model.save(os.path.join(self.outdir, self.config["model"]["outfile"]))  # type: ignore
 
     def predict(self, X) -> np.ndarray:
         pass
@@ -40,14 +40,15 @@ class Model:
         pass
 
     @classmethod
-    def make_link_prediction_data(self,
-                                  embedding_file: str,
-                                  training_graph_args: dict,
-                                  pos_validation_args: dict,
-                                  neg_training_args: dict,
-                                  neg_validation_args: dict,
-                                  edge_method: str
-                                  ) -> Tuple[Tuple, Tuple]:
+    def make_link_prediction_data(
+        self,
+        embedding_file: str,
+        training_graph_args: dict,
+        pos_validation_args: dict,
+        neg_training_args: dict,
+        neg_validation_args: dict,
+        edge_method: str,
+    ) -> Tuple[Tuple, Tuple]:
         """Prepare training and validation data for training link prediction classifers
 
         Args:
@@ -61,34 +62,38 @@ class Model:
             A tuple of tuples
 
         """
-        embedding = pd.read_csv(embedding_file,
-                                index_col=0,
-                                header=None)
+        embedding = pd.read_csv(embedding_file, index_col=0, header=None)
 
         # load graphs
-        graphs = {'pos_training': Graph.from_csv(**training_graph_args)}
-        for name, graph_args in [('pos_validation', pos_validation_args),
-                                 ('neg_training', neg_training_args),
-                                 ('neg_validation', neg_validation_args)]:
+        graphs = {"pos_training": Graph.from_csv(**training_graph_args)}
+        for name, graph_args in [
+            ("pos_validation", pos_validation_args),
+            ("neg_training", neg_training_args),
+            ("neg_validation", neg_validation_args),
+        ]:
             these_params = copy.deepcopy(training_graph_args)
             these_params.update(graph_args)
             graphs[name] = Graph.from_csv(**these_params)
 
         # create transformer object to convert graphs into edge embeddings
         lpt = LinkPredictionTransformer(method=edge_method)
-        lpt.fit(embedding)  # pass node embeddings to be used to create edge embeddings
-        train_edges, train_labels = lpt.transform(positive_graph=graphs['pos_training'],
-                                                  negative_graph=graphs['neg_training'])
-        valid_edges, valid_labels = lpt.transform(positive_graph=graphs['pos_validation'],
-                                                  negative_graph=graphs['neg_validation'])
+        lpt.fit(
+            embedding
+        )  # pass node embeddings to be used to create edge embeddings
+        train_edges, train_labels = lpt.transform(
+            positive_graph=graphs["pos_training"],
+            negative_graph=graphs["neg_training"],
+        )
+        valid_edges, valid_labels = lpt.transform(
+            positive_graph=graphs["pos_validation"],
+            negative_graph=graphs["neg_validation"],
+        )
         return (train_edges, train_labels), (valid_edges, valid_labels)
 
     @classmethod
-    def make_link_prediction_predict_data(self,
-                                          embedding_file: str,
-                                          trained_graph_args: dict,
-                                          edge_method: str
-                                  ) -> Tuple:
+    def make_link_prediction_predict_data(
+        self, embedding_file: str, trained_graph_args: dict, edge_method: str
+    ) -> Tuple:
         """Prepare training and validation data for training link prediction classifers
 
         Args:
@@ -99,20 +104,20 @@ class Model:
             A tuple of tuples
 
         """
-        embedding = pd.read_csv(embedding_file,
-                                index_col=0,
-                                header=None)
+        embedding = pd.read_csv(embedding_file, index_col=0, header=None)
 
         # load graphs
-        graphs = {'trained_graph': Graph.from_csv(**trained_graph_args)}
+        graphs = {"trained_graph": Graph.from_csv(**trained_graph_args)}
 
         # create transformer object to convert graphs into edge embeddings
         lpt = LinkPredictionTransformer(method=edge_method)
-        lpt.fit(embedding)  # pass node embeddings to be used to create edge embeddings
-        predict_edges, _ = lpt.transform(positive_graph=graphs['trained_graph'],
-                                         negative_graph=[[]])
+        lpt.fit(
+            embedding
+        )  # pass node embeddings to be used to create edge embeddings
+        predict_edges, _ = lpt.transform(
+            positive_graph=graphs["trained_graph"], negative_graph=[[]]
+        )
         return predict_edges, _
-
 
     @classmethod
     def dynamically_import_class(self, reference) -> object:
@@ -139,14 +144,14 @@ class Model:
             The imported function
 
         """
-        module_name = '.'.join(reference.split('.')[0:-1])
-        function_name = reference.split('.')[-1]
+        module_name = ".".join(reference.split(".")[0:-1])
+        function_name = reference.split(".")[-1]
         f = getattr(importlib.import_module(module_name), function_name)
         return f
 
     @classmethod
     def my_import(self, name):
-        components = name.split('.')
+        components = name.split(".")
         mod = __import__(components[0])
         for comp in components[1:]:
             mod = getattr(mod, comp)
