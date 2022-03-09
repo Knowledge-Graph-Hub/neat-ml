@@ -106,7 +106,8 @@ def predict_links(
             # see if src and dst are actually in embedding.tsv:
             for name in [src_name, dst_name]:
                 if not name in embedding_node_names:
-                    warn(f"Can't find {name} in embeddings - skipping")
+                    if verbose:
+                        warn(f"Can't find {name} in embeddings - skipping")
                     have_embeddings = False
                     
             if not have_embeddings:
