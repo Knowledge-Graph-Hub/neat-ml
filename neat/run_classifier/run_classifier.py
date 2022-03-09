@@ -84,6 +84,13 @@ def predict_links(
     #     if any(x in nt for x in node_types[0])
     # ]
 
+    # Check on validity of methods for this model type first
+    try:
+        _ = model.make_link_prediction_predict_data()
+    except AttributeError as e:
+        model_type = type(model)
+        print(f"Model of type {model_type} cannot call 'make_link_prediction_predict_data': {e}")
+
     embedding_node_names = list(embeddings[0])
     with open(output_file, "w") as f:
         # for src in source_node_ids:
