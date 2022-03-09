@@ -1,4 +1,3 @@
-import itertools
 from pathlib import Path
 from typing import List
 from warnings import warn
@@ -102,13 +101,15 @@ def predict_links(
             src_name = graph.get_node_name_from_node_id(src)
             dst_name = graph.get_node_name_from_node_id(dst)
 
+            have_embeddings = True
+
             # see if src and dst are actually in embedding.tsv:
-            if not src_name in embedding_node_names:
-                warn(f"Can't find {src_name} in embeddings - skipping")
-                f.write("\t".join([src_name, dst_name, "NaN\n"]))
-                continue
-            elif not dst_name in embedding_node_names:
-                warn(f"Can't find {dst_name} in embeddings - skipping")
+            for name in [src_name, dst_name]:
+                if not name in embedding_node_names:
+                    warn(f"Can't find {name} in embeddings - skipping")
+                    have_embeddings = False
+                    
+            if not have_embeddings:
                 f.write("\t".join([src_name, dst_name, "NaN\n"]))
                 continue
             else:
