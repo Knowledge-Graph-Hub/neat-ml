@@ -139,6 +139,7 @@ class TestRun(TestCase):
             cli=run,
             args=["--config", "tests/resources/test_neat.yaml"],
         )
+        print(result)
         self.assertEqual(result.exit_code, 0)
 
     @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_upload")

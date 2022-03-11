@@ -18,6 +18,7 @@ class TestRunClassifier(TestCase):
         cls.test_embeddings = pd.read_csv(
             "tests/resources/test_embeddings.tsv", header=None
         )
+        cls.test_model_path = "tests/resources/model_lr_test_yaml.pkl"
         # cls.model = pickle.load(
         #     open(
         #         "tests/resources/test_output_data_dir/model_lr_test_yaml.h5",
@@ -35,7 +36,7 @@ class TestRunClassifier(TestCase):
         # temp = tempfile.NamedTemporaryFile().name  # once we have test firmed up
         outfile = "/dev/null"
         # outfile = os.path.join(dirname(__file__), "resources/tmp/test.tsv")
-        with open('tests/resources/model_lr_test_yaml.h5', 'rb') as f:
+        with open(self.test_model_path, 'rb') as f:
             m = pickle.load(f)
             predict_links(
                 graph=self.graph,
