@@ -35,13 +35,15 @@ class TestRunClassifier(TestCase):
         # temp = tempfile.NamedTemporaryFile().name  # once we have test firmed up
         outfile = "/dev/null"
         # outfile = os.path.join(dirname(__file__), "resources/tmp/test.tsv")
-        predict_links(
-            graph=self.graph,
-            model="",
-            node_types=[["biolink:Gene"], ["biolink:Protein"]],
-            cutoff=0.8,
-            output_file=outfile,
-            embeddings=self.test_embeddings,
-            edge_method="foo",
-            verbose=False,
-        )
+        with open('tests/resources/model_lr_test_yaml.h5', 'rb') as f:
+            m = pickle.load(f)
+            predict_links(
+                graph=self.graph,
+                model=m,
+                node_types=[["biolink:Gene"], ["biolink:Protein"]],
+                cutoff=0.8,
+                output_file=outfile,
+                embeddings=self.test_embeddings,
+                edge_method="foo",
+                verbose=False,
+            )

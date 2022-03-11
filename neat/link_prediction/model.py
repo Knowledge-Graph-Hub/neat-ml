@@ -31,7 +31,7 @@ class Model:
         pass
 
     def save(self) -> None:
-        self.model.save(os.path.join(self.outdir, self.config["model"]["outfile"]))  # type: ignore
+        pass
 
     def predict(self, X) -> np.ndarray:
         pass

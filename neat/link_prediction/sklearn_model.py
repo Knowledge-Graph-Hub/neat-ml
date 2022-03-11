@@ -4,11 +4,10 @@ from .model import Model
 
 
 class SklearnModel(Model):
-
     def __init__(self, config: dict, outdir: str = None):
         super().__init__(outdir=outdir)
         self.config = config
-        model_type = config['model']['type']
+        model_type = config["model"]["type"]
         model_class = self.dynamically_import_class(model_type)
         self.model = model_class()  # type: ignore
 
@@ -22,6 +21,14 @@ class SklearnModel(Model):
         self.model.predict_proba(*predict_data)
 
     def save(self):
-        with open(os.path.join(self.outdir, self.config['model']['outfile']), 'wb') as f:
-             pickle.dump(self.model, f)
+        with open(
+            os.path.join(self.outdir, self.config["model"]["outfile"]), "wb"
+        ) as f:
+            pickle.dumps(self.model, f)
 
+    def load(self, path: str) -> object:
+        with open(
+            os.path.join(self.outdir, self.config["model"]["outfile"]), "rb"
+        ) as f:
+            model = pickle.loads(self.model, f)
+        return model
