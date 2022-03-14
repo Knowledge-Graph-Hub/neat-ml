@@ -9,4 +9,4 @@ input_data
 node_embeddings/*
 tests/resources/test_output_data_dir/*
 tests/resources/tmp/*
-tests/resources/test_link_prediction/*
+tests/resources/test_link_prediction/*.h5
