@@ -26,24 +26,31 @@ class SklearnModel(Model):
         ) as f:
             pickle.dump(self.model, f)
 
-        model_outfile = self.config["model"]["outfile"].replace(
-            ".h5", "_model.h5"
-        )
+        fn, ext = self.config["model"]["outfile"].split(".")
+        model_outfile = fn + "_custom." + ext
         with open(os.path.join(self.outdir, model_outfile), "wb") as f:
             pickle.dump(self, f)
 
-    def load(self, path: str) -> object:
-        new_model = SklearnModel(self, self.outdir, self.config)
-        with open(
-            os.path.join(
-                self.outdir, self.config["model"]["outfile"] + "model"
-            ),
-            "rb",
-        ) as f:
-            new_model = pickle.loads(self, f)
-        with open(
-            os.path.join(self.outdir, self.config["model"]["outfile"]), "rb"
-        ) as f:
-            new_model.model = pickle.loads(self.model, f)
+    def load(self, path: str) -> tuple():
+        fn, ext = path.split(".")
+        custom_model_filename = fn + "_custom." + ext
+        with open(path, "rb") as mf1:
+            generic_model_object = pickle.load(mf1)
 
-        return new_model
+        with open(custom_model_filename, "rb") as mf2:
+            custom_model_object = pickle.load(mf2)
+
+        # new_model = SklearnModel(self, self.outdir, self.config)
+        # with open(
+        #     os.path.join(
+        #         self.outdir, self.config["model"]["outfile"] + "model"
+        #     ),
+        #     "rb",
+        # ) as f:
+        #     new_model = pickle.loads(self, f)
+        # with open(
+        #     os.path.join(self.outdir, self.config["model"]["outfile"]), "rb"
+        # ) as f:
+        #     new_model.model = pickle.loads(self.model, f)
+
+        return generic_model_object, custom_model_object

@@ -16,8 +16,14 @@ class TestLinkPrediction(TestCase):
         cls.yaml_file = "tests/resources/test_neat.yaml"
         cls.yhelp = YamlHelper(cls.yaml_file)
         cls.test_model_path = "tests/resources/test_link_prediction/"
-        cls.outfile = ((cls.yhelp.classifiers())[0])["model"]["outfile"]
-        cls.model_outfile = cls.outfile.replace(".h5", "_model.h5")
+        cls.sklearn_model = SklearnModel(
+            (cls.yhelp.classifiers())[0], cls.test_model_path
+        )
+        cls.generic_outfile = ((cls.yhelp.classifiers())[0])["model"][
+            "outfile"
+        ]
+        fn, ext = cls.generic_outfile.split(".")
+        cls.custom_outfile = fn + "_custom." + ext
 
     def setUp(self) -> None:
         pass
@@ -27,26 +33,21 @@ class TestLinkPrediction(TestCase):
             raise AssertionError("File does not exist: %s" % str(path))
 
     def test_sklearn_save(self) -> None:
-        model_object = SklearnModel(
-            (self.yhelp.classifiers())[0], self.test_model_path
-        )
-
+        model_object = self.sklearn_model
         model_object.save()
-        self.assertIsFile(os.path.join(self.test_model_path, self.outfile))
+
         self.assertIsFile(
-            os.path.join(self.test_model_path, self.model_outfile)
+            os.path.join(self.test_model_path, self.generic_outfile)
+        )
+        self.assertIsFile(
+            os.path.join(self.test_model_path, self.custom_outfile)
         )
 
     def test_sklearn_load(self) -> None:
-        out_fn = self.outfile
-        out_model_fn = self.model_outfile
-
-        with open(os.path.join(self.test_model_path, out_fn), "rb") as mf:
-            model_object_1 = pickle.load(mf)
-
-        with open(
-            os.path.join(self.test_model_path, out_model_fn), "rb"
-        ) as mf:
-            model_object_2 = pickle.load(mf)
-        self.assertEqual(type(model_object_1), LogisticRegression)
-        self.assertEqual(type(model_object_2), SklearnModel)
+        out_fn = os.path.join(self.test_model_path, self.generic_outfile)
+        (
+            generic_model_object,
+            customized_model_object,
+        ) = self.sklearn_model.load(out_fn)
+        self.assertEqual(type(generic_model_object), LogisticRegression)
+        self.assertEqual(type(customized_model_object), SklearnModel)

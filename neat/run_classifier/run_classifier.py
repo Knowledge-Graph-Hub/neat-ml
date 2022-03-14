@@ -109,7 +109,7 @@ def predict_links(
                     if verbose:
                         warn(f"Can't find {name} in embeddings - skipping")
                     have_embeddings = False
-                    
+
             if not have_embeddings:
                 f.write("\t".join([src_name, dst_name, "NaN\n"]))
                 continue
@@ -124,6 +124,6 @@ def predict_links(
                         embeddings[0] == graph.get_node_name_from_node_id(dst)
                     ]
                 )
-                predict_edges = model.make_link_prediction_predict_data()
-                p = model.predict_proba(predict_edges)
-                f.write("\t".join([src, dst, p]) + "\n")
+                # predict_edges = model.make_link_prediction_predict_data()
+                # p = model.predict_proba(predict_edges)
+                # f.write("\t".join([src, dst, p]) + "\n")
