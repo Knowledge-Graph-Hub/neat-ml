@@ -24,11 +24,21 @@ class SklearnModel(Model):
         with open(
             os.path.join(self.outdir, self.config["model"]["outfile"]), "wb"
         ) as f:
-            pickle.dumps(self.model, f)
+            pickle.dump(self.model, f)
+        with open(
+            os.path.join(self.outdir, self.config["model"]["outfile"] + "model"), "wb"
+        ) as f:
+            pickle.dump(self, f)
 
     def load(self, path: str) -> object:
+        new_model = SklearnModel(self, self.outdir, self.config)
+        with open(
+            os.path.join(self.outdir, self.config["model"]["outfile"] + "model"), "rb"
+        ) as f:
+            new_model = pickle.loads(self, f)
         with open(
             os.path.join(self.outdir, self.config["model"]["outfile"]), "rb"
         ) as f:
-            model = pickle.loads(self.model, f)
-        return model
+            new_model.model = pickle.loads(self.model, f)
+            
+        return new_model

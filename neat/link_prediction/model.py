@@ -1,4 +1,5 @@
 import os
+import pickle
 
 import numpy as np  # type: ignore
 import copy
@@ -30,9 +31,9 @@ class Model:
     def load(self, path: str) -> object:
         pass
 
-    def save(self) -> None:
+    def save(self):
         pass
-
+        
     def predict(self, X) -> np.ndarray:
         pass
 
