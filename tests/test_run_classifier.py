@@ -36,7 +36,7 @@ class TestRunClassifier(TestCase):
         # temp = tempfile.NamedTemporaryFile().name  # once we have test firmed up
         outfile = "/dev/null"
         # outfile = os.path.join(dirname(__file__), "resources/tmp/test.tsv")
-        with open(self.test_model_path, 'rb') as f:
+        with open(self.test_model_path, "rb") as f:
             m = pickle.load(f)
             predict_links(
                 graph=self.graph,

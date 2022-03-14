@@ -33,7 +33,7 @@ class Model:
 
     def save(self):
         pass
-        
+
     def predict(self, X) -> np.ndarray:
         pass
 
