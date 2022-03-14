@@ -25,20 +25,25 @@ class SklearnModel(Model):
             os.path.join(self.outdir, self.config["model"]["outfile"]), "wb"
         ) as f:
             pickle.dump(self.model, f)
-        with open(
-            os.path.join(self.outdir, self.config["model"]["outfile"] + "model"), "wb"
-        ) as f:
+
+        model_outfile = self.config["model"]["outfile"].replace(
+            ".h5", "_model.h5"
+        )
+        with open(os.path.join(self.outdir, model_outfile), "wb") as f:
             pickle.dump(self, f)
 
     def load(self, path: str) -> object:
         new_model = SklearnModel(self, self.outdir, self.config)
         with open(
-            os.path.join(self.outdir, self.config["model"]["outfile"] + "model"), "rb"
+            os.path.join(
+                self.outdir, self.config["model"]["outfile"] + "model"
+            ),
+            "rb",
         ) as f:
             new_model = pickle.loads(self, f)
         with open(
             os.path.join(self.outdir, self.config["model"]["outfile"]), "rb"
         ) as f:
             new_model.model = pickle.loads(self.model, f)
-            
+
         return new_model
