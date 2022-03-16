@@ -4,7 +4,7 @@ import pickle
 import numpy as np  # type: ignore
 import copy
 import pandas as pd  # type: ignore
-from typing import Tuple
+from typing import Optional, Tuple, Union
 from embiggen import LinkPredictionTransformer  # type: ignore
 from ensmallen import Graph  # type: ignore
 import sklearn  # type: ignore
@@ -45,10 +45,10 @@ class Model:
         self,
         embedding_file: str,
         training_graph_args: dict,
-        pos_validation_args: dict,
-        neg_training_args: dict,
-        neg_validation_args: dict,
         edge_method: str,
+        pos_validation_args: Optional[dict]  = None,
+        neg_training_args: Optional[dict]  = None,
+        neg_validation_args: Optional[dict]  = None,
     ) -> Tuple[Tuple, Tuple]:
         """Prepare training and validation data for training link prediction classifers
 
@@ -65,6 +65,11 @@ class Model:
         """
         embedding = pd.read_csv(embedding_file, index_col=0, header=None)
 
+        # TODO: re-evaluate this behavior
+        # If a positive validation set isn't provided, we may
+        # want to just skip the validation.
+        # Same with evaluating against negative train/validate.
+
         # load graphs
         graphs = {"pos_training": Graph.from_csv(**training_graph_args)}
         for name, graph_args in [
@@ -72,9 +77,14 @@ class Model:
             ("neg_training", neg_training_args),
             ("neg_validation", neg_validation_args),
         ]:
-            these_params = copy.deepcopy(training_graph_args)
-            these_params.update(graph_args)
-            graphs[name] = Graph.from_csv(**these_params)
+            if not graph_args:
+                if name in ["neg_training", "neg_validation"]:
+                    graphs[name] = (graphs["pos_training"]).sample_negatives(negatives_number=100)
+                else:
+                    these_params = copy.deepcopy(training_graph_args)
+                    graphs[name] = Graph.from_csv(**these_params)
+            else:
+                graphs[name] = Graph.from_csv(**graph_args)
 
         # create transformer object to convert graphs into edge embeddings
         lpt = LinkPredictionTransformer(method=edge_method)
