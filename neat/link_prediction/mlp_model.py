@@ -1,4 +1,5 @@
 import os
+import pickle
 import tensorflow as tf  # type: ignore
 from .model import Model
 
@@ -121,10 +122,27 @@ class MLPModel(Model):
 
     def save(self) -> None:
         # self.model.save(os.path.join(self.outdir, self.config["model"]["outfile"]))  # type: ignore
-        tf.keras.save(
+
+        self.model.save(
             os.path.join(self.outdir, self.config["model"]["outfile"])
         )
 
-    def load(self, path: str) -> object:
-        # Not sure if this works
-        return tf.keras.models.load_model(path)
+        fn, ext = self.config["model"]["outfile"].split(".")
+        model_outfile = fn + "_custom." + ext
+
+        with open(os.path.join(self.outdir, model_outfile), "wb") as f:
+            pickle.dump(self, f)
+
+    def load(self, path: str) -> tuple():
+
+        fn, ext = path.split(".")
+        custom_model_filename = fn + "_custom." + ext
+        generic_model_object = tf.keras.models.load_model(path)
+
+        with open(custom_model_filename, "rb") as mf2:
+            custom_model_object = pickle.load(mf2)
+
+        #import pdb
+        #pdb.set_trace()
+
+        return generic_model_object, custom_model_object

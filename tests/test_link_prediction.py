@@ -4,6 +4,7 @@ from unittest import TestCase, skip
 
 from neat.link_prediction import model
 from neat.link_prediction.sklearn_model import SklearnModel
+from neat.link_prediction.mlp_model import MLPModel
 from neat.yaml_helper.yaml_helper import YamlHelper
 
 from sklearn.linear_model._logistic import LogisticRegression
@@ -13,18 +14,28 @@ import numpy as np
 class TestLinkPrediction(TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        cls.yaml_file = "tests/resources/test_neat.yaml"
+        cls.yaml_file_sklearn = "tests/resources/test_neat.yaml"
+        cls.yaml_file_tf = "tests/resources/test.yaml"
         cls.embed_file = "tests/resources/test_link_prediction/test_embeddings_test_yaml.csv"
-        cls.yhelp = YamlHelper(cls.yaml_file)
+        cls.yhelp_sklearn = YamlHelper(cls.yaml_file_sklearn)
+        cls.yhelp_tf = YamlHelper(cls.yaml_file_tf)
         cls.test_model_path = "tests/resources/test_link_prediction/"
         cls.sklearn_model = SklearnModel(
-            (cls.yhelp.classifiers())[0], cls.test_model_path
+            (cls.yhelp_sklearn.classifiers())[0], cls.test_model_path
         )
-        cls.generic_outfile = ((cls.yhelp.classifiers())[0])["model"][
+        cls.tf_model = MLPModel(
+            (cls.yhelp_tf.classifiers())[0], cls.test_model_path
+        )
+        cls.generic_sklearn_outfile = ((cls.yhelp_sklearn.classifiers())[0])["model"][
             "outfile"
         ]
-        fn, ext = cls.generic_outfile.split(".")
-        cls.custom_outfile = fn + "_custom." + ext
+        cls.generic_tf_outfile = ((cls.yhelp_tf.classifiers())[0])["model"][
+            "outfile"
+        ]
+        fn_sklearn, ext_sklearn = cls.generic_sklearn_outfile.split(".")
+        fn_tf, ext_tf = cls.generic_tf_outfile.split(".")
+        cls.custom_sklearn_outfile = fn_sklearn + "_custom." + ext_sklearn
+        cls.custom_tf_outfile = fn_tf + "_custom." + ext_tf
         cls.training_graph_args = {"directed": False,
                                     "node_path": 'tests/resources/test_graphs/pos_train_nodes.tsv',
                                     "edge_path": 'tests/resources/test_graphs/pos_train_edges.tsv',
@@ -48,14 +59,25 @@ class TestLinkPrediction(TestCase):
         model_object.save()
 
         self.assertIsFile(
-            os.path.join(self.test_model_path, self.generic_outfile)
+            os.path.join(self.test_model_path, self.generic_sklearn_outfile)
         )
         self.assertIsFile(
-            os.path.join(self.test_model_path, self.custom_outfile)
+            os.path.join(self.test_model_path, self.custom_sklearn_outfile)
+        )
+
+    def test_tf_save(self) -> None:
+        model_object = self.tf_model
+        model_object.save()
+
+        self.assertIsFile(
+            os.path.join(self.test_model_path, self.generic_tf_outfile)
+        )
+        self.assertIsFile(
+            os.path.join(self.test_model_path, self.custom_tf_outfile)
         )
 
     def test_sklearn_load(self) -> None:
-        out_fn = os.path.join(self.test_model_path, self.generic_outfile)
+        out_fn = os.path.join(self.test_model_path, self.generic_sklearn_outfile)
         (
             generic_model_object,
             customized_model_object,
@@ -63,7 +85,16 @@ class TestLinkPrediction(TestCase):
         self.assertEqual(type(generic_model_object), LogisticRegression)
         self.assertEqual(type(customized_model_object), SklearnModel)
 
-    def test_make_link_prediction_data(self) -> None:
+    def test_tf_load(self) -> None:
+        out_fn = os.path.join(self.test_model_path, self.generic_tf_outfile)
+        (
+            generic_model_object,
+            customized_model_object,
+        ) = self.tf_model.load(out_fn)
+        self.assertEqual(type(generic_model_object), "")
+        self.assertEqual(type(customized_model_object), "")
+
+    def test_sklearn_make_link_prediction_data(self) -> None:
         model_object = self.sklearn_model
         result = model_object.make_link_prediction_data(
                     embedding_file=self.embed_file,
