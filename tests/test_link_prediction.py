@@ -8,6 +8,7 @@ from neat.link_prediction.mlp_model import MLPModel
 from neat.yaml_helper.yaml_helper import YamlHelper
 
 from sklearn.linear_model._logistic import LogisticRegression
+from keras.engine.sequential import Sequential
 
 import numpy as np
 
@@ -19,7 +20,8 @@ class TestLinkPrediction(TestCase):
         cls.embed_file = "tests/resources/test_link_prediction/test_embeddings_test_yaml.csv"
         cls.yhelp_sklearn = YamlHelper(cls.yaml_file_sklearn)
         cls.yhelp_tf = YamlHelper(cls.yaml_file_tf)
-        cls.test_model_path = "tests/resources/test_link_prediction/"
+        cls.test_model_path = "tests/resources/test_output_data_dir/"
+        cls.test_load_path = "tests/resources/test_link_prediction/"
         cls.sklearn_model = SklearnModel(
             (cls.yhelp_sklearn.classifiers())[0], cls.test_model_path
         )
@@ -76,8 +78,11 @@ class TestLinkPrediction(TestCase):
             os.path.join(self.test_model_path, self.custom_tf_outfile)
         )
 
+    # Note that the load tests *do not* use the files created by
+    # the save tests above, so they may remain independent.
+
     def test_sklearn_load(self) -> None:
-        out_fn = os.path.join(self.test_model_path, self.generic_sklearn_outfile)
+        out_fn = os.path.join(self.test_load_path, self.generic_sklearn_outfile)
         (
             generic_model_object,
             customized_model_object,
@@ -86,13 +91,13 @@ class TestLinkPrediction(TestCase):
         self.assertEqual(type(customized_model_object), SklearnModel)
 
     def test_tf_load(self) -> None:
-        out_fn = os.path.join(self.test_model_path, self.generic_tf_outfile)
+        out_fn = os.path.join(self.test_load_path, self.generic_tf_outfile)
         (
             generic_model_object,
             customized_model_object,
         ) = self.tf_model.load(out_fn)
-        self.assertEqual(type(generic_model_object), "")
-        self.assertEqual(type(customized_model_object), "")
+        self.assertEqual(type(generic_model_object), Sequential)
+        self.assertEqual(type(customized_model_object), MLPModel)
 
     def test_sklearn_make_link_prediction_data(self) -> None:
         model_object = self.sklearn_model
