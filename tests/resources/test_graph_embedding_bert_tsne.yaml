@@ -38,6 +38,7 @@ embeddings:
       return_weight: 1.0  # 1/p
       explore_weight: 1.0  # 1/q
       iterations: 5 # typically 20
+      use_mirrored_strategy: False
   tsne:  # comment this out if you don't want a TSNE plot
     n: 230 # how many processors to use
     tsne_file_name: test_embedding_tsne.png
