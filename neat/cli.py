@@ -44,7 +44,7 @@ def run(config: str) -> None:
     yhelp = YamlHelper(config)
 
     # pre run checks for failing early
-    if not pre_run_checks(yhelp=yhelp):
+    if not pre_run_checks(yhelp=yhelp, check_s3_credentials=yhelp.do_upload()):
         raise RuntimeError("Failed pre_run_check")
 
     # generate embeddings if config has 'embeddings' block
