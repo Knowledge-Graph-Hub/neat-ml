@@ -8,6 +8,9 @@ def make_tsne(
         graph: Graph,
         tsne_outfile: str,
         embedding_file: str,
+        color_nodes: bool,
+        node_file: str,
+        node_property_for_color: str
 ) -> None:
     """
     :param graph: Ensmallen graph object
@@ -29,14 +32,14 @@ def make_tsne(
     # colors: Optional[Any] = None
     # cmap: Optional[Any] = None
     # ticks: Optional[Any] = None
-    # if color_nodes:
-    #     nodes = pd.read_csv(node_file, sep='\t')
-    #     categories = nodes[node_property_for_color].astype(str)
-    #     category_names = list(set(categories))
-    #     category_names.sort()
-    #     colors = [category_names.index(i) for i in categories]
-    #     cmap = plt.cm.get_cmap('jet', len(category_names))
-    #     ticks = list(range(len(category_names)))
+    if color_nodes:
+        nodes = pd.read_csv(node_file, sep='\t')
+        categories = nodes[node_property_for_color].astype(str)
+        category_names = list(set(categories))
+        category_names.sort()
+        colors = [category_names.index(i) for i in categories]
+        cmap = plt.cm.get_cmap('jet', len(category_names))
+        ticks = list(range(len(category_names)))
 
     node_embeddings = pd.read_csv(embedding_file, index_col=0, header=None)
     # tsne_embeddings = TSNE(n_jobs=num_processors).fit_transform(node_embeddings)
@@ -50,5 +53,5 @@ def make_tsne(
     visualizer = GraphVisualization(graph)
     visualizer.fit_transform_nodes(node_embeddings)
 
-    figure, _ = visualizer.plot_node_types(show_legend=False)
+    figure, _ = visualizer.plot_node_types(show_legend=True)
     figure.savefig(tsne_outfile)
