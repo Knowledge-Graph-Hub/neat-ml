@@ -222,9 +222,6 @@ class YamlHelper:
             'graph': graph,
             'tsne_outfile': self.tsne_outfile(),
             'embedding_file': self.embedding_outfile(),
-            'color_nodes': self.yaml['embeddings']['tsne']['color_nodes'],
-            'node_file': self.yaml['embeddings']['tsne']['node_file'],
-            'node_property_for_color': self.yaml['embeddings']['tsne']['node_property_for_color']
         }
         return make_tsne_args
 
