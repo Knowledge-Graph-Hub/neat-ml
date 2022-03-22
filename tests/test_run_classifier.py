@@ -3,7 +3,7 @@ import pickle
 from posixpath import dirname
 import tempfile
 from unittest import TestCase, skip
-from neat.run_classifier.run_classifier import predict_links
+from neat.run_classifier.run_classifier import predict_links, get_custom_model
 from neat.yaml_helper.yaml_helper import YamlHelper
 from ensmallen import Graph
 import pandas as pd
@@ -15,16 +15,18 @@ class TestRunClassifier(TestCase):
         cls.yaml_file = "tests/resources/test.yaml"
         cls.yhelp = YamlHelper(cls.yaml_file)
         cls.graph = Graph.from_csv(**cls.yhelp.main_graph_args())
-        cls.test_embeddings = pd.read_csv(
-            "tests/resources/test_embeddings.tsv", header=None
-        )
-        cls.test_model_path = "tests/resources/model_lr_test_yaml.pkl"
-        # cls.model = pickle.load(
-        #     open(
-        #         "tests/resources/test_output_data_dir/model_lr_test_yaml.h5",
-        #         "rb",
-        #     )
-        # )
+        cls.test_embeddings =  "tests/resources/test_run_classifier/test_embeddings_test_yaml.csv"
+        cls.test_model_path = "tests/resources/test_run_classifier/model_lr_test_yaml.h5"
+        cls.training_graph_args = {"directed": False,
+                            "node_path": 'tests/resources/test_graphs/pos_train_nodes.tsv',
+                            "edge_path": 'tests/resources/test_graphs/pos_train_edges.tsv',
+                            "verbose": True,
+                            "nodes_column": 'id',
+                            "node_list_node_types_column": 'category',
+                            "default_node_type": 'biolink:NamedThing',
+                            "sources_column": 'subject',
+                            "destinations_column": 'object',
+                            "default_edge_type": 'biolink:related_to'}
 
     def setUp(self) -> None:
         pass
@@ -34,17 +36,22 @@ class TestRunClassifier(TestCase):
 
     def test_run_classifier(self):
         # temp = tempfile.NamedTemporaryFile().name  # once we have test firmed up
-        outfile = "/dev/null"
-        # outfile = os.path.join(dirname(__file__), "resources/tmp/test.tsv")
-        with open(self.test_model_path, "rb") as f:
+        # outfile = "/dev/null"
+        outdir = "tests/resources/tmp/"
+        if not os.path.isdir(outdir):
+            os.mkdir(outdir)
+        outfile = os.path.join(dirname(__file__), "resources/tmp/test.tsv")
+        with open(get_custom_model(self.test_model_path), "rb") as f:
             m = pickle.load(f)
-            predict_links(
+
+        predict_links(
                 graph=self.graph,
+                training_graph_args=self.training_graph_args,
                 model=m,
                 node_types=[["biolink:Gene"], ["biolink:Protein"]],
                 cutoff=0.8,
                 output_file=outfile,
-                embeddings=self.test_embeddings,
-                edge_method="foo",
-                verbose=False,
-            )
+                embeddings_file=self.test_embeddings,
+                edge_method="Average",
+                verbose=True,
+        )
