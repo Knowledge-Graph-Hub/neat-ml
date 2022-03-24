@@ -41,14 +41,14 @@ class Model:
         pass
 
     @classmethod
-    def make_link_prediction_data(
+    def make_train_valid_data(
         self,
         embedding_file: str,
         training_graph_args: dict,
         edge_method: str,
-        pos_validation_args: Optional[dict]  = None,
-        neg_training_args: Optional[dict]  = None,
-        neg_validation_args: Optional[dict]  = None,
+        pos_validation_args: Optional[dict] = None,
+        neg_training_args: Optional[dict] = None,
+        neg_validation_args: Optional[dict] = None,
     ) -> Tuple[Tuple, Tuple]:
         """Prepare training and validation data for training link prediction classifers
 
@@ -79,7 +79,11 @@ class Model:
         ]:
             if not graph_args:
                 if name in ["neg_training", "neg_validation"]:
-                    graphs[name] = (graphs["pos_training"]).sample_negatives(negatives_number=100)
+                    graphs[name] = (graphs["pos_training"]).sample_negatives(
+                        negatives_number=graphs[
+                            "pos_training"
+                        ].get_edges_number()
+                    )
                 else:
                     these_params = copy.deepcopy(training_graph_args)
                     graphs[name] = Graph.from_csv(**these_params)
@@ -88,6 +92,7 @@ class Model:
 
         # create transformer object to convert graphs into edge embeddings
         lpt = LinkPredictionTransformer(method=edge_method)
+        # TODO: Save embedding(?)
         lpt.fit(
             embedding
         )  # pass node embeddings to be used to create edge embeddings
@@ -102,9 +107,15 @@ class Model:
         return (train_edges, train_labels), (valid_edges, valid_labels)
 
     @classmethod
-    def make_link_prediction_predict_data(
-        self, embedding_file: str, trained_graph_args: dict, edge_method: str
-    ) -> Tuple:
+    def make_link_predictions(
+        self,
+        embedding_file: str,
+        trained_graph_args: dict,
+        edge_method: str,
+        pos_validation_args: Optional[dict] = None,
+        neg_training_args: Optional[dict] = None,
+        neg_validation_args: Optional[dict] = None,
+    ) -> np.ndarray:
         """Prepare training and validation data for training link prediction classifers
 
         Args:
@@ -112,23 +123,31 @@ class Model:
             trained_graph_args: EnsmallenGraph arguments to load training graph
             edge_method: edge embedding method to use (average, L1, L2, etc)
         Returns:
-            A tuple of tuples
+            A NumPy Array embeddings that represent prediction edges.
 
         """
         embedding = pd.read_csv(embedding_file, index_col=0, header=None)
+        # Get 'directed' value from trained_graph_args
+        neg_training_args["directed"] = trained_graph_args["directed"]
 
         # load graphs
-        graphs = {"trained_graph": Graph.from_csv(**trained_graph_args)}
+        graphs = {
+            "trained_graph": Graph.from_csv(**trained_graph_args),
+            "negative_graph": Graph.from_csv(**neg_training_args),
+        }
 
         # create transformer object to convert graphs into edge embeddings
         lpt = LinkPredictionTransformer(method=edge_method)
+        # TODO: Instead of fit, use embeddings that was previously exported.
         lpt.fit(
             embedding
         )  # pass node embeddings to be used to create edge embeddings
-        predict_edges, _ = lpt.transform(
-            positive_graph=graphs["trained_graph"], negative_graph=[[]]
+
+        predict_edges = lpt.transform(
+            positive_graph=graphs["trained_graph"],
+            negative_graph=graphs["negative_graph"],
         )
-        return predict_edges, _
+        return predict_edges
 
     @classmethod
     def dynamically_import_class(self, reference) -> object:

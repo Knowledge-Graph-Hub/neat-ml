@@ -55,6 +55,7 @@ def gen_src_dst_pair(
 def predict_links(
     graph: Graph,
     training_graph_args: dict,
+    negative_graph_args: dict,
     model: object,
     node_types: List[List],
     cutoff: float,
@@ -86,9 +87,6 @@ def predict_links(
     # ]
 
     embeddings = pd.read_csv(embeddings_file, sep=",", header=None)
-
-    #import pdb
-    #pdb.set_trace()
 
     embedding_node_names = list(embeddings[0])
     with open(output_file, "w") as f:
@@ -134,11 +132,16 @@ def predict_links(
                 # TODO: create new embedding set based on source_embed and destination_embed
                 #       then pass to make_link_prediction_predict_data (not in the loop)
 
-        predict_edges = model.make_link_prediction_predict_data(embedding_file=embeddings_file,
-                                                                trained_graph_args=training_graph_args,
-                                                                edge_method=edge_method)
+        predict_edges = model.make_link_predictions(
+            embedding_file=embeddings_file,
+            trained_graph_args=training_graph_args,
+            neg_training_args=negative_graph_args,
+            edge_method=edge_method,
+        )
+
         p = model.predict_proba(predict_edges)
         f.write("\t".join([src, dst, p]) + "\n")
+
 
 # This may be moved if needed
 def get_custom_model(model_file_path: str) -> str:
@@ -151,6 +154,10 @@ def get_custom_model(model_file_path: str) -> str:
     :return: str, path to custom model
     """
 
-    custom_model_path = (model_file_path.split("."))[0] + "_custom." + (model_file_path.split("."))[1] 
+    custom_model_path = (
+        (model_file_path.split("."))[0]
+        + "_custom."
+        + (model_file_path.split("."))[1]
+    )
 
     return custom_model_path

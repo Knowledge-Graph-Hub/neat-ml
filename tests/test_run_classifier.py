@@ -15,18 +15,28 @@ class TestRunClassifier(TestCase):
         cls.yaml_file = "tests/resources/test.yaml"
         cls.yhelp = YamlHelper(cls.yaml_file)
         cls.graph = Graph.from_csv(**cls.yhelp.main_graph_args())
-        cls.test_embeddings =  "tests/resources/test_run_classifier/test_embeddings_test_yaml.csv"
-        cls.test_model_path = "tests/resources/test_run_classifier/model_lr_test_yaml.h5"
-        cls.training_graph_args = {"directed": False,
-                            "node_path": 'tests/resources/test_graphs/pos_train_nodes.tsv',
-                            "edge_path": 'tests/resources/test_graphs/pos_train_edges.tsv',
-                            "verbose": True,
-                            "nodes_column": 'id',
-                            "node_list_node_types_column": 'category',
-                            "default_node_type": 'biolink:NamedThing',
-                            "sources_column": 'subject',
-                            "destinations_column": 'object',
-                            "default_edge_type": 'biolink:related_to'}
+        cls.test_embeddings = (
+            "tests/resources/test_run_classifier/test_embeddings_test_yaml.csv"
+        )
+        cls.test_model_path = (
+            "tests/resources/test_run_classifier/model_lr_test_yaml.h5"
+        )
+        cls.training_graph_args = {
+            "directed": False,
+            "node_path": "tests/resources/test_graphs/pos_train_nodes.tsv",
+            "edge_path": "tests/resources/test_graphs/pos_train_edges.tsv",
+            "verbose": True,
+            "nodes_column": "id",
+            "node_list_node_types_column": "category",
+            "default_node_type": "biolink:NamedThing",
+            "sources_column": "subject",
+            "destinations_column": "object",
+            "default_edge_type": "biolink:related_to",
+        }
+        cls.negative_graph_args = {
+            "directed": False,
+            "edge_path": "tests/resources/test_graphs/neg_train_edges.tsv",
+        }
 
     def setUp(self) -> None:
         pass
@@ -45,13 +55,14 @@ class TestRunClassifier(TestCase):
             m = pickle.load(f)
 
         predict_links(
-                graph=self.graph,
-                training_graph_args=self.training_graph_args,
-                model=m,
-                node_types=[["biolink:Gene"], ["biolink:Protein"]],
-                cutoff=0.8,
-                output_file=outfile,
-                embeddings_file=self.test_embeddings,
-                edge_method="Average",
-                verbose=True,
+            graph=self.graph,
+            training_graph_args=self.training_graph_args,
+            negative_graph_args=self.negative_graph_args,
+            model=m,
+            node_types=[["biolink:Gene"], ["biolink:Protein"]],
+            cutoff=0.8,
+            output_file=outfile,
+            embeddings_file=self.test_embeddings,
+            edge_method="Average",
+            verbose=True,
         )
