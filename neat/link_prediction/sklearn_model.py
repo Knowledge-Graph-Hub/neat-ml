@@ -26,13 +26,14 @@ class SklearnModel(Model):
         ) as f:
             pickle.dump(self.model, f)
 
-        fn, ext = self.config["model"]["outfile"].split(".")
+        fn, ext = os.path.splitext(self.config["model"]["outfile"])
         model_outfile = fn + "_custom." + ext
         with open(os.path.join(self.outdir, model_outfile), "wb") as f:
             pickle.dump(self, f)
 
     def load(self, path: str) -> tuple():
-        fn, ext = path.split(".")
+
+        fn, ext = os.path.splitext(path)
         custom_model_filename = fn + "_custom." + ext
         with open(path, "rb") as mf1:
             generic_model_object = pickle.load(mf1)

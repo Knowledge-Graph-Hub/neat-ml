@@ -127,7 +127,7 @@ class MLPModel(Model):
             os.path.join(self.outdir, self.config["model"]["outfile"])
         )
 
-        fn, ext = self.config["model"]["outfile"].split(".")
+        fn, ext = os.path.splitext(self.config["model"]["outfile"])
         model_outfile = fn + "_custom." + ext
 
         with open(os.path.join(self.outdir, model_outfile), "wb") as f:
@@ -135,14 +135,14 @@ class MLPModel(Model):
 
     def load(self, path: str) -> tuple():
 
-        fn, ext = path.split(".")
+        fn, ext = os.path.splitext(path)
         custom_model_filename = fn + "_custom." + ext
         generic_model_object = tf.keras.models.load_model(path)
 
         with open(custom_model_filename, "rb") as mf2:
             custom_model_object = pickle.load(mf2)
 
-        #import pdb
-        #pdb.set_trace()
+        # import pdb
+        # pdb.set_trace()
 
         return generic_model_object, custom_model_object

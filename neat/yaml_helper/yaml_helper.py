@@ -339,8 +339,7 @@ class YamlHelper:
         model = self.get_classifier_from_id(
             classifier_args["classifier_model_id"]
         )
-        generic_model_filename = model["model"]["outfile"]
-        fn, ext = generic_model_filename.split(".")
+        fn, ext = os.path.splitext(model["model"]["outfile"])
         custom_model_filename = fn + "_custom." + ext
 
         classifier_args_dict = {}

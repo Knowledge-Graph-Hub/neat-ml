@@ -143,7 +143,7 @@ class Model:
             embedding
         )  # pass node embeddings to be used to create edge embeddings
 
-        predict_edges = lpt.transform(
+        predict_edges, _ = lpt.transform(
             positive_graph=graphs["trained_graph"],
             negative_graph=graphs["negative_graph"],
         )
