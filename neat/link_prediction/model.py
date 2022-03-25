@@ -72,6 +72,7 @@ class Model:
 
         # load graphs
         graphs = {"pos_training": Graph.from_csv(**training_graph_args)}
+        is_directed = graphs["pos_training"].is_directed()
         for name, graph_args in [
             ("pos_validation", pos_validation_args),
             ("neg_training", neg_training_args),
@@ -79,10 +80,12 @@ class Model:
         ]:
             if not graph_args:
                 if name in ["neg_training", "neg_validation"]:
+                    neg_edge_number = graphs["pos_training"].get_edges_number()
+                    if not is_directed:
+                        neg_edge_number = neg_edge_number * 2
+
                     graphs[name] = (graphs["pos_training"]).sample_negatives(
-                        negatives_number=graphs[
-                            "pos_training"
-                        ].get_edges_number()
+                        negatives_number=neg_edge_number
                     )
                 else:
                     these_params = copy.deepcopy(training_graph_args)
@@ -92,10 +95,11 @@ class Model:
 
         # create transformer object to convert graphs into edge embeddings
         lpt = LinkPredictionTransformer(method=edge_method)
-        # TODO: Save embedding(?)
+
         lpt.fit(
             embedding
         )  # pass node embeddings to be used to create edge embeddings
+        # TODO: Save lpt object(?)
         train_edges, train_labels = lpt.transform(
             positive_graph=graphs["pos_training"],
             negative_graph=graphs["neg_training"],
