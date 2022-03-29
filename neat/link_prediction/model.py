@@ -146,11 +146,17 @@ class Model:
         lpt.fit(
             embedding
         )  # pass node embeddings to be used to create edge embeddings
+        with open("test.pickle", "wb") as file:
+            pickle.dump(lpt, file)
 
         predict_edges, _ = lpt.transform(
             positive_graph=graphs["trained_graph"],
             negative_graph=graphs["negative_graph"],
         )
+        import pdb
+
+        pdb.set_trace()
+
         return predict_edges
 
     @classmethod
