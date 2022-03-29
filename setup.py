@@ -66,9 +66,9 @@ setup(
         'click',
         'pyyaml',
         'tensorflow',
-        'ensmallen==0.6.6',
+        'ensmallen==0.7.0.dev6',
+        'embiggen==0.10.0.dev3',
         'opencv-python',  # for embiggen's 4d tSNEs
-        'embiggen==0.9.3',
         'numpy',
         'matplotlib',
         'sanitize_ml_labels',
