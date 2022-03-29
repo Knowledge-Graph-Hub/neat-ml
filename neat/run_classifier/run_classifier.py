@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List
+from typing import List, Union
 from warnings import warn
 
 from embiggen import EdgeTransformer  # type: ignore
@@ -59,8 +59,8 @@ def predict_links(
     model: object,
     node_types: List[List],
     cutoff: float,
-    output_file: Path,
-    embeddings_file: Path,
+    output_file: Union[str, Path],
+    embeddings_file: Union[str, Path],
     edge_method: str,  # [Average etc.]
     ignore_existing_edges: bool = True,
     verbose: bool = True,
