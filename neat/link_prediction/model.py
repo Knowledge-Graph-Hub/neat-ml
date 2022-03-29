@@ -1,5 +1,4 @@
 import os
-import pickle
 
 import numpy as np  # type: ignore
 import copy
@@ -45,10 +44,10 @@ class Model:
         self,
         embedding_file: str,
         training_graph_args: dict,
-        edge_method: str,
         pos_validation_args: Optional[dict] = None,
         neg_training_args: Optional[dict] = None,
         neg_validation_args: Optional[dict] = None,
+        edge_method: str = 'Average'
     ) -> Tuple[Tuple, Tuple]:
         """Prepare training and validation data for training link prediction classifers
 
@@ -63,12 +62,8 @@ class Model:
             A tuple of tuples
 
         """
-        embedding = pd.read_csv(embedding_file, index_col=0, header=None)
 
-        # TODO: re-evaluate this behavior
-        # If a positive validation set isn't provided, we may
-        # want to just skip the validation.
-        # Same with evaluating against negative train/validate.
+        embedding = pd.read_csv(embedding_file, index_col=0, header=None)
 
         # load graphs
         graphs = {"pos_training": Graph.from_csv(**training_graph_args)}
@@ -89,8 +84,11 @@ class Model:
                     )
                 else:
                     these_params = copy.deepcopy(training_graph_args)
+                    if "directed" not in these_params.keys():
+                        these_params["directed"] = training_graph_args["directed"]
                     graphs[name] = Graph.from_csv(**these_params)
             else:
+                graph_args["directed"] = training_graph_args["directed"]
                 graphs[name] = Graph.from_csv(**graph_args)
 
         # create transformer object to convert graphs into edge embeddings

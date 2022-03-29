@@ -72,6 +72,7 @@ def run(config: str) -> None:
                 raise NotImplementedError(f"{model} isn't implemented yet")
 
             model.compile()
+
             train_data, validation_data = model.make_train_valid_data(
                 yhelp.embedding_outfile(),
                 yhelp.main_graph_args(),
