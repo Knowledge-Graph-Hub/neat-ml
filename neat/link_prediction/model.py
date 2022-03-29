@@ -47,7 +47,7 @@ class Model:
         pos_validation_args: Optional[dict] = None,
         neg_training_args: Optional[dict] = None,
         neg_validation_args: Optional[dict] = None,
-        edge_method: str = 'Average'
+        edge_method: str = "Average",
     ) -> Tuple[Tuple, Tuple]:
         """Prepare training and validation data for training link prediction classifers
 
@@ -85,7 +85,9 @@ class Model:
                 else:
                     these_params = copy.deepcopy(training_graph_args)
                     if "directed" not in these_params.keys():
-                        these_params["directed"] = training_graph_args["directed"]
+                        these_params["directed"] = training_graph_args[
+                            "directed"
+                        ]
                     graphs[name] = Graph.from_csv(**these_params)
             else:
                 graph_args["directed"] = training_graph_args["directed"]
@@ -144,16 +146,11 @@ class Model:
         lpt.fit(
             embedding
         )  # pass node embeddings to be used to create edge embeddings
-        with open("test.pickle", "wb") as file:
-            pickle.dump(lpt, file)
 
         predict_edges, _ = lpt.transform(
             positive_graph=graphs["trained_graph"],
             negative_graph=graphs["negative_graph"],
         )
-        import pdb
-
-        pdb.set_trace()
 
         return predict_edges
 
