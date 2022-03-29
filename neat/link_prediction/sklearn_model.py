@@ -18,7 +18,7 @@ class SklearnModel(Model):
         self.model.predict(*predict_data)
 
     def predict_proba(self, predict_data):
-        self.model.predict_proba(*predict_data)
+        self.model.predict_proba(predict_data)
 
     def save(self):
         with open(
