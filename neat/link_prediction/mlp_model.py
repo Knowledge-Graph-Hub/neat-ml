@@ -142,7 +142,4 @@ class MLPModel(Model):
         with open(custom_model_filename, "rb") as mf2:
             custom_model_object = pickle.load(mf2)
 
-        # import pdb
-        # pdb.set_trace()
-
         return generic_model_object, custom_model_object
