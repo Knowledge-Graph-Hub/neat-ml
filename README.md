@@ -12,7 +12,7 @@ NEAT is a flexible pipeline for:
 ## Quick Start
 ```
 git clone https://github.com/Knowledge-Graph-Hub/NEAT.git && cd NEAT && pip install .
-neat run --config quickstart.yaml
+neat run --config neat_quickstart.yaml
 ```
 NEAT will write graph embeddings to a new `quickstart_output` directory.
 
