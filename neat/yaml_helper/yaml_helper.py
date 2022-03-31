@@ -360,9 +360,7 @@ class YamlHelper:
             self.outdir(), classifier_args["outfile"]
         )
 
-        classifier_args_dict["embeddings"] = pd.read_csv(
-            self.embedding_outfile(), sep=",", header=None
-        )
+        classifier_args_dict["embeddings_file"] = self.embedding_outfile()
         classifier_args_dict["edge_method"] = model["edge_method"]
 
         return classifier_args_dict
