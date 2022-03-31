@@ -9,6 +9,13 @@ NEAT is a flexible pipeline for:
 - Making predictions
 - Creating well formatted output and metrics for the predictions
 
+## Quick Start
+```
+git clone https://github.com/Knowledge-Graph-Hub/NEAT.git && cd NEAT && pip install .
+neat run --config neat_quickstart.yaml
+```
+NEAT will write graph embeddings to a new `quickstart_output` directory.
+
 ## Requirements
 
 This pipeline has [Embiggen](https://github.com/monarch-initiative/embiggen) and [tensorflow](https://github.com/tensorflow/tensorflow) as major dependencies.
