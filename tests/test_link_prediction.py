@@ -35,10 +35,10 @@ class TestLinkPrediction(TestCase):
         cls.generic_tf_outfile = ((cls.yhelp_tf.classifiers())[0])["model"][
             "outfile"
         ]
-        fn_sklearn, ext_sklearn = cls.generic_sklearn_outfile.split(".")
-        fn_tf, ext_tf = cls.generic_tf_outfile.split(".")
-        cls.custom_sklearn_outfile = fn_sklearn + "_custom." + ext_sklearn
-        cls.custom_tf_outfile = fn_tf + "_custom." + ext_tf
+        fn_sklearn, ext_sklearn = os.path.splitext(cls.generic_sklearn_outfile)
+        fn_tf, ext_tf = os.path.splitext(cls.generic_tf_outfile)
+        cls.custom_sklearn_outfile = fn_sklearn + "_custom" + ext_sklearn
+        cls.custom_tf_outfile = fn_tf + "_custom" + ext_tf
         cls.training_graph_args = {
             "directed": False,
             "node_path": "tests/resources/test_graphs/pos_train_nodes.tsv",

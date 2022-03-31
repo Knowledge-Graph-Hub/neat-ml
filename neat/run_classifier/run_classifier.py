@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 from typing import List, Union
 from warnings import warn
@@ -155,9 +156,8 @@ def get_custom_model(model_file_path: str) -> str:
     """
 
     custom_model_path = (
-        (model_file_path.split("."))[0]
-        + "_custom."
-        + (model_file_path.split("."))[1]
+        os.path.splitext(model_file_path)[0]
+        + "_custom"
+        + os.path.splitext(model_file_path)[1]
     )
-
     return custom_model_path
