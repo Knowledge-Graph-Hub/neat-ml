@@ -340,7 +340,7 @@ class YamlHelper:
             classifier_args["classifier_model_id"]
         )
         fn, ext = os.path.splitext(model["model"]["outfile"])
-        custom_model_filename = fn + "_custom." + ext
+        custom_model_filename = fn + "_custom" + ext
 
         classifier_args_dict = {}
         classifier_args_dict["graph"] = Graph.from_csv(
