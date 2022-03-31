@@ -1,4 +1,5 @@
 import os
+import pickle
 
 import numpy as np  # type: ignore
 import copy
@@ -99,7 +100,11 @@ class Model:
         lpt.fit(
             embedding
         )  # pass node embeddings to be used to create edge embeddings
+
         # TODO: Save lpt object(?)
+        # with open("test.pickle", "wb") as file:
+        #     pickle.dump(lpt, file)
+
         train_edges, train_labels = lpt.transform(
             positive_graph=graphs["pos_training"],
             negative_graph=graphs["neg_training"],
