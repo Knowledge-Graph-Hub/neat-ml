@@ -92,6 +92,10 @@ def run(config: str) -> None:
     if yhelp.do_apply_classifier():
         # take graph, classifier, biolink node types and cutoff
         classifier_kwargs = yhelp.make_classifier_args()
+
+        # TODO: refactor predict_links and downstream methods
+        # so they don't need 'training_graph_args' and 'negative_graph_args'
+
         predict_links(**classifier_kwargs)
 
     if yhelp.do_upload():

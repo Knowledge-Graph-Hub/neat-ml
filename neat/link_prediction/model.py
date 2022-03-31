@@ -135,6 +135,12 @@ class Model:
             A NumPy Array embeddings that represent prediction edges.
 
         """
+
+        # TODO: Refactor - this should only take a pre-built LPT object (from make_train_valid_data)
+        #       the node embeddings, and
+        #       edge_method
+        # not all the graph details - we already have embeddings for them
+
         embedding = pd.read_csv(embedding_file, index_col=0, header=None)
         # Get 'directed' value from trained_graph_args
         neg_training_args["directed"] = trained_graph_args["directed"]
