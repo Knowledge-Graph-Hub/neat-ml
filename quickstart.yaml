@@ -26,3 +26,7 @@ embeddings:
     return_weight: 1.0  # 1/p
     explore_weight: 1.0  # 1/q
     iterations: 5 # typically 20
+    use_mirrored_strategy: False
+  
+  tsne:
+    tsne_file_name: tsne.png
