@@ -171,6 +171,19 @@ class TestYamlHelper(TestCase):
         self.assertTrue(mock_download_file.called)
         self.assertEqual(2, mock_download_file.call_count)
 
+    @mock.patch('neat.yaml_helper.yaml_helper.download_file')
+    def test_embeddings_url_converted_to_path(self, mock_download_file):
+        this_yh = YamlHelper('tests/resources/test_url_for_embeddings.yaml')
+        self.assertFalse(is_url(this_yh.embedding_outfile()))
+        self.assertEqual('output_data/https___someremoteurl.com_embeddings.tsv',
+                         this_yh.embedding_outfile())
+
+    @mock.patch('neat.yaml_helper.yaml_helper.download_file')
+    def test_embeddings_url_file_downloaded(self, mock_download_file):
+        this_yh = YamlHelper('tests/resources/test_url_for_embeddings.yaml')
+        this_yh.embedding_outfile()
+        self.assertTrue(mock_download_file.called)
+
     @mock.patch('neat.yaml_helper.yaml_helper.Request')
     @mock.patch('neat.yaml_helper.yaml_helper.urlopen')
     @mock.patch('neat.yaml_helper.yaml_helper.open')

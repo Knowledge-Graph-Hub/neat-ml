@@ -1,0 +1,11 @@
+embeddings:
+  embedding_file_name: https://someremoteurl.com/embeddings.tsv
+  embedding_history_file_name: embedding_history.json
+  node_embedding_params:
+      node_embedding_method_name: SkipGram
+      walk_length: 10 # typically 100 or so
+      batch_size: 128 # typically 512? or more
+      window_size: 4
+      return_weight: 1.0  # 1/p
+      explore_weight: 1.0  # 1/q
+      iterations: 5 # typically 20
