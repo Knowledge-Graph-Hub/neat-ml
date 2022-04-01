@@ -9,6 +9,7 @@ def pre_run_checks(yhelp: YamlHelper,
                    check_s3_credentials: bool = True,
                    check_s3_bucket: bool = True,
                    check_s3_bucket_dir: bool = True,
+                   check_file_extensions: bool = True,
                    ) -> bool:
     """Some checks before run, to prevent frustrating failure at the end of long runs
 
@@ -18,6 +19,8 @@ def pre_run_checks(yhelp: YamlHelper,
             upload dir exists, this will pass
         check_s3_bucket: check that s3 bucket exists on s3
         check_s3_bucket_dir: check that s3 bucket directory doesn't already exist
+        check_file_extensions: check that files are in expected formats (tsv or tar.gz)
+            at least based on their extensions
 
     Returns:
         Boolean pass or fail
@@ -73,6 +76,17 @@ def pre_run_checks(yhelp: YamlHelper,
                     return_val = False
         except ClientError as ce:
             warnings.warn(f"Client error when trying S3 credentials: {ce}")
+            return_val = False
+
+    if check_file_extensions and yhelp.main_graph_args():
+        if not (yhelp.main_graph_args()['node_path']).lower().endswith(('.tsv', '.tar.gz')) \
+            or not (yhelp.main_graph_args()['edge_path']).lower().endswith(('.tsv', '.tar.gz')):
+            warnings.warn(f"Node or edge file may not be TSV or tar.gz format.")
+            return_val = False
+
+    if check_file_extensions and yhelp.do_embeddings():
+        if not (yhelp.embedding_outfile()).lower().endswith(('.tsv', '.tar.gz')):
+            warnings.warn(f"Embedding file may not be TSV or tar.gz format.")
             return_val = False
 
     return return_val
