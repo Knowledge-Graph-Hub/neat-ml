@@ -1,9 +1,7 @@
-import copy
 import functools
 import logging
 import os
 import string
-import urllib
 from typing import Optional, Callable, Any, Union
 from urllib.request import Request, urlopen
 
@@ -175,8 +173,16 @@ class YamlHelper:
         return 'embeddings' in self.yaml
 
     def embedding_outfile(self) -> str:
-        return os.path.join(self.outdir(),
-                            self.yaml['embeddings']['embedding_file_name'])
+        filepath = self.yaml['embeddings']['embedding_file_name']
+        if is_url(filepath):
+            url_as_filename = \
+                ''.join(c if c in VALID_CHARS else "_" for c in filepath)
+            outfile = os.path.join(self.outdir(), url_as_filename)
+            download_file(filepath, outfile)
+            return outfile
+        else:
+            return os.path.join(self.outdir(),
+                            filepath)
 
     @catch_keyerror
     def embedding_history_outfile(self):
