@@ -34,7 +34,8 @@ class TestPreRunChecks(TestCase):
         mock_boto_client.side_effect = ClientError(error_response=mock_boto_client,
                                                    operation_name=mock_boto_client)
         return_val = pre_run_checks(YamlHelper('tests/resources/test_no_upload.yaml'),
-                                    check_s3_credentials=True)
+                                    check_s3_credentials=True,
+                                    check_file_extensions=False)
         # returns true if bad creds, but we don't have upload key in yaml
         self.assertTrue(return_val)
         self.assertTrue(mock_boto_client.called)
@@ -44,8 +45,15 @@ class TestPreRunChecks(TestCase):
         mock_boto_client.side_effect = ClientError(error_response=mock_boto_client,
                                                    operation_name=mock_boto_client)
         return_val = pre_run_checks(YamlHelper('tests/resources/test_no_upload.yaml'),
-                                    check_s3_credentials=False)
+                                    check_s3_credentials=False,
+                                    check_file_extensions=False)
         # returns true if bad creds, but we don't want to check credentials
         self.assertTrue(return_val)
+    
+    def test_pre_run_check_bad_file_format(self) -> None:
+        return_val = pre_run_checks(YamlHelper('tests/resources/test_bad_file_format.yaml'),
+                                    check_s3_credentials=False,
+                                    check_file_extensions=True)
+        self.assertFalse(return_val)
 
 
