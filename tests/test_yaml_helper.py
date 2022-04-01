@@ -192,3 +192,13 @@ class TestYamlHelper(TestCase):
         for this_mock in [mock_open, mock_urlopen, mock_Request]:
             self.assertTrue(this_mock.called)
             self.assertEqual(1, this_mock.call_count)
+
+    @mock.patch('neat.yaml_helper.yaml_helper.Request')
+    @mock.patch('neat.yaml_helper.yaml_helper.urlopen')
+    @mock.patch('neat.yaml_helper.yaml_helper.open')
+    @mock.patch('tarfile.open')
+    def test_download_compressed_file(self, mock_tarfile_open, mock_open, mock_urlopen, mock_Request):
+        download_file("https://someurl.com/file.tar.gz", outfile="file.tar.gz")
+        for this_mock in [mock_tarfile_open, mock_open, mock_urlopen, mock_Request]:
+            self.assertTrue(this_mock.called)
+            self.assertEqual(1, this_mock.call_count)
