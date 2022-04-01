@@ -4,6 +4,7 @@ import os
 import string
 from typing import Optional, Callable, Any, Union
 from urllib.request import Request, urlopen
+import tarfile
 
 import yaml  # type: ignore
 from ensmallen import Graph  # type: ignore
@@ -50,11 +51,34 @@ def is_valid_path(string_to_check: Union[str, Path]) -> bool:
     
     return False
 
-def download_file(url: str, outfile: str) -> None:
+def download_file(url: str, outfile: str) -> list:
+    """
+    Downloads file at input url to outfile path.
+    URL must point to a TSV or a tar.gz compressed file.
+    (This is checked during pre_run_checks though.)
+    If it's tar.gz, decompress.
+    Return the names of all files as a list.
+    There should be just one,
+    unless the outfile was compressed.
+    """
+
+    outlist = []
+
     req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
     with urlopen(req) as response, open(outfile, 'wb') as fh:  # type: ignore
         data = response.read()  # a `bytes` object
         fh.write(data)
+    if outfile.lower().endswith(".tar.gz"): # Need to decompress
+        decomp_outfile = tarfile.open(outfile)
+        outdir = os.path.dirname(outfile)
+        for filename in decomp_outfile.getnames():
+            outlist.append(os.path.join(outdir,filename))
+        decomp_outfile.extractall(outdir)
+        decomp_outfile.close()
+    else:
+        outlist.append(outfile)
+
+    return outlist
 
 
 def catch_keyerror(f):
