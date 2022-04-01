@@ -4,6 +4,7 @@ import boto3  # type: ignore
 from botocore.exceptions import ClientError  # type: ignore
 from neat.yaml_helper.yaml_helper import YamlHelper
 
+PREFERRED_FORMATS = ('.tsv', '.tar.gz')
 
 def pre_run_checks(yhelp: YamlHelper,
                    check_s3_credentials: bool = True,
@@ -79,13 +80,13 @@ def pre_run_checks(yhelp: YamlHelper,
             return_val = False
 
     if check_file_extensions and yhelp.main_graph_args():
-        if not (yhelp.main_graph_args()['node_path']).lower().endswith(('.tsv', '.tar.gz')) \
-            or not (yhelp.main_graph_args()['edge_path']).lower().endswith(('.tsv', '.tar.gz')):
+        if not (yhelp.main_graph_args()['node_path']).lower().endswith(PREFERRED_FORMATS) \
+            or not (yhelp.main_graph_args()['edge_path']).lower().endswith(PREFERRED_FORMATS):
             warnings.warn(f"Node or edge file may not be TSV or tar.gz format.")
             return_val = False
 
     if check_file_extensions and yhelp.do_embeddings():
-        if not (yhelp.embedding_outfile()).lower().endswith(('.tsv', '.tar.gz')):
+        if not (yhelp.embedding_outfile()).lower().endswith(PREFERRED_FORMATS):
             warnings.warn(f"Embedding file may not be TSV or tar.gz format.")
             return_val = False
 
