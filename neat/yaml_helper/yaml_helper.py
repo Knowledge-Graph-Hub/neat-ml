@@ -73,9 +73,8 @@ def download_file(url: str, outfile: str) -> list:
         outdir = os.path.dirname(outfile)
         for filename in decomp_outfile.getnames():
             outlist.append(os.path.join(outdir,filename))
-        # There should be two files, at most.
         if len(outlist) > 2:
-            raise ValueError(f"{outfile} contains more files than expected!")
+            logging.warning(f"{outfile} contains than two files.")
         decomp_outfile.extractall(outdir)
         decomp_outfile.close()
     else:
