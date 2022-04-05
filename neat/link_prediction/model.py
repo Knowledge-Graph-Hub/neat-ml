@@ -15,6 +15,7 @@ from sklearn.linear_model import LogisticRegression  # type: ignore
 
 import importlib
 
+PICKLE_VERSION = pickle.format_version
 
 class Model:
     def __init__(self, outdir=None):
@@ -101,9 +102,10 @@ class Model:
             embedding
         )  # pass node embeddings to be used to create edge embeddings
 
-        # TODO: Save lpt object(?)
-        # with open("test.pickle", "wb") as file:
-        #     pickle.dump(lpt, file)
+        # Save lpt object
+        lpt_pickle_fn = f'{embedding_file}_{PICKLE_VERSION}_lpt.pickle'
+        with open(lpt_pickle_fn, "wb") as file:
+             pickle.dump(lpt, file)
 
         train_edges, train_labels = lpt.transform(
             positive_graph=graphs["pos_training"],
@@ -119,11 +121,9 @@ class Model:
     def make_link_predictions(
         self,
         embedding_file: str,
-        trained_graph_args: dict,
+        source_embeddings: np.array,
+        destination_embeddings: np.array,
         edge_method: str,
-        pos_validation_args: Optional[dict] = None,
-        neg_training_args: Optional[dict] = None,
-        neg_validation_args: Optional[dict] = None,
     ) -> np.ndarray:
         """Prepare training and validation data for training link prediction classifers
 
@@ -136,31 +136,18 @@ class Model:
 
         """
 
-        # TODO: Refactor - this should only take a pre-built LPT object (from make_train_valid_data)
-        #       the node embeddings, and
-        #       edge_method
-        # not all the graph details - we already have embeddings for them
-
         embedding = pd.read_csv(embedding_file, index_col=0, header=None)
-        # Get 'directed' value from trained_graph_args
-        neg_training_args["directed"] = trained_graph_args["directed"]
 
-        # load graphs
-        graphs = {
-            "trained_graph": Graph.from_csv(**trained_graph_args),
-            "negative_graph": Graph.from_csv(**neg_training_args),
-        }
+        # load transformer object for edge embeddings
+        lpt_pickle_fn = f'{embedding_file}_{PICKLE_VERSION}_lpt.pickle'
+        with open(lpt_pickle_fn, "wb") as file:
+             lpt = pickle.load(file)
 
-        # create transformer object to convert graphs into edge embeddings
-        lpt = LinkPredictionTransformer(method=edge_method)
-        # TODO: Instead of fit, use embeddings that was previously exported.
-        lpt.fit(
-            embedding
-        )  # pass node embeddings to be used to create edge embeddings
+        # What do we need to pass to the LPT?
 
         predict_edges, _ = lpt.transform(
-            positive_graph=graphs["trained_graph"],
-            negative_graph=graphs["negative_graph"],
+            positive_graph=source_embeddings
+            negative_graph=destination_embeddings
         )
 
         return predict_edges

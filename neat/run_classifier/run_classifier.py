@@ -55,8 +55,8 @@ def gen_src_dst_pair(
 
 def predict_links(
     graph: Graph,
-    training_graph_args: dict,
-    negative_graph_args: dict,
+    #training_graph_args: dict,
+    #negative_graph_args: dict,
     model: object,
     node_types: List[List],
     cutoff: float,
@@ -131,12 +131,12 @@ def predict_links(
                 )
 
                 # TODO: create new embedding set based on source_embed and destination_embed
-                #       then pass to make_link_prediction_predict_data (not in the loop)
+                #       then pass to make_link_predictions (not in the loop)
 
         predict_edges = model.make_link_predictions(
-            embedding_file=embeddings_file,
-            trained_graph_args=training_graph_args,
-            neg_training_args=negative_graph_args,
+            embedding_file=embeddings_file, # this should be the new embeddings
+            source_embeddings = source_embed,
+            destination_embeddings = destination_embed,
             edge_method=edge_method,
         )
 
