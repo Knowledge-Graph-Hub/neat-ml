@@ -135,15 +135,35 @@ class YamlHelper:
     def add_indir_to_graph_data(self, graph_data: dict,
                                 keys_to_add_indir: list = ['node_path', 'edge_path']) -> dict:
         """
+        Updates the graph file paths 
+        with their input directory.
+        Also checks for existence of a 
+        graph_path key. If this exists,
+        download and decompress as needed.
+        The node_path and edge_path values
+        will still need to refer to the
+        node/edge filenames.
         :param graph_data - parsed yaml
         :param keys_to_add_indir: what keys to add indir to
         :return:
         """
+
+        graph_path = 'graph_path'
+
+        if graph_path in graph_data:
+            filepath = graph_data[graph_path]
+            if is_url(filepath):
+                url_as_filename = \
+                    ''.join(c if c in VALID_CHARS else "_" for c in filepath)
+                outfile = os.path.join(self.outdir(), url_as_filename)
+                download_file(filepath, outfile)
+
         for k in keys_to_add_indir:
             if k in graph_data:
                 graph_data[k] = os.path.join(self.indir(), graph_data[k])
             else:
                 logging.warning(f"Can't find key {k} in graph_data - skipping (possibly harmless)")
+        
         return graph_data
 
     #
