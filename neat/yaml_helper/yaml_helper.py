@@ -157,6 +157,17 @@ class YamlHelper:
                     ''.join(c if c in VALID_CHARS else "_" for c in filepath)
                 outfile = os.path.join(self.indir(), url_as_filename)
                 download_file(filepath, outfile)
+            # If this was a URL, it already got decompressed.
+            # but if it's local and still compressed, decompress now
+            if filepath.endswith(".tar.gz"):
+                outlist = []
+                decomp_outfile = tarfile.open(filepath)
+                for filename in decomp_outfile.getnames():
+                    outlist.append(os.path.join(self.indir(),filename))
+                if len(outlist) > 2:
+                    logging.warning(f"{outfile} contains than two files.")
+                decomp_outfile.extractall(self.indir())
+                decomp_outfile.close()
 
         for k in keys_to_add_indir:
             if k in graph_data:
