@@ -172,23 +172,26 @@ class TestYamlHelper(TestCase):
         self.assertEqual(2, mock_download_file.call_count)
 
     @mock.patch('neat.yaml_helper.yaml_helper.download_file')
-    @mock.patch('ensmallen.Graph.from_csv')
-    def test_graph_url_converted_to_path(self, mock_from_csv, mock_download_file):
+    @mock.patch('tarfile.open')
+    def test_graph_url_converted_to_path(self, mock_tarfile_open, mock_download_file):
         this_yh = YamlHelper('tests/resources/test_url_for_graph_path.yaml')
-        self.assertTrue(is_url(this_yh.main_graph_args()['graph_path']))
+        self.assertTrue(is_url(this_yh.yaml['graph_data']['graph']['graph_path']))
         this_yh.main_graph_args()
-        self.assertFalse(is_url(this_yh.main_graph_args()['node_path']))
+        self.assertTrue(mock_download_file.called)
+        self.assertTrue(mock_tarfile_open.called)
         self.assertEqual('nodes.tsv',
                          this_yh.main_graph_args()['node_path'])
         self.assertFalse(is_url(this_yh.main_graph_args()['edge_path']))
         self.assertEqual('edges.tsv',
                          this_yh.main_graph_args()['edge_path'])
-
+        
     @mock.patch('neat.yaml_helper.yaml_helper.download_file')
-    def test_graph_url_file_downloaded(self, mock_download_file):
+    @mock.patch('tarfile.open')
+    def test_graph_url_file_downloaded(self, mock_tarfile_open, mock_download_file):
         this_yh = YamlHelper('tests/resources/test_url_for_graph_path.yaml')
         this_yh.main_graph_args()
         self.assertTrue(mock_download_file.called)
+        self.assertTrue(mock_tarfile_open.called)
 
     @mock.patch('neat.yaml_helper.yaml_helper.download_file')
     def test_embeddings_url_converted_to_path(self, mock_download_file):
