@@ -155,7 +155,7 @@ class YamlHelper:
             if is_url(filepath):
                 url_as_filename = \
                     ''.join(c if c in VALID_CHARS else "_" for c in filepath)
-                outfile = os.path.join(self.outdir(), url_as_filename)
+                outfile = os.path.join(self.indir(), url_as_filename)
                 download_file(filepath, outfile)
 
         for k in keys_to_add_indir:
@@ -185,9 +185,9 @@ class YamlHelper:
             if is_url(filepath):
                 url_as_filename = \
                     ''.join(c if c in VALID_CHARS else "_" for c in filepath)
-                outfile = os.path.join(self.outdir(), url_as_filename)
+                outfile = os.path.join(self.indir(), url_as_filename)
                 download_file(filepath, outfile)
-                graph_args_with_indir[pathtype] = outfile
+                graph_args_with_indir[pathtype] = os.path.join(outfile)
             elif not is_valid_path(filepath):
                 raise FileNotFoundError(f"Please check path: {filepath}")
         
