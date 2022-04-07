@@ -56,8 +56,6 @@ class TestRunClassifier(TestCase):
 
         predict_links(
             graph=self.graph,
-            training_graph_args=self.training_graph_args,
-            negative_graph_args=self.negative_graph_args,
             model=m,
             node_types=[["biolink:Gene"], ["biolink:Protein"]],
             cutoff=0.8,

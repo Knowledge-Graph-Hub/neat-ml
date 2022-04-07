@@ -123,7 +123,6 @@ class Model:
         embedding_file: str,
         source_embeddings: np.array,
         destination_embeddings: np.array,
-        edge_method: str,
     ) -> np.ndarray:
         """Prepare training and validation data for training link prediction classifers
 
@@ -135,19 +134,22 @@ class Model:
             A NumPy Array embeddings that represent prediction edges.
 
         """
-
-        embedding = pd.read_csv(embedding_file, index_col=0, header=None)
-
         # load transformer object for edge embeddings
+        # TODO: can change the embedding file to a global or some other
+        #       var - then we wouldn't need to parse it again here
         lpt_pickle_fn = f'{embedding_file}_{PICKLE_VERSION}_lpt.pickle'
-        with open(lpt_pickle_fn, "wb") as file:
+        with open(lpt_pickle_fn, "rb") as file:
              lpt = pickle.load(file)
 
         # What do we need to pass to the LPT?
+        negative_graph = np.ndarray()
+        import pdb
+        pdb.set_trace()
 
         predict_edges, _ = lpt.transform(
-            positive_graph=source_embeddings
-            negative_graph=destination_embeddings
+            positive_graph=np.ndarray(source_embeddings,destination_embeddings),
+            negative_graph=negative_graph,
+            random_state=42
         )
 
         return predict_edges

@@ -136,8 +136,7 @@ def predict_links(
         predict_edges = model.make_link_predictions(
             embedding_file=embeddings_file, # this should be the new embeddings
             source_embeddings = source_embed,
-            destination_embeddings = destination_embed,
-            edge_method=edge_method,
+            destination_embeddings = destination_embed
         )
 
         p = model.predict_proba(predict_edges)
