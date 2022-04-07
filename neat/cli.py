@@ -91,8 +91,6 @@ def run(config: str) -> None:
 
     if yhelp.do_apply_classifier():
         # take graph, classifier, biolink node types and cutoff
-        import pdb
-        pdb.set_trace()
         classifier_kwargs = yhelp.make_classifier_args()
         predict_links(**classifier_kwargs)
 
