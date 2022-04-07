@@ -17,6 +17,7 @@ import importlib
 
 PICKLE_VERSION = pickle.format_version
 
+
 class Model:
     def __init__(self, outdir=None):
         if outdir:
@@ -103,9 +104,9 @@ class Model:
         )  # pass node embeddings to be used to create edge embeddings
 
         # Save lpt object
-        lpt_pickle_fn = f'{embedding_file}_{PICKLE_VERSION}_lpt.pickle'
+        lpt_pickle_fn = f"{embedding_file}_{PICKLE_VERSION}_lpt.pickle"
         with open(lpt_pickle_fn, "wb") as file:
-             pickle.dump(lpt, file)
+            pickle.dump(lpt, file)
 
         train_edges, train_labels = lpt.transform(
             positive_graph=graphs["pos_training"],
@@ -121,8 +122,9 @@ class Model:
     def make_link_predictions(
         self,
         embedding_file: str,
-        source_embeddings: np.array,
-        destination_embeddings: np.array,
+        source_destination_list
+        # source_embeddings: np.array,
+        # destination_embeddings: np.array,
     ) -> np.ndarray:
         """Prepare training and validation data for training link prediction classifers
 
@@ -137,21 +139,20 @@ class Model:
         # load transformer object for edge embeddings
         # TODO: can change the embedding file to a global or some other
         #       var - then we wouldn't need to parse it again here
-        lpt_pickle_fn = f'{embedding_file}_{PICKLE_VERSION}_lpt.pickle'
+        lpt_pickle_fn = f"{embedding_file}_{PICKLE_VERSION}_lpt.pickle"
         with open(lpt_pickle_fn, "rb") as file:
-             lpt = pickle.load(file)
+            lpt = pickle.load(file)
 
         # What do we need to pass to the LPT?
-        negative_graph = np.ndarray()
-        import pdb
-        pdb.set_trace()
 
         predict_edges, _ = lpt.transform(
-            positive_graph=np.ndarray(source_embeddings,destination_embeddings),
-            negative_graph=negative_graph,
-            random_state=42
+            positive_graph=source_destination_list,
+            negative_graph=source_destination_list,
+            random_state=42,
         )
+        import pdb
 
+        pdb.set_trace()
         return predict_edges
 
     @classmethod

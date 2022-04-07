@@ -55,8 +55,8 @@ def gen_src_dst_pair(
 
 def predict_links(
     graph: Graph,
-    #training_graph_args: dict,
-    #negative_graph_args: dict,
+    # training_graph_args: dict,
+    # negative_graph_args: dict,
     model: object,
     node_types: List[List],
     cutoff: float,
@@ -90,6 +90,7 @@ def predict_links(
     embeddings = pd.read_csv(embeddings_file, sep=",", header=None)
 
     embedding_node_names = list(embeddings[0])
+    src_dst_list = []
     with open(output_file, "w") as f:
         # for src in source_node_ids:
         #     for dst in destination_node_ids:
@@ -120,23 +121,21 @@ def predict_links(
                 continue
             else:
                 source_embed = np.array(
-                    embeddings.loc[
-                        embeddings[0] == graph.get_node_name_from_node_id(src)
-                    ]
+                    embeddings.loc[embeddings[0] == src_name]
                 )
                 destination_embed = np.array(
-                    embeddings.loc[
-                        embeddings[0] == graph.get_node_name_from_node_id(dst)
-                    ]
+                    embeddings.loc[embeddings[0] == dst_name]
                 )
+                src_dst_list.append((src_name, dst_name))
 
                 # TODO: create new embedding set based on source_embed and destination_embed
                 #       then pass to make_link_predictions (not in the loop)
 
         predict_edges = model.make_link_predictions(
-            embedding_file=embeddings_file, # this should be the new embeddings
-            source_embeddings = source_embed,
-            destination_embeddings = destination_embed
+            embedding_file=embeddings_file,  # this should be the new embeddings
+            # source_embeddings=source_embed,
+            # destination_embeddings=destination_embed,
+            source_destination_list=src_dst_list,
         )
 
         p = model.predict_proba(predict_edges)
