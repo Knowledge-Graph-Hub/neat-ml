@@ -11,6 +11,7 @@ from sklearn.linear_model._logistic import LogisticRegression
 from keras.engine.sequential import Sequential
 
 import numpy as np
+import pandas as pd
 
 
 class TestLinkPrediction(TestCase):
@@ -61,6 +62,10 @@ class TestLinkPrediction(TestCase):
 
     def test_sklearn_save(self) -> None:
         model_object = self.sklearn_model
+
+        # Need to have a fitted model here
+        #model_object.fit(pd.read_csv(self.embed_file, index_col=0, header=None),"")
+
         model_object.save()
 
         self.assertIsFile(
@@ -72,6 +77,11 @@ class TestLinkPrediction(TestCase):
 
     def test_tf_save(self) -> None:
         model_object = self.tf_model
+
+        # Need to have a fitted model here
+        #model_object.fit(pd.read_csv(self.embed_file, index_col=0, header=None),
+        #                pd.read_csv("tests/resources/test_graphs/pos_valid_edges.tsv",
+        #                            index_col=0, header=None, sep="\t"))
         model_object.save()
 
         self.assertIsFile(
