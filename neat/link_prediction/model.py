@@ -5,7 +5,7 @@ import numpy as np  # type: ignore
 import copy
 import pandas as pd  # type: ignore
 from typing import Optional, Tuple, Union
-from embiggen import LinkPredictionTransformer  # type: ignore
+from embiggen import LinkPredictionTransformer, GraphTransformer  # type: ignore
 from ensmallen import Graph  # type: ignore
 import sklearn  # type: ignore
 import tensorflow  # type: ignore
@@ -104,9 +104,9 @@ class Model:
         )  # pass node embeddings to be used to create edge embeddings
 
         # Save lpt object
-        lpt_pickle_fn = f"{embedding_file}_{PICKLE_VERSION}_lpt.pickle"
-        with open(lpt_pickle_fn, "wb") as file:
-            pickle.dump(lpt, file)
+        #lpt_pickle_fn = f"{embedding_file}_{PICKLE_VERSION}_lpt.pickle"
+        #with open(lpt_pickle_fn, "wb") as file:
+        #    pickle.dump(lpt, file)
 
         train_edges, train_labels = lpt.transform(
             positive_graph=graphs["pos_training"],
@@ -119,9 +119,10 @@ class Model:
         return (train_edges, train_labels), (valid_edges, valid_labels)
 
     @classmethod
-    def make_link_predictions(
+    def make_edge_embedding_for_predict(
         self,
         embedding_file: str,
+        edge_method: str,
         source_destination_list
         # source_embeddings: np.array,
         # destination_embeddings: np.array,
@@ -136,24 +137,25 @@ class Model:
             A NumPy Array embeddings that represent prediction edges.
 
         """
-        # load transformer object for edge embeddings
-        # TODO: can change the embedding file to a global or some other
-        #       var - then we wouldn't need to parse it again here
-        lpt_pickle_fn = f"{embedding_file}_{PICKLE_VERSION}_lpt.pickle"
-        with open(lpt_pickle_fn, "rb") as file:
-            lpt = pickle.load(file)
+        
+        #lpt_pickle_fn = f"{embedding_file}_{PICKLE_VERSION}_lpt.pickle"
+        #with open(lpt_pickle_fn, "rb") as file:
+        #    lpt = pickle.load(file)
 
-        # What do we need to pass to the LPT?
+        embedding = pd.read_csv(embedding_file, index_col=0, header=None)
 
-        predict_edges, _ = lpt.transform(
-            positive_graph=source_destination_list,
-            negative_graph=source_destination_list,
-            random_state=42,
+        # Create graphtransformer object for edge embeddings
+        gt = GraphTransformer(method=edge_method)
+
+        gt.fit(
+            embedding
+            )
+
+        edge_embedding_for_predict = gt.transform(
+            graph=source_destination_list
         )
-        import pdb
 
-        pdb.set_trace()
-        return predict_edges
+        return edge_embedding_for_predict
 
     @classmethod
     def dynamically_import_class(self, reference) -> object:
