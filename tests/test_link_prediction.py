@@ -64,7 +64,11 @@ class TestLinkPrediction(TestCase):
         model_object = self.sklearn_model
 
         # Need to have a fitted model here
-        #model_object.fit(pd.read_csv(self.embed_file, index_col=0, header=None),"")
+        embed_contents = pd.read_csv(self.embed_file, index_col=0, header=None)
+
+        dummy_labels = np.random.randint(0,high=2,size=(embed_contents.shape[0],),dtype=np.bool)
+
+        model_object.fit(embed_contents, dummy_labels)
 
         model_object.save()
 
@@ -78,10 +82,16 @@ class TestLinkPrediction(TestCase):
     def test_tf_save(self) -> None:
         model_object = self.tf_model
 
-        # Need to have a fitted model here
-        #model_object.fit(pd.read_csv(self.embed_file, index_col=0, header=None),
-        #                pd.read_csv("tests/resources/test_graphs/pos_valid_edges.tsv",
-        #                            index_col=0, header=None, sep="\t"))
+        # Need to have a fitted model here - but this doesn't quite work yet -
+        # it raises:
+        # RuntimeError: You must compile your model before training/testing. Use `model.compile(optimizer, loss)`.
+        
+        #embed_contents = pd.read_csv(self.embed_file, index_col=0, header=None)
+
+        #dummy_labels = np.random.randint(0,high=2,size=(embed_contents.shape[0],),dtype=np.bool)
+
+        #model_object.fit(embed_contents, dummy_labels)
+
         model_object.save()
 
         self.assertIsFile(
