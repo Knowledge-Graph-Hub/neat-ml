@@ -11,8 +11,8 @@ class SklearnModel(Model):
         model_class = self.dynamically_import_class(model_type)
         self.model = model_class()  # type: ignore
 
-    def fit(self, train_data, _):
-        self.model.fit(*train_data)
+    def fit(self, train_data, test_data):
+        self.model.fit(train_data, test_data)
 
     def predict(self, predict_data):
         self.model.predict(*predict_data)

@@ -83,7 +83,7 @@ class MLPModel(Model):
             del classifier_params["callbacks"]
 
         history = self.model.fit(
-            *train_data,
+            train_data,
             validation_data=validation_data,
             **classifier_params,
             callbacks=callback_list

@@ -128,9 +128,6 @@ def predict_links(
                 )
                 src_dst_list.append((src_name, dst_name))
 
-                # TODO: create new embedding set based on source_embed and destination_embed
-                #       then pass to make_link_predictions (not in the loop)
-
         edge_embedding_for_predict = model.make_edge_embedding_for_predict(
             embedding_file=embeddings_file,  # this should be the new embeddings
             edge_method=edge_method,
@@ -140,7 +137,7 @@ def predict_links(
         )
 
         p = model.predict_proba(edge_embedding_for_predict)
-        f.write("\t".join([src, dst, p]) + "\n")
+        f.write("\t".join([str(src), str(dst), str(p)]) + "\n")
 
 
 # This may be moved if needed
