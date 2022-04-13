@@ -63,6 +63,9 @@ class Model:
                                 header=None)
 
         # load graphs
+        # need to remove graph_path if it's present
+        if 'graph_path' in training_graph_args:
+            training_graph_args.pop('graph_path')
         graphs = {'pos_training': Graph.from_csv(**training_graph_args)}
         for name, graph_args in [('pos_validation', pos_validation_args),
                                  ('neg_training', neg_training_args),
