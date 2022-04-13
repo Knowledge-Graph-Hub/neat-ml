@@ -159,9 +159,13 @@ class YamlHelper:
                 download_file(filepath, outfile)
             # If this was a URL, it already got decompressed.
             # but if it's local and still compressed, decompress now
+            # (this can happen if we already downloaded it but didn't decomp)
             if filepath.endswith(".tar.gz"):
                 outlist = []
-                decomp_outfile = tarfile.open(filepath)
+                if is_url(filepath):
+                    decomp_outfile = tarfile.open(outfile)
+                else:
+                    decomp_outfile = tarfile.open(filepath)
                 for filename in decomp_outfile.getnames():
                     outlist.append(os.path.join(self.indir(),filename))
                 if len(outlist) > 2:
