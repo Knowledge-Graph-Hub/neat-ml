@@ -81,7 +81,19 @@ def run(config: str) -> None:
                 neg_validation_args=yhelp.neg_val_graph_args(),
                 edge_method=yhelp.get_edge_embedding_method(classifier),
             )
-            history_obj = model.fit(train_data, validation_data)
+            
+            history_obj = model.fit(*train_data)
+            predicted_labels = model.predict(validation_data[0])
+            actual_labels = validation_data[1]
+            correct_matches = sum(list(predicted_labels == actual_labels))
+            total_data_points = len(validation_data[0])
+            correct_label_match = (correct_matches / total_data_points) * 100
+
+            print(f"Correct label match in validation: {correct_label_match}")
+
+            # TODO: check if model is fitted - for sklearn this means
+            # catching a NotFittedError
+            # see https://stackoverflow.com/questions/39884009/whats-the-best-way-to-test-whether-an-sklearn-model-has-been-fitted
 
             if yhelp.classifier_history_file_name(classifier):
                 with open(yhelp.classifier_history_file_name(classifier), "w") as f:  # type: ignore

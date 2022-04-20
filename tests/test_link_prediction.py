@@ -115,6 +115,17 @@ class TestLinkPrediction(TestCase):
         self.assertEqual(type(generic_model_object), LogisticRegression)
         self.assertEqual(type(customized_model_object), SklearnModel)
 
+    def test_sklearn_fit(self) -> None:
+        model_object = self.sklearn_model
+        result, _ = model_object.make_train_valid_data(
+            embedding_file=self.embed_file,
+            training_graph_args=self.training_graph_args,
+            edge_method="Average",
+        )
+
+        fit_out = model_object.fit(*result)
+        self.assertEqual(str(fit_out),"LogisticRegression()")
+
     def test_tf_load(self) -> None:
         out_fn = os.path.join(self.test_load_path, self.generic_tf_outfile)
         (

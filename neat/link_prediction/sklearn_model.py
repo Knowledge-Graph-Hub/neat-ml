@@ -12,13 +12,13 @@ class SklearnModel(Model):
         self.model = model_class()  # type: ignore
 
     def fit(self, train_data, test_data):
-        self.model.fit(train_data, test_data)
+        return self.model.fit(train_data, test_data)
 
     def predict(self, predict_data):
-        self.model.predict(*predict_data)
+        return self.model.predict(predict_data)
 
     def predict_proba(self, predict_data):
-        self.model.predict_proba(predict_data)
+        return self.model.predict_proba(predict_data)
 
     def save(self):
         with open(
