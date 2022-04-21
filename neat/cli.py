@@ -81,7 +81,6 @@ def run(config: str) -> None:
                 neg_validation_args=yhelp.neg_val_graph_args(),
                 edge_method=yhelp.get_edge_embedding_method(classifier),
             )
-            
             history_obj = model.fit(*train_data)
             predicted_labels = model.predict(validation_data[0])
             actual_labels = validation_data[1]
