@@ -65,7 +65,7 @@ classifiers:
 
 apply_trained_classifier:
    classifier_model_id: lr_0
-   link_node_types:
+   link_node_types: #Note that these source/destination types are not in the input graph!
       source:
          - 'biolink:Drug'
          - 'biolink:ChemicalSubstance'

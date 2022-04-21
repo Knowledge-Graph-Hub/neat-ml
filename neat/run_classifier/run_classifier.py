@@ -91,6 +91,7 @@ def predict_links(
 
     embedding_node_names = list(embeddings[0])
     src_dst_list = []
+    no_embed_list = []
     with open(output_file, "w") as f:
         # for src in source_node_ids:
         #     for dst in destination_node_ids:
@@ -117,7 +118,7 @@ def predict_links(
                     have_embeddings = False
 
             if not have_embeddings:
-                f.write("\t".join([src_name, dst_name, "NaN\n"]))
+                no_embed_list.append((src_name, dst_name))
                 continue
             else:
                 source_embed = np.array(
@@ -136,9 +137,22 @@ def predict_links(
             source_destination_list=src_dst_list,
         )
 
-        p = model.predict_proba(edge_embedding_for_predict)
-        f.write("\t".join([str(src), str(dst), str(p)]) + "\n")
+        import pdb
 
+        p = model.predict_proba(edge_embedding_for_predict)
+
+        name_pairs = []
+        for pair in src_dst_list:
+            name_pairs.append(f"{pair[0]}\t{pair[1]}")
+
+        pdb.set_trace()
+        
+        p_with_names = np.hstack(name_pairs, p)
+
+        # inject the src and dst node names into the proba array
+        # w/ list comprehension
+        # include the no_embed_list items, each with a value of NaN
+        # dump the labeled probas to tsv
 
 # This may be moved if needed
 def get_custom_model(model_file_path: str) -> str:
