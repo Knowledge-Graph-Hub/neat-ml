@@ -9,6 +9,7 @@ import pandas as pd  # type: ignore
 from itertools import combinations  # [READ DOCS]
 import numpy as np
 
+OUTPUT_COL_NAMES = ["source_node", "destination_node", "edge_type"]
 
 def gen_src_dst_pair(
     graph: Graph,
@@ -92,7 +93,7 @@ def predict_links(
     embedding_node_names = list(embeddings[0])
     src_dst_list = []
     no_embed_list = []
-    with open(output_file, "w") as f:
+    # with open(output_file, "w") as f:
         # for src in source_node_ids:
         #     for dst in destination_node_ids:
         #         if (
@@ -103,56 +104,41 @@ def predict_links(
         #             )
         #         ) and ignore_existing_edges:
         #             continue
-        for src, dst in gen_src_dst_pair(graph, ignore_existing_edges):
+    for src, dst in gen_src_dst_pair(graph, ignore_existing_edges):
 
-            src_name = graph.get_node_name_from_node_id(src)
-            dst_name = graph.get_node_name_from_node_id(dst)
+        src_name = graph.get_node_name_from_node_id(src)
+        dst_name = graph.get_node_name_from_node_id(dst)
 
-            have_embeddings = True
-
-            # see if src and dst are actually in embedding.tsv:
-            for name in [src_name, dst_name]:
-                if not name in embedding_node_names:
-                    if verbose:
-                        warn(f"Can't find {name} in embeddings - skipping")
-                    have_embeddings = False
-
-            if not have_embeddings:
+        # see if src and dst are actually in embedding.tsv:
+        for name in [src_name, dst_name]:
+            if not name in embedding_node_names:
+                if verbose:
+                    warn(f"Can't find {name} in embeddings - skipping")
                 no_embed_list.append((src_name, dst_name))
-                continue
             else:
-                source_embed = np.array(
-                    embeddings.loc[embeddings[0] == src_name]
-                )
-                destination_embed = np.array(
-                    embeddings.loc[embeddings[0] == dst_name]
-                )
                 src_dst_list.append((src_name, dst_name))
 
-        edge_embedding_for_predict = model.make_edge_embedding_for_predict(
-            embedding_file=embeddings_file,  # this should be the new embeddings
-            edge_method=edge_method,
-            # source_embeddings=source_embed,
-            # destination_embeddings=destination_embed,
-            source_destination_list=src_dst_list,
-        )
+    edge_embedding_for_predict = model.make_edge_embedding_for_predict(
+        embedding_file=embeddings_file,  # this should be the new embeddings
+        edge_method=edge_method,
+        source_destination_list=src_dst_list,
+    )
 
-        import pdb
-
-        p = model.predict_proba(edge_embedding_for_predict)
-
-        name_pairs = []
-        for pair in src_dst_list:
-            name_pairs.append(f"{pair[0]}\t{pair[1]}")
-
-        pdb.set_trace()
-        
-        p_with_names = np.hstack(name_pairs, p)
-
-        # inject the src and dst node names into the proba array
-        # w/ list comprehension
-        # include the no_embed_list items, each with a value of NaN
-        # dump the labeled probas to tsv
+    preds = model.predict(edge_embedding_for_predict).astype(int)
+    pred_probas = model.predict_proba(edge_embedding_for_predict)
+    pred_proba_df = pd.DataFrame(pred_probas)
+    embed_df = pd.DataFrame(src_dst_list, columns = OUTPUT_COL_NAMES[:-1])
+    embed_df[OUTPUT_COL_NAMES[-1]] = preds
+    
+    full_embed_df = pd.concat([embed_df,pred_proba_df ], axis= 1)
+    
+    if no_embed_list:
+        no_embed_df = pd.DataFrame(no_embed_list, columns = OUTPUT_COL_NAMES[:-1])
+        output_df = pd.concat([full_embed_df, no_embed_df], axis=1)
+    else:
+        output_df = full_embed_df
+    
+    output_df.to_csv(output_file, sep='\t', index=None)
 
 # This may be moved if needed
 def get_custom_model(model_file_path: str) -> str:
