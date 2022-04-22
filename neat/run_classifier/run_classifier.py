@@ -127,7 +127,12 @@ def predict_links(
     else:
         output_df = full_embed_df
 
-    output_df.sort_values(by=2, inplace=True, ignore_index=True)
+    # Sort, but keep heading differences in mind
+    if output_df.shape[1] == len(OUTPUT_COL_NAMES) + 1:
+        sort_by = output_df.columns[2]
+    else:
+        sort_by = [output_df.columns[2], output_df.columns[4]]
+    output_df.sort_values(by=sort_by, inplace=True, ascending=False)
 
     output_df.to_csv(output_file, sep="\t", index=None)
 
