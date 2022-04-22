@@ -11,7 +11,7 @@ import numpy as np
 
 from neat.link_prediction.sklearn_model import SklearnModel
 
-OUTPUT_COL_NAMES = ["source_node", "destination_node", "edge_type"]
+OUTPUT_COL_NAMES = ["source_node", "destination_node"]
 
 
 def gen_src_dst_pair(
@@ -105,21 +105,24 @@ def predict_links(
         source_destination_list=src_dst_list,
     )
 
-    preds = model.predict(edge_embedding_for_predict).astype(int)
-    embed_df = pd.DataFrame(src_dst_list, columns=OUTPUT_COL_NAMES[:-1])
-    embed_df[OUTPUT_COL_NAMES[-1]] = preds
+    embed_df = pd.DataFrame(src_dst_list, columns=OUTPUT_COL_NAMES)
+    # NOTE: A trained Sklearn model treats '0' and '1' labels as classes
+    #  as opposed to a Tensorflow(MLP) model where 0 and 1 are booleans
+    # to a class (binary).
 
     if type(model) == SklearnModel:
+        preds = model.predict(edge_embedding_for_predict).astype(int)
+        embed_df["edge_type"] = preds
         pred_probas = model.predict_proba(edge_embedding_for_predict)
         pred_proba_df = pd.DataFrame(pred_probas)
         full_embed_df = pd.concat([embed_df, pred_proba_df], axis=1)
     else:
+        preds = model.predict(edge_embedding_for_predict)
+        embed_df["probabilities"] = preds
         full_embed_df = embed_df
 
     if no_embed_list:
-        no_embed_df = pd.DataFrame(
-            no_embed_list, columns=OUTPUT_COL_NAMES[:-1]
-        )
+        no_embed_df = pd.DataFrame(no_embed_list, columns=OUTPUT_COL_NAMES)
         output_df = pd.concat([full_embed_df, no_embed_df], axis=1)
     else:
         output_df = full_embed_df

@@ -15,7 +15,7 @@ class SklearnModel(Model):
         return self.model.fit(train_data, test_data)
 
     def predict_proba(self, predict_data):
-        return self.model.predict_proba(predict_data).astype(int)
+        return self.model.predict_proba(predict_data)
 
     def load(self, path: str) -> tuple():
         with open(path, "rb") as mf1:
