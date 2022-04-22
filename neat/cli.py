@@ -100,7 +100,7 @@ def run(config: str) -> None:
             # TODO: check if model is fitted - for sklearn this means
             # catching a NotFittedError
             # see https://stackoverflow.com/questions/39884009/whats-the-best-way-to-test-whether-an-sklearn-model-has-been-fitted
-
+            # TODO: Find an apt place for this JSON file to be exported
             if yhelp.classifier_history_file_name(classifier):
                 with open(yhelp.classifier_history_file_name(classifier), "w") as f:  # type: ignore
                     json.dump(history_obj.history, f)
