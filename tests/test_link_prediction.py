@@ -5,6 +5,7 @@ from unittest import TestCase, skip
 from neat.link_prediction import model
 from neat.link_prediction.sklearn_model import SklearnModel
 from neat.link_prediction.mlp_model import MLPModel
+from neat.run_classifier.run_classifier import get_custom_model_path
 from neat.yaml_helper.yaml_helper import YamlHelper
 
 from sklearn.linear_model._logistic import LogisticRegression
@@ -30,16 +31,13 @@ class TestLinkPrediction(TestCase):
         cls.tf_model = MLPModel(
             (cls.yhelp_tf.classifiers())[0], cls.test_model_path
         )
-        cls.generic_sklearn_outfile = ((cls.yhelp_sklearn.classifiers())[0])[
-            "model"
-        ]["outfile"]
+        cls.sklearn_outfile = ((cls.yhelp_sklearn.classifiers())[0])["model"][
+            "outfile"
+        ]
         cls.generic_tf_outfile = ((cls.yhelp_tf.classifiers())[0])["model"][
             "outfile"
         ]
-        fn_sklearn, ext_sklearn = os.path.splitext(cls.generic_sklearn_outfile)
-        fn_tf, ext_tf = os.path.splitext(cls.generic_tf_outfile)
-        cls.custom_sklearn_outfile = fn_sklearn + "_custom" + ext_sklearn
-        cls.custom_tf_outfile = fn_tf + "_custom" + ext_tf
+        cls.custom_tf_outfile = get_custom_model_path(cls.generic_tf_outfile)
         cls.training_graph_args = {
             "directed": False,
             "node_path": "tests/resources/test_graphs/pos_train_nodes.tsv",
@@ -66,17 +64,16 @@ class TestLinkPrediction(TestCase):
         # Need to have a fitted model here
         embed_contents = pd.read_csv(self.embed_file, index_col=0, header=None)
 
-        dummy_labels = np.random.randint(0,high=2,size=(embed_contents.shape[0],),dtype=np.bool)
+        dummy_labels = np.random.randint(
+            0, high=2, size=(embed_contents.shape[0],), dtype=np.bool
+        )
 
         model_object.fit(embed_contents, dummy_labels)
 
         model_object.save()
 
         self.assertIsFile(
-            os.path.join(self.test_model_path, self.generic_sklearn_outfile)
-        )
-        self.assertIsFile(
-            os.path.join(self.test_model_path, self.custom_sklearn_outfile)
+            os.path.join(self.test_model_path, self.sklearn_outfile)
         )
 
     def test_tf_save(self) -> None:
@@ -85,12 +82,12 @@ class TestLinkPrediction(TestCase):
         # Need to have a fitted model here - but this doesn't quite work yet -
         # it raises:
         # RuntimeError: You must compile your model before training/testing. Use `model.compile(optimizer, loss)`.
-        
-        #embed_contents = pd.read_csv(self.embed_file, index_col=0, header=None)
 
-        #dummy_labels = np.random.randint(0,high=2,size=(embed_contents.shape[0],),dtype=np.bool)
+        # embed_contents = pd.read_csv(self.embed_file, index_col=0, header=None)
 
-        #model_object.fit(embed_contents, dummy_labels)
+        # dummy_labels = np.random.randint(0,high=2,size=(embed_contents.shape[0],),dtype=np.bool)
+
+        # model_object.fit(embed_contents, dummy_labels)
 
         model_object.save()
 
@@ -105,15 +102,9 @@ class TestLinkPrediction(TestCase):
     # the save tests above, so they may remain independent.
 
     def test_sklearn_load(self) -> None:
-        out_fn = os.path.join(
-            self.test_load_path, self.generic_sklearn_outfile
-        )
-        (
-            generic_model_object,
-            customized_model_object,
-        ) = self.sklearn_model.load(out_fn)
-        self.assertEqual(type(generic_model_object), LogisticRegression)
-        self.assertEqual(type(customized_model_object), SklearnModel)
+        out_fn = os.path.join(self.test_load_path, self.sklearn_outfile)
+        model_object = self.sklearn_model.load(out_fn)
+        self.assertEqual(type(model_object), SklearnModel)
 
     def test_sklearn_fit(self) -> None:
         model_object = self.sklearn_model
@@ -124,7 +115,7 @@ class TestLinkPrediction(TestCase):
         )
 
         fit_out = model_object.fit(*result)
-        self.assertEqual(str(fit_out),"LogisticRegression()")
+        self.assertEqual(str(fit_out), "LogisticRegression()")
 
     def test_tf_load(self) -> None:
         out_fn = os.path.join(self.test_load_path, self.generic_tf_outfile)

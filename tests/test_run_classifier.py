@@ -3,7 +3,7 @@ import pickle
 from posixpath import dirname
 import tempfile
 from unittest import TestCase, skip
-from neat.run_classifier.run_classifier import predict_links, get_custom_model
+from neat.run_classifier.run_classifier import predict_links
 from neat.yaml_helper.yaml_helper import YamlHelper
 from ensmallen import Graph
 import pandas as pd
@@ -51,7 +51,7 @@ class TestRunClassifier(TestCase):
         if not os.path.isdir(outdir):
             os.mkdir(outdir)
         outfile = os.path.join(dirname(__file__), "resources/tmp/test.tsv")
-        with open(get_custom_model(self.test_model_path), "rb") as f:
+        with open(self.test_model_path, "rb") as f:
             m = pickle.load(f)
 
         predict_links(

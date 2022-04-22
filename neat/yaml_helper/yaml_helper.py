@@ -9,7 +9,8 @@ from typing import Optional, Callable, Any, Union
 from urllib.request import Request, urlopen
 
 import yaml  # type: ignore
-from ensmallen import Graph  # type: ignore
+from ensmallen import Graph
+from neat.link_prediction.mlp_model import MLPModel  # type: ignore
 from neat.link_prediction.model import Model
 import validators  # type: ignore
 import pandas as pd  # type: ignore
@@ -17,6 +18,8 @@ import pandas as pd  # type: ignore
 from pathlib import Path
 import pandas as pd  # type: ignore
 import tempfile
+
+from neat.run_classifier.run_classifier import get_custom_model_path
 
 VALID_CHARS = "-_.() %s%s" % (string.ascii_letters, string.digits)
 
@@ -322,7 +325,11 @@ class YamlHelper:
         return "apply_trained_classifier" in self.yaml
 
     def get_classifier_id_for_prediction(self):
-        return self.yaml["apply_trained_classifier"]["classifier_model_id"]
+        classifier_applications = self.yaml["apply_trained_classifier"]
+        list_of_ids = [
+            cl["classifier_model_id"] for cl in classifier_applications
+        ]
+        return list_of_ids
 
     def get_classifier_from_id(self, classifier_id: str):
 
@@ -332,26 +339,41 @@ class YamlHelper:
             if x["classifier_id"] == classifier_id
         ][0]
 
-    def make_classifier_args(self):
-
-        classifier_args = self.yaml["apply_trained_classifier"]
-
-        model = self.get_classifier_from_id(
-            classifier_args["classifier_model_id"]
-        )
-        fn, ext = os.path.splitext(model["model"]["outfile"])
-        custom_model_filename = fn + "_custom" + ext
+    def make_classifier_args(self, cl_id: str):
+        classifier_args = [
+            arg
+            for arg in self.yaml["apply_trained_classifier"]
+            if cl_id == arg["classifier_model_id"]
+        ][0]
+        model = self.get_classifier_from_id(cl_id)
 
         classifier_args_dict = {}
         classifier_args_dict["graph"] = Graph.from_csv(
             **self.main_graph_args()
         )
-        classifier_args_dict["model"] = pickle.load(
-            open(
-                os.path.join(self.outdir(), custom_model_filename),
-                "rb",
-            ),
-        )
+        # TODO: Not comfortable with hard-coding this *********
+        if self.get_classifier_from_id(cl_id)["type"] == "neural network":
+            # classifier_args_dict["model"] = MLPModel.load(
+            #     self.get_classifier_from_id(cl_id),
+            #     os.path.join(self.outdir(), model["model"]["outfile"]),
+            # )
+            classifier_args_dict["model"] = pickle.load(
+                open(
+                    os.path.join(
+                        self.outdir(),
+                        get_custom_model_path(model["model"]["outfile"]),
+                    ),
+                    "rb",
+                ),
+            )
+
+        else:
+            classifier_args_dict["model"] = pickle.load(
+                open(
+                    os.path.join(self.outdir(), model["model"]["outfile"]),
+                    "rb",
+                ),
+            )
 
         classifier_args_dict["node_types"] = classifier_args["link_node_types"]
 
