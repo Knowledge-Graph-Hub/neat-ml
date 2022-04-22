@@ -9,3 +9,4 @@ input_data
 node_embeddings/*
 tests/resources/test_output_data_dir/*
 tests/resources/tmp/*
+.vscode/*
