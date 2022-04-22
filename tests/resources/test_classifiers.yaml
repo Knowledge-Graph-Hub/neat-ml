@@ -26,12 +26,13 @@ classifiers:
         random_state: 42
 
 apply_trained_classifier:
-   classifier_model_id: lr_0
-   link_node_types:
+  -
+    classifier_model_id: lr_0
+    link_node_types:
       source:
-         - 'biolink:Drug'
-         - 'biolink:ChemicalSubstance'
+          - 'biolink:Drug'
+          - 'biolink:ChemicalSubstance'
       destination:
-         - 'biolink:Protein'
-   cutoff: 0.9
-   outfile: lr_classifier_predictions_kgx.tsv
+          - 'biolink:Protein'
+    cutoff: 0.9
+    outfile: lr_classifier_predictions_kgx.tsv

@@ -63,13 +63,91 @@ classifiers:
         random_state: 42
         max_iter: 100
 
+  -
+    classifier_id: mlp_0
+    type: neural network
+    edge_method: Average # one of EdgeTransformer.methods: Hadamard, Sum, Average, L1, AbsoluteL1, L2, or alternatively a lambda
+    model:
+      outfile: "model_mlp_test_yaml.h5"
+      classifier_history_file_name: "mlp_classifier_history.json"
+      type: tensorflow.keras.models.Sequential
+      layers:
+        - type: tensorflow.keras.layers.Input
+          parameters:
+            shape: 100   # must match embedding_size up above
+        - type: tensorflow.keras.layers.Dense
+          parameters:
+            units: 128
+            activation: relu
+        - type: tensorflow.keras.layers.Dense
+          parameters:
+            units: 32
+            activation: relu
+            # TODO: fix this:
+            # activity_regularizer: tensorflow.keras.regularizers.l1_l2(l1=1e-5, l2=1e-4)
+        - type: tensorflow.keras.layers.Dropout
+          parameters:
+            rate: 0.5
+        - type: tensorflow.keras.layers.Dense
+          parameters:
+            units: 16
+            activation: relu
+        - type: tensorflow.keras.layers.Dense
+          parameters:
+            units: 1
+            activation: sigmoid
+    model_compile:
+      loss: binary_crossentropy
+      optimizer: nadam
+      metrics:
+        # these can be tensorflow objects
+        # or a string that tensorflow understands,
+        # e.g. 'accuracy'
+        - type: tensorflow.keras.metrics.AUC
+          parameters:
+            curve: PR
+            name: auprc
+        - type: tensorflow.keras.metrics.AUC
+          parameters:
+            curve: ROC
+            name: auroc
+        - type: tensorflow.keras.metrics.Recall
+          parameters:
+            name: Recall
+        - type: tensorflow.keras.metrics.Precision
+          parameters:
+            name: Precision
+        - type: accuracy
+    model_fit:
+      parameters:
+        batch_size: 4096
+        epochs: 5  # typically much higher
+        callbacks:
+          - type: tensorflow.keras.callbacks.EarlyStopping
+            parameters:
+              monitor: val_loss
+              patience: 5
+              min_delta: 0.001  # min improvement to be considered progress
+          - type: tensorflow.keras.callbacks.ReduceLROnPlateau
+
 apply_trained_classifier:
-   classifier_model_id: lr_0
-   link_node_types: #Note that these source/destination types are not in the input graph!
+  -
+    classifier_model_id: lr_0
+    link_node_types: #Note that these source/destination types are not in the input graph!
       source:
-         - 'biolink:Drug'
-         - 'biolink:ChemicalSubstance'
+          - 'biolink:Drug'
+          - 'biolink:ChemicalSubstance'
       destination:
-         - 'biolink:Protein'
-   cutoff: 0.9
-   outfile: lr_classifier_predictions_kgx.tsv
+          - 'biolink:Protein'
+    cutoff: 0.9
+    outfile: lr_classifier_predictions_kgx.tsv
+  -
+    classifier_model_id: mlp_0
+    link_node_types: #Note that these source/destination types are not in the input graph!
+        source:
+          - 'biolink:Drug'
+          - 'biolink:ChemicalSubstance'
+        destination:
+          - 'biolink:Protein'
+    cutoff: 0.9
+    outfile: mlp_classifier_predictions_kgx.tsv

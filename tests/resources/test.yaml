@@ -159,12 +159,13 @@ classifiers:
         max_iter: 1000
 
 apply_trained_classifier:
-  classifier_model_id: lr_0
-  link_node_types:
-    source:
-      - 'biolink:Drug'
-      - 'biolink:ChemicalSubstance'
-    destination:
-      - 'biolink:Protein'
-  cutoff: 0.9
-  outfile: lr_classifier_predictions_kgx.tsv
+  -
+    classifier_model_id: lr_0
+    link_node_types:
+      source:
+        - 'biolink:Drug'
+        - 'biolink:ChemicalSubstance'
+      destination:
+        - 'biolink:Protein'
+    cutoff: 0.9
+    outfile: lr_classifier_predictions_kgx.tsv
