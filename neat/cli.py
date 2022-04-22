@@ -1,7 +1,9 @@
 import json
 import os
+from unicodedata import decimal
 import click
-from ensmallen import Graph  # type: ignore
+from ensmallen import Graph
+import numpy as np  # type: ignore
 
 from neat.link_prediction.sklearn_model import SklearnModel
 from neat.link_prediction.mlp_model import MLPModel
@@ -82,7 +84,12 @@ def run(config: str) -> None:
                 edge_method=yhelp.get_edge_embedding_method(classifier),
             )
             history_obj = model.fit(*train_data)
-            predicted_labels = model.predict(validation_data[0])
+            if type(model) == SklearnModel:
+                predicted_labels = model.predict(validation_data[0])
+            else:
+                predicted_labels = np.concatenate(
+                    np.around(model.predict(validation_data[0]), decimals=0)
+                )
             actual_labels = validation_data[1]
             correct_matches = sum(list(predicted_labels == actual_labels))
             total_data_points = len(validation_data[0])
@@ -102,8 +109,9 @@ def run(config: str) -> None:
 
     if yhelp.do_apply_classifier():
         # take graph, classifier, biolink node types and cutoff
-        classifier_kwargs = yhelp.make_classifier_args()
-        predict_links(**classifier_kwargs)
+        for clsfr_id in yhelp.get_classifier_id_for_prediction():
+            classifier_kwargs = yhelp.make_classifier_args(clsfr_id)
+            predict_links(**classifier_kwargs)
 
     if yhelp.do_upload():
         upload_kwargs = yhelp.make_upload_args()

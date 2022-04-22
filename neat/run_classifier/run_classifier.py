@@ -9,7 +9,10 @@ import pandas as pd  # type: ignore
 from itertools import combinations  # [READ DOCS]
 import numpy as np
 
+from neat.link_prediction.sklearn_model import SklearnModel
+
 OUTPUT_COL_NAMES = ["source_node", "destination_node", "edge_type"]
+
 
 def gen_src_dst_pair(
     graph: Graph,
@@ -76,34 +79,12 @@ def predict_links(
         cutoff (float): Cutoff point for filtering.
         output_file (Path): Results destination.
     """
-
-    # source_node_ids = [
-    #     i
-    #     for i, nt in enumerate(graph.get_node_type_names())
-    #     if any(x in nt for x in node_types[0])
-    # ]
-    # destination_node_ids = [
-    #     i
-    #     for i, nt in enumerate(graph.get_node_type_names())
-    #     if any(x in nt for x in node_types[0])
-    # ]
-
     embeddings = pd.read_csv(embeddings_file, sep=",", header=None)
 
     embedding_node_names = list(embeddings[0])
     src_dst_list = []
     no_embed_list = []
-    # with open(output_file, "w") as f:
-        # for src in source_node_ids:
-        #     for dst in destination_node_ids:
-        #         if (
-        #             graph.has_edge_from_node_ids(src, dst)
-        #             or (
-        #                 graph.has_edge_from_node_ids(dst, src)
-        #                 and not graph.is_directed()
-        #             )
-        #         ) and ignore_existing_edges:
-        #             continue
+
     for src, dst in gen_src_dst_pair(graph, ignore_existing_edges):
 
         src_name = graph.get_node_name_from_node_id(src)
@@ -125,23 +106,29 @@ def predict_links(
     )
 
     preds = model.predict(edge_embedding_for_predict).astype(int)
-    pred_probas = model.predict_proba(edge_embedding_for_predict)
-    pred_proba_df = pd.DataFrame(pred_probas)
-    embed_df = pd.DataFrame(src_dst_list, columns = OUTPUT_COL_NAMES[:-1])
+    embed_df = pd.DataFrame(src_dst_list, columns=OUTPUT_COL_NAMES[:-1])
     embed_df[OUTPUT_COL_NAMES[-1]] = preds
-    
-    full_embed_df = pd.concat([embed_df,pred_proba_df ], axis= 1)
-    
+
+    if type(model) == SklearnModel:
+        pred_probas = model.predict_proba(edge_embedding_for_predict)
+        pred_proba_df = pd.DataFrame(pred_probas)
+        full_embed_df = pd.concat([embed_df, pred_proba_df], axis=1)
+    else:
+        full_embed_df = embed_df
+
     if no_embed_list:
-        no_embed_df = pd.DataFrame(no_embed_list, columns = OUTPUT_COL_NAMES[:-1])
+        no_embed_df = pd.DataFrame(
+            no_embed_list, columns=OUTPUT_COL_NAMES[:-1]
+        )
         output_df = pd.concat([full_embed_df, no_embed_df], axis=1)
     else:
         output_df = full_embed_df
-    
-    output_df.to_csv(output_file, sep='\t', index=None)
+
+    output_df.to_csv(output_file, sep="\t", index=None)
+
 
 # This may be moved if needed
-def get_custom_model(model_file_path: str) -> str:
+def get_custom_model_path(model_file_path: str) -> str:
     """
     Given the path to a sklearn or TF model,
     returns the name of the corresponding custom
