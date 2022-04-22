@@ -14,44 +14,10 @@ class SklearnModel(Model):
     def fit(self, train_data, test_data):
         return self.model.fit(train_data, test_data)
 
-    def predict(self, predict_data):
-        return self.model.predict(predict_data)
-
     def predict_proba(self, predict_data):
-        return self.model.predict_proba(predict_data)
-
-    def save(self):
-        with open(
-            os.path.join(self.outdir, self.config["model"]["outfile"]), "wb"
-        ) as f:
-            pickle.dump(self.model, f)
-
-        fn, ext = os.path.splitext(self.config["model"]["outfile"])
-        model_outfile = fn + "_custom" + ext
-        with open(os.path.join(self.outdir, model_outfile), "wb") as f:
-            pickle.dump(self, f)
+        return self.model.predict_proba(predict_data).astype(int)
 
     def load(self, path: str) -> tuple():
-
-        fn, ext = os.path.splitext(path)
-        custom_model_filename = fn + "_custom" + ext
         with open(path, "rb") as mf1:
-            generic_model_object = pickle.load(mf1)
-
-        with open(custom_model_filename, "rb") as mf2:
-            custom_model_object = pickle.load(mf2)
-
-        # new_model = SklearnModel(self, self.outdir, self.config)
-        # with open(
-        #     os.path.join(
-        #         self.outdir, self.config["model"]["outfile"] + "model"
-        #     ),
-        #     "rb",
-        # ) as f:
-        #     new_model = pickle.loads(self, f)
-        # with open(
-        #     os.path.join(self.outdir, self.config["model"]["outfile"]), "rb"
-        # ) as f:
-        #     new_model.model = pickle.loads(self.model, f)
-
-        return generic_model_object, custom_model_object
+            model_object = pickle.load(mf1)
+        return model_object  # , custom_model_object

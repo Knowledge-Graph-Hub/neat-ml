@@ -34,10 +34,13 @@ class Model:
         pass
 
     def save(self):
-        pass
+        with open(
+            os.path.join(self.outdir, self.config["model"]["outfile"]), "wb"
+        ) as f:
+            pickle.dump(self, f)
 
-    def predict(self, X) -> np.ndarray:
-        pass
+    def predict(self, predict_data) -> np.ndarray:
+        return self.model.predict(predict_data)
 
     def predict_proba(self, X) -> np.ndarray:
         pass
@@ -103,11 +106,6 @@ class Model:
             embedding
         )  # pass node embeddings to be used to create edge embeddings
 
-        # Save lpt object
-        #lpt_pickle_fn = f"{embedding_file}_{PICKLE_VERSION}_lpt.pickle"
-        #with open(lpt_pickle_fn, "wb") as file:
-        #    pickle.dump(lpt, file)
-
         train_edges, train_labels = lpt.transform(
             positive_graph=graphs["pos_training"],
             negative_graph=graphs["neg_training"],
@@ -137,19 +135,13 @@ class Model:
             A NumPy Array embeddings that represent prediction edges.
 
         """
-        
-        #lpt_pickle_fn = f"{embedding_file}_{PICKLE_VERSION}_lpt.pickle"
-        #with open(lpt_pickle_fn, "rb") as file:
-        #    lpt = pickle.load(file)
 
         embedding = pd.read_csv(embedding_file, index_col=0, header=None)
 
         # Create graphtransformer object for edge embeddings
         gt = GraphTransformer(method=edge_method)
 
-        gt.fit(
-            embedding
-            )
+        gt.fit(embedding)
 
         edge_embedding_for_predict = gt.transform(
             graph=source_destination_list
