@@ -61,6 +61,13 @@ def run(config: str) -> None:
 
     if yhelp.do_classifier():
         for classifier in tqdm(yhelp.classifiers()):
+
+            # Check if classifier already exists
+            if os.path.exists(yhelp.classifier_outfile(classifier)):
+                classifier_id = classifier["classifier_id"]
+                print(f"Found existing classifier: {classifier_id}")
+                continue
+
             model: object = None
             if classifier["type"] == "neural network":
                 model = MLPModel(classifier, outdir=yhelp.outdir())

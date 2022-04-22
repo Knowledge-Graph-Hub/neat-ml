@@ -300,6 +300,11 @@ class YamlHelper:
             else None
         )
 
+    def classifier_outfile(self, classifier: dict) -> str:
+        return os.path.join(
+            self.outdir(), classifier["model"]["outfile"]
+        )
+
     #
     # upload stuff
     #
