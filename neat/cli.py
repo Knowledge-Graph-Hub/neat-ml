@@ -2,7 +2,7 @@ import json
 import os
 from unicodedata import decimal
 import click
-from ensmallen import Graph
+from ensmallen import Graph # type: ignore
 import numpy as np  # type: ignore
 
 from neat.link_prediction.sklearn_model import SklearnModel

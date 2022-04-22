@@ -15,8 +15,6 @@ from sklearn.linear_model import LogisticRegression  # type: ignore
 
 import importlib
 
-PICKLE_VERSION = pickle.format_version
-
 
 class Model:
     def __init__(self, outdir=None):
@@ -40,7 +38,7 @@ class Model:
             pickle.dump(self, f)
 
     def predict(self, predict_data) -> np.ndarray:
-        return self.model.predict(predict_data)
+        return self.model.predict(predict_data) # type: ignore
 
     def predict_proba(self, X) -> np.ndarray:
         pass
