@@ -127,6 +127,8 @@ def predict_links(
     else:
         output_df = full_embed_df
 
+    output_df.sort_values(by=2, inplace=True, ignore_index=True)
+
     output_df.to_csv(output_file, sep="\t", index=None)
 
 
