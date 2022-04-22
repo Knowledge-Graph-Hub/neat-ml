@@ -101,7 +101,7 @@ def pre_run_checks(
         all_classifier_ids = yhelp.get_all_classifier_ids()
         if len(all_classifier_ids) != len(set(all_classifier_ids)):
             dup_ids = [
-                item # type: str
+                item # type: ignore
                 for item, count in collections.Counter(  # type: ignore
                     all_classifier_ids
                 ).items()
