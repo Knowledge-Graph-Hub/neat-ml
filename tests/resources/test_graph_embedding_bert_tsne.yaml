@@ -11,7 +11,7 @@ graph_data:
     directed: False
     verbose: True
     nodes_column: 'id'
-    node_types_column: 'category'
+    node_list_node_types_column: 'category'
     default_node_type: 'biolink:NamedThing'
     sources_column: 'subject'
     destinations_column: 'object'
