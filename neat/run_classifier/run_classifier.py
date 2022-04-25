@@ -92,7 +92,7 @@ def predict_links(
 
         # see if src and dst are actually in embedding.tsv:
         for name in [src_name, dst_name]:
-            if not name in embedding_node_names:
+            if name not in embedding_node_names:
                 if verbose:
                     warn(f"Can't find {name} in embeddings - skipping")
                 no_embed_list.append((src_name, dst_name))
@@ -111,10 +111,6 @@ def predict_links(
     # to a class (binary).
 
     if type(model) == SklearnModel:
-        # preds = model.predict(edge_embedding_for_predict).astype(int)
-        # embed_df["edge_type"] = preds
-        # pred_probas = model.predict_proba(edge_embedding_for_predict)
-        # pred_proba_df = pd.DataFrame(pred_probas)
         pred_probas = [
             y for x, y in model.predict_proba(edge_embedding_for_predict)
         ]

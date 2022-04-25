@@ -356,12 +356,8 @@ class YamlHelper:
         classifier_args_dict["graph"] = Graph.from_csv(
             **self.main_graph_args()
         )
-        # TODO: Not comfortable with hard-coding this *********
+
         if self.get_classifier_from_id(cl_id)["type"] == "neural network":
-            # classifier_args_dict["model"] = MLPModel.load(
-            #     self.get_classifier_from_id(cl_id),
-            #     os.path.join(self.outdir(), model["model"]["outfile"]),
-            # )
             classifier_args_dict["model"] = pickle.load(
                 open(
                     os.path.join(
