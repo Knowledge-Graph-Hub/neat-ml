@@ -50,17 +50,36 @@ class TestRunClassifier(TestCase):
         outdir = "tests/resources/tmp/"
         if not os.path.isdir(outdir):
             os.mkdir(outdir)
-        outfile = os.path.join(dirname(__file__), "resources/tmp/test.tsv")
+        
         with open(self.test_model_path, "rb") as f:
             m = pickle.load(f)
 
+
+        outfile = os.path.join(dirname(__file__), "resources/tmp/test.tsv")
         predict_links(
             graph=self.graph,
             model=m,
             node_types=[["biolink:Gene"], ["biolink:Protein"]],
-            cutoff=0.8,
+            cutoff=0.0001,
             output_file=outfile,
             embeddings_file=self.test_embeddings,
             edge_method="Average",
             verbose=True,
         )
+        with open(outfile) as f:
+            self.assertEqual(9893, len(f.readlines()))
+
+        # This file should just have the header
+        outfile = os.path.join(dirname(__file__), "resources/tmp/test2.tsv")
+        predict_links(
+            graph=self.graph,
+            model=m,
+            node_types=[["biolink:Gene"], ["biolink:Protein"]],
+            cutoff=0.9,
+            output_file=outfile,
+            embeddings_file=self.test_embeddings,
+            edge_method="Average",
+            verbose=True,
+        )
+        with open(outfile) as f:
+            self.assertEqual(1, len(f.readlines()))
