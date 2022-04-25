@@ -99,7 +99,7 @@ def predict_links(
             else:
                 src_dst_list.append((src_name, dst_name))
 
-    edge_embedding_for_predict = model.make_edge_embedding_for_predict(
+    edge_embedding_for_predict = model.make_edge_embedding_for_predict(  # type: ignore
         embedding_file=embeddings_file,  # this should be the new embeddings
         edge_method=edge_method,
         source_destination_list=src_dst_list,
@@ -121,7 +121,7 @@ def predict_links(
         pred_proba_df = pd.DataFrame(pred_probas, columns=["score"])
         full_embed_df = pd.concat([embed_df, pred_proba_df], axis=1)
     else:
-        preds = model.predict(edge_embedding_for_predict)
+        preds = model.predict(edge_embedding_for_predict)  # type: ignore
         embed_df["score"] = preds
         full_embed_df = embed_df
 
