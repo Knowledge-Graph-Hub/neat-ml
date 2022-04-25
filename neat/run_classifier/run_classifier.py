@@ -131,6 +131,7 @@ def predict_links(
         filtered_output = output_df[output_df["score"] > cutoff]
         output_df = filtered_output
 
+    output_df.sort_values(by="score", inplace=True, ascending=False)
     output_df.to_csv(output_file, sep="\t", index=None)
 
 
