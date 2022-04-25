@@ -127,6 +127,10 @@ def predict_links(
     else:
         output_df = full_embed_df
 
+    if cutoff:
+        filtered_output = output_df[output_df["score"] > cutoff]
+        output_df = filtered_output
+
     output_df.to_csv(output_file, sep="\t", index=None)
 
 
