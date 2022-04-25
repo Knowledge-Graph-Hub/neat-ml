@@ -99,7 +99,7 @@ def predict_links(
             else:
                 src_dst_list.append((src_name, dst_name))
 
-    edge_embedding_for_predict = model.make_edge_embedding_for_predict( # type: ignore
+    edge_embedding_for_predict = model.make_edge_embedding_for_predict(
         embedding_file=embeddings_file,  # this should be the new embeddings
         edge_method=edge_method,
         source_destination_list=src_dst_list,
@@ -111,14 +111,18 @@ def predict_links(
     # to a class (binary).
 
     if type(model) == SklearnModel:
-        preds = model.predict(edge_embedding_for_predict).astype(int)
-        embed_df["edge_type"] = preds
-        pred_probas = model.predict_proba(edge_embedding_for_predict)
-        pred_proba_df = pd.DataFrame(pred_probas)
+        # preds = model.predict(edge_embedding_for_predict).astype(int)
+        # embed_df["edge_type"] = preds
+        # pred_probas = model.predict_proba(edge_embedding_for_predict)
+        # pred_proba_df = pd.DataFrame(pred_probas)
+        pred_probas = [
+            y for x, y in model.predict_proba(edge_embedding_for_predict)
+        ]
+        pred_proba_df = pd.DataFrame(pred_probas, columns=["score"])
         full_embed_df = pd.concat([embed_df, pred_proba_df], axis=1)
     else:
-        preds = model.predict(edge_embedding_for_predict) # type: ignore
-        embed_df["probabilities"] = preds
+        preds = model.predict(edge_embedding_for_predict)
+        embed_df["score"] = preds
         full_embed_df = embed_df
 
     if no_embed_list:
@@ -126,13 +130,6 @@ def predict_links(
         output_df = pd.concat([full_embed_df, no_embed_df], axis=1)
     else:
         output_df = full_embed_df
-
-    # Sort, but keep heading differences in mind
-    if output_df.shape[1] == len(OUTPUT_COL_NAMES) + 1:
-        sort_by = output_df.columns[2]
-    else:
-        sort_by = [output_df.columns[2], output_df.columns[4]]
-    output_df.sort_values(by=sort_by, inplace=True, ascending=False)
 
     output_df.to_csv(output_file, sep="\t", index=None)
 
