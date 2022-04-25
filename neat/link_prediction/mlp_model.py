@@ -131,7 +131,7 @@ class MLPModel(Model):
         with open(os.path.join(self.outdir, model_outfile), "wb") as f:
             pickle.dump(self, f)
 
-    def load(self, path: str) -> tuple():
+    def load(self, path: str) -> tuple(): # type: ignore
         fn, ext = os.path.splitext(path)
         custom_model_filename = fn + "_custom" + ext
         generic_model_object = tf.keras.models.load_model(path)
