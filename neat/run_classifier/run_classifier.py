@@ -74,10 +74,14 @@ def predict_links(
 
     Args:
         graph (Graph): Ensmallen graph.
-        model (Any):Trained model.
-        node_types (dict): Dictionary of 'source' and 'destination' nodes.
+        model (Any): Trained model.
+        node_types (list): List of lists of target 'source' and 'destination' nodes.
+                            Only these types will be in output.
         cutoff (float): Cutoff point for filtering.
-        output_file (Path): Results destination.
+        output_file (str or Path): Results destination.
+        embeddings_file (str or Path): Path to embeddings.
+        edge_method (str): Method to use for calculating edge embeddings.
+        ignore_existing_edges (bool): default True; do not output predictions for edges already in graph.
     """
     embeddings = pd.read_csv(embeddings_file, sep=",", header=None)
 
@@ -90,7 +94,15 @@ def predict_links(
         src_name = graph.get_node_name_from_node_id(src)
         dst_name = graph.get_node_name_from_node_id(dst)
 
-        # see if src and dst are actually in embedding.tsv:
+        # Check if this pair passes the node filter(s)
+        if node_types:
+            these_types = {src:graph.get_node_type_names_from_node_id(src),
+                            dst:graph.get_node_type_names_from_node_id(dst)}
+            if these_types[src] not in node_types[0] or \
+                these_types[dst] not in node_types[1]:
+                continue
+
+        # see if src and dst are actually in embedding.tsv
         for name in [src_name, dst_name]:
             if name not in embedding_node_names:
                 if verbose:
@@ -98,6 +110,9 @@ def predict_links(
                 no_embed_list.append((src_name, dst_name))
             else:
                 src_dst_list.append((src_name, dst_name))
+
+    if len(src_dst_list) == 0:
+        warn("Filter has excluded all edges or no edges found - cannot apply classifier.")
 
     edge_embedding_for_predict = model.make_edge_embedding_for_predict(  # type: ignore
         embedding_file=embeddings_file,  # this should be the new embeddings

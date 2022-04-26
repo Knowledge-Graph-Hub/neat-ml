@@ -59,7 +59,7 @@ class TestRunClassifier(TestCase):
         predict_links(
             graph=self.graph,
             model=m,
-            node_types=[["biolink:Gene"], ["biolink:Protein"]],
+            node_types=None, # No filter
             cutoff=0.0001,
             output_file=outfile,
             embeddings_file=self.test_embeddings,
@@ -75,7 +75,7 @@ class TestRunClassifier(TestCase):
         predict_links(
             graph=self.graph,
             model=m,
-            node_types=[["biolink:Gene"], ["biolink:Protein"]],
+            node_types=None, # No filter
             cutoff=0.9,
             output_file=outfile,
             embeddings_file=self.test_embeddings,
