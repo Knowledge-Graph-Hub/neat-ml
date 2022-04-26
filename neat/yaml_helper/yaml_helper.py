@@ -376,7 +376,14 @@ class YamlHelper:
                 ),
             )
 
-        classifier_args_dict["node_types"] = classifier_args["link_node_types"]
+        # YAML may specify node_types as dict with 'source' and 'destination'
+        # or as a list of lists
+        if 'source' in classifier_args["link_node_types"] \
+            or 'destination' in classifier_args["link_node_types"]:
+            classifier_args_dict["node_types"] = [classifier_args["link_node_types"]['source'],
+                                                    classifier_args["link_node_types"]['destination']]
+        else:
+            classifier_args_dict["node_types"] = classifier_args["link_node_types"]
 
         classifier_args_dict["cutoff"] = classifier_args["cutoff"]
         classifier_args_dict["output_file"] = os.path.join(
