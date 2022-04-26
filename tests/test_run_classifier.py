@@ -67,7 +67,8 @@ class TestRunClassifier(TestCase):
             verbose=True,
         )
         with open(outfile) as f:
-            self.assertEqual(9893, len(f.readlines()))
+            self.assertGreater(len(f.readlines()), 9000, 
+                                "Link prediction output is too short.")
 
         # This file should just have the header
         outfile = os.path.join(dirname(__file__), "resources/tmp/test2.tsv")
