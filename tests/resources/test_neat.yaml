@@ -88,8 +88,7 @@ apply_trained_classifier:
     classifier_model_id: lr_0
     link_node_types:
       source:
-          - 'biolink:Drug'
-          - 'biolink:ChemicalSubstance'
+          - 'biolink:Protein'
       destination:
           - 'biolink:Protein'
     cutoff: 0.9
