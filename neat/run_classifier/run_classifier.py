@@ -95,11 +95,15 @@ def predict_links(
         dst_name = graph.get_node_name_from_node_id(dst)
 
         # Check if this pair passes the node filter(s)
+        # Note that nodes may have >1 type
+        # so these are lists
         if node_types:
-            these_types = {src:graph.get_node_type_names_from_node_id(src),
-                            dst:graph.get_node_type_names_from_node_id(dst)}
-            if these_types[src] not in node_types[0] or \
-                these_types[dst] not in node_types[1]:
+            src_types = graph.get_node_type_names_from_node_id(src)
+            dst_types = graph.get_node_type_names_from_node_id(dst)
+
+            # Test if any intersection between node_types and src/dst types
+            if len(list(set(src_types) & set(node_types[0]))) == 0 or \
+                len(list(set(dst_types) & set(node_types[1]))) == 0 :
                 continue
 
         # see if src and dst are actually in embedding.tsv

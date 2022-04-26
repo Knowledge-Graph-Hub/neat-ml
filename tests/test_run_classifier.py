@@ -84,3 +84,27 @@ class TestRunClassifier(TestCase):
         )
         with open(outfile) as f:
             self.assertEqual(1, len(f.readlines()))
+
+    def test_run_classifier_with_node_filters(self):
+
+        outdir = "tests/resources/tmp/"
+        if not os.path.isdir(outdir):
+            os.mkdir(outdir)
+        
+        with open(self.test_model_path, "rb") as f:
+            m = pickle.load(f)
+
+        outfile = os.path.join(dirname(__file__), "resources/tmp/test_node_filt.tsv")
+        predict_links(
+            graph=self.graph,
+            model=m,
+            node_types=[["biolink:Gene","biolink:Protein"],["biolink:Protein"]],
+            cutoff=0.0001,
+            output_file=outfile,
+            embeddings_file=self.test_embeddings,
+            edge_method="Average",
+            verbose=True,
+        )
+        with open(outfile) as f:
+            self.assertGreater(len(f.readlines()), 3000, 
+                                "Link prediction output is too short.")
