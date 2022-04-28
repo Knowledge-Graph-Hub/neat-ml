@@ -1,7 +1,9 @@
 import json
 import os
+from unicodedata import decimal
 import click
-from ensmallen import Graph  # type: ignore
+from ensmallen import Graph # type: ignore
+import numpy as np  # type: ignore
 
 from neat.link_prediction.sklearn_model import SklearnModel
 from neat.link_prediction.mlp_model import MLPModel
@@ -13,6 +15,7 @@ from neat.pre_run_checks.pre_run_checks import pre_run_checks
 from neat.update_yaml.update_yaml import do_update_yaml
 from neat.upload.upload import upload_dir_to_s3
 from neat.visualization.visualization import make_tsne
+from neat.run_classifier.run_classifier import predict_links
 from neat.yaml_helper.yaml_helper import YamlHelper
 
 
@@ -22,7 +25,12 @@ def cli():
 
 
 @cli.command()
-@click.option("--config", required=True, default="config.yaml", type=click.Path(exists=True))
+@click.option(
+    "--config",
+    required=True,
+    default="config.yaml",
+    type=click.Path(exists=True),
+)
 def run(config: str) -> None:
     """Run a NEAT pipeline using the given YAML file [neat.yaml]
     \f
@@ -38,7 +46,7 @@ def run(config: str) -> None:
     yhelp = YamlHelper(config)
 
     # pre run checks for failing early
-    if not pre_run_checks(yhelp=yhelp):
+    if not pre_run_checks(yhelp=yhelp, check_s3_credentials=yhelp.do_upload()):
         raise RuntimeError("Failed pre_run_check")
 
     # generate embeddings if config has 'embeddings' block
@@ -53,30 +61,64 @@ def run(config: str) -> None:
 
     if yhelp.do_classifier():
         for classifier in tqdm(yhelp.classifiers()):
+
+            # Check if classifier already exists
+            if os.path.exists(yhelp.classifier_outfile(classifier)):
+                classifier_id = classifier["classifier_id"]
+                print(f"Found existing classifier: {classifier_id}")
+                continue
+
             model: object = None
-            if classifier['type'] == 'neural network':
+            if classifier["type"] == "neural network":
                 model = MLPModel(classifier, outdir=yhelp.outdir())
-            elif classifier['type'] in \
-                    ['Decision Tree', 'Logistic Regression', 'Random Forest']:
+            elif classifier["type"] in [
+                "Decision Tree",
+                "Logistic Regression",
+                "Random Forest",
+            ]:
                 model = SklearnModel(classifier, outdir=yhelp.outdir())
             else:
                 raise NotImplementedError(f"{model} isn't implemented yet")
 
             model.compile()
-            train_data, validation_data = \
-                model.make_link_prediction_data(yhelp.embedding_outfile(),
-                                                yhelp.main_graph_args(),
-                                                yhelp.pos_val_graph_args(),
-                                                yhelp.neg_train_graph_args(),
-                                                yhelp.neg_val_graph_args(),
-                                                yhelp.edge_embedding_method())
-            history_obj = model.fit(train_data, validation_data)
 
+            train_data, validation_data = model.make_train_valid_data(
+                embedding_file=yhelp.embedding_outfile(),
+                training_graph_args=yhelp.main_graph_args(),
+                pos_validation_args=yhelp.pos_val_graph_args(),
+                neg_training_args=yhelp.neg_train_graph_args(),
+                neg_validation_args=yhelp.neg_val_graph_args(),
+                edge_method=yhelp.get_edge_embedding_method(classifier),
+            )
+            history_obj = model.fit(*train_data)
+            if type(model) == SklearnModel:
+                predicted_labels = model.predict(validation_data[0])
+            else:
+                predicted_labels = np.concatenate(
+                    np.around(model.predict(validation_data[0]), decimals=0)
+                )
+            actual_labels = validation_data[1]
+            correct_matches = sum(list(predicted_labels == actual_labels))
+            total_data_points = len(validation_data[0])
+            correct_label_match = (correct_matches / total_data_points) * 100
+
+            print(f"Correct label match in validation: {correct_label_match}")
+
+            # TODO: check if model is fitted - for sklearn this means
+            # catching a NotFittedError
+            # see https://stackoverflow.com/questions/39884009/whats-the-best-way-to-test-whether-an-sklearn-model-has-been-fitted
+            # TODO: Find an apt place for this JSON file to be exported
             if yhelp.classifier_history_file_name(classifier):
-                with open(yhelp.classifier_history_file_name(classifier), 'w') as f:  # type: ignore
+                with open(yhelp.classifier_history_file_name(classifier), "w") as f:  # type: ignore
                     json.dump(history_obj.history, f)
 
             model.save()
+
+    if yhelp.do_apply_classifier():
+        # take graph, classifier, biolink node types and cutoff
+        for clsfr_id in yhelp.get_classifier_id_for_prediction():
+            classifier_kwargs = yhelp.make_classifier_args(clsfr_id)
+            predict_links(**classifier_kwargs)
 
     if yhelp.do_upload():
         upload_kwargs = yhelp.make_upload_args()
@@ -86,17 +128,19 @@ def run(config: str) -> None:
 
 
 @cli.command()
-@click.option("--input_path",
-              nargs=1,
-              help="The path to the yaml to update.")
-@click.option("--keys",
-              callback=lambda _,__,x: x.split(',') if x else [],
-              help="One or more keys to update the values for, comma-delimited. "
-                    "Nested keys (i.e., keys under other keys) must be delimited "
-                    "with colons, e.g. key1:key2:key3.")
-@click.option("--values",
-               callback=lambda _,__,x: x.split(',') if x else [],
-               help="One or more values, in the same order as keys, comma-delimited.")
+@click.option("--input_path", nargs=1, help="The path to the yaml to update.")
+@click.option(
+    "--keys",
+    callback=lambda _, __, x: x.split(",") if x else [],
+    help="One or more keys to update the values for, comma-delimited. "
+    "Nested keys (i.e., keys under other keys) must be delimited "
+    "with colons, e.g. key1:key2:key3.",
+)
+@click.option(
+    "--values",
+    callback=lambda _, __, x: x.split(",") if x else [],
+    help="One or more values, in the same order as keys, comma-delimited.",
+)
 def updateyaml(input_path, keys, values):
     """Update a YAML file with specified key/value pairs
     \f
@@ -106,5 +150,3 @@ def updateyaml(input_path, keys, values):
     Ignores keys in lists, even if they're dicts in lists.
     """
     do_update_yaml(input_path, keys, values)
-
-

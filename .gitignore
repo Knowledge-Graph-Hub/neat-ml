@@ -6,3 +6,8 @@ dist/
 neat.egg-info/
 output_data
 input_data
+node_embeddings/*
+tests/resources/test_output_data_dir/*
+tests/resources/tmp/*
+.vscode/*
+mlp_classifier_history.json

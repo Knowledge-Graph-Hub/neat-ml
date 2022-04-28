@@ -1,12 +1,13 @@
 import os
+import pickle
 
 import numpy as np  # type: ignore
 import copy
 import pandas as pd  # type: ignore
-from typing import Tuple
-from embiggen import LinkPredictionTransformer  # type: ignore
+from typing import Optional, Tuple, Union
+from embiggen import LinkPredictionTransformer, GraphTransformer  # type: ignore
 from ensmallen import Graph  # type: ignore
-import sklearn   # type: ignore
+import sklearn  # type: ignore
 import tensorflow  # type: ignore
 from sklearn.tree import DecisionTreeClassifier  # type: ignore
 from sklearn.ensemble import RandomForestClassifier  # type: ignore
@@ -19,7 +20,7 @@ class Model:
     def __init__(self, outdir=None):
         if outdir:
             os.makedirs(outdir, exist_ok=True)
-        self.outdir=outdir
+        self.outdir = outdir
 
     def fit(self, X, y):
         pass
@@ -30,21 +31,28 @@ class Model:
     def load(self, path: str) -> object:
         pass
 
-    def save(self) -> None:
-        self.model.save(os.path.join(self.outdir, self.config['model']['outfile']))  # type: ignore
+    def save(self):
+        with open(
+            os.path.join(self.outdir, self.config["model"]["outfile"]), "wb"
+        ) as f:
+            pickle.dump(self, f)
 
-    def predict(self, X) -> np.ndarray:
+    def predict(self, predict_data) -> np.ndarray:
+        return self.model.predict(predict_data) # type: ignore
+
+    def predict_proba(self, X) -> np.ndarray:
         pass
 
     @classmethod
-    def make_link_prediction_data(self,
-                                  embedding_file: str,
-                                  training_graph_args: dict,
-                                  pos_validation_args: dict,
-                                  neg_training_args: dict,
-                                  neg_validation_args: dict,
-                                  edge_method: str
-                                  ) -> Tuple[Tuple, Tuple]:
+    def make_train_valid_data(
+        self,
+        embedding_file: str,
+        training_graph_args: dict,
+        pos_validation_args: Optional[dict] = None,
+        neg_training_args: Optional[dict] = None,
+        neg_validation_args: Optional[dict] = None,
+        edge_method: str = "Average",
+    ) -> Tuple[Tuple, Tuple]:
         """Prepare training and validation data for training link prediction classifers
 
         Args:
@@ -58,30 +66,86 @@ class Model:
             A tuple of tuples
 
         """
-        embedding = pd.read_csv(embedding_file,
-                                index_col=0,
-                                header=None)
+
+        embedding = pd.read_csv(embedding_file, index_col=0, header=None)
 
         # load graphs
-        # need to remove graph_path if it's present
-        if 'graph_path' in training_graph_args:
-            training_graph_args.pop('graph_path')
-        graphs = {'pos_training': Graph.from_csv(**training_graph_args)}
-        for name, graph_args in [('pos_validation', pos_validation_args),
-                                 ('neg_training', neg_training_args),
-                                 ('neg_validation', neg_validation_args)]:
-            these_params = copy.deepcopy(training_graph_args)
-            these_params.update(graph_args)
-            graphs[name] = Graph.from_csv(**these_params)
+        graphs = {"pos_training": Graph.from_csv(**training_graph_args)}
+        is_directed = graphs["pos_training"].is_directed()
+        for name, graph_args in [
+            ("pos_validation", pos_validation_args),
+            ("neg_training", neg_training_args),
+            ("neg_validation", neg_validation_args),
+        ]:
+            if not graph_args:
+                if name in ["neg_training", "neg_validation"]:
+                    neg_edge_number = graphs["pos_training"].get_edges_number()
+                    if not is_directed:
+                        neg_edge_number = neg_edge_number * 2
+
+                    graphs[name] = (graphs["pos_training"]).sample_negatives(
+                        negatives_number=neg_edge_number
+                    )
+                else:
+                    these_params = copy.deepcopy(training_graph_args)
+                    if "directed" not in these_params.keys():
+                        these_params["directed"] = training_graph_args[
+                            "directed"
+                        ]
+                    graphs[name] = Graph.from_csv(**these_params)
+            else:
+                graph_args["directed"] = training_graph_args["directed"]
+                graphs[name] = Graph.from_csv(**graph_args)
 
         # create transformer object to convert graphs into edge embeddings
         lpt = LinkPredictionTransformer(method=edge_method)
-        lpt.fit(embedding)  # pass node embeddings to be used to create edge embeddings
-        train_edges, train_labels = lpt.transform(positive_graph=graphs['pos_training'],
-                                                  negative_graph=graphs['neg_training'])
-        valid_edges, valid_labels = lpt.transform(positive_graph=graphs['pos_validation'],
-                                                  negative_graph=graphs['neg_validation'])
+
+        lpt.fit(
+            embedding
+        )  # pass node embeddings to be used to create edge embeddings
+
+        train_edges, train_labels = lpt.transform(
+            positive_graph=graphs["pos_training"],
+            negative_graph=graphs["neg_training"],
+        )
+        valid_edges, valid_labels = lpt.transform(
+            positive_graph=graphs["pos_validation"],
+            negative_graph=graphs["neg_validation"],
+        )
         return (train_edges, train_labels), (valid_edges, valid_labels)
+
+    @classmethod
+    def make_edge_embedding_for_predict(
+        self,
+        embedding_file: str,
+        edge_method: str,
+        source_destination_list
+        # source_embeddings: np.array,
+        # destination_embeddings: np.array,
+    ) -> np.ndarray:
+        """Prepare training and validation data for training link prediction classifers
+
+        Args:
+            embedding_file: path to embedding file for nodes in graph
+            trained_graph_args: EnsmallenGraph arguments to load training graph
+            edge_method: edge embedding method to use (average, L1, L2, etc)
+        Returns:
+            A NumPy Array embeddings that represent prediction edges.
+
+        """
+
+        embedding = pd.read_csv(embedding_file, index_col=0, header=None)
+
+        # Create graphtransformer object for edge embeddings
+        gt = GraphTransformer(method=edge_method)
+
+        gt.fit(embedding)
+
+        edge_embedding_for_predict = gt.transform(
+            graph=source_destination_list
+        )
+
+        return edge_embedding_for_predict
 
     @classmethod
     def dynamically_import_class(self, reference) -> object:
@@ -108,14 +172,14 @@ class Model:
             The imported function
 
         """
-        module_name = '.'.join(reference.split('.')[0:-1])
-        function_name = reference.split('.')[-1]
+        module_name = ".".join(reference.split(".")[0:-1])
+        function_name = reference.split(".")[-1]
         f = getattr(importlib.import_module(module_name), function_name)
         return f
 
     @classmethod
     def my_import(self, name):
-        components = name.split('.')
+        components = name.split(".")
         mod = __import__(components[0])
         for comp in components[1:]:
             mod = getattr(mod, comp)
