@@ -1,0 +1,25 @@
+---
+graph_data:
+  graph:
+    directed: False
+    node_path: tests/resources/test_graphs/pos_train_nodes.bmp
+    edge_path: tests/resources/test_graphs/pos_train_edges.flac
+    verbose: True
+    nodes_column: 'id'
+    node_list_node_types_column: 'category'
+    default_node_type: 'biolink:NamedThing'
+    sources_column: 'subject'
+    destinations_column: 'object'
+    default_edge_type: 'biolink:related_to'
+
+embeddings:
+  embedding_file_name: test_embeddings_test_yaml.giraffe
+  embedding_history_file_name: embedding_history.json
+  node_embedding_params:
+      node_embedding_method_name: SkipGram # one of 'CBOW', 'GloVe', 'SkipGram', 'Siamese', 'TransE', 'SimplE', 'TransH', 'TransR'
+      walk_length: 10 # typically 100 or so
+      batch_size: 128 # typically 512? or more
+      window_size: 4
+      return_weight: 1.0  # 1/p
+      explore_weight: 1.0  # 1/q
+      iterations: 5 # typically 20

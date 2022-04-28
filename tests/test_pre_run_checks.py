@@ -41,6 +41,7 @@ class TestPreRunChecks(TestCase):
         self.assertTrue(mock_boto_client.called)
 
     @mock.patch("boto3.client")
+
     def test_pre_run_check_bad_credentials_but_no_upload(
         self, mock_boto_client
     ) -> None:
@@ -52,11 +53,13 @@ class TestPreRunChecks(TestCase):
             check_s3_credentials=True,
             check_classifiers=False,
         )
+
         # returns true if bad creds, but we don't have upload key in yaml
         self.assertTrue(return_val)
         self.assertTrue(mock_boto_client.called)
 
     @mock.patch("boto3.client")
+
     def test_pre_run_check_bad_credentials_but_no_check(
         self, mock_boto_client
     ) -> None:
@@ -68,8 +71,15 @@ class TestPreRunChecks(TestCase):
             check_s3_credentials=False,
             check_classifiers=False,
         )
+
         # returns true if bad creds, but we don't want to check credentials
         self.assertTrue(return_val)
+    
+    def test_pre_run_check_bad_file_format(self) -> None:
+        return_val = pre_run_checks(YamlHelper('tests/resources/test_bad_file_format.yaml'),
+                                    check_s3_credentials=False,
+                                    check_file_extensions=True)
+        self.assertFalse(return_val)
 
     def test_pre_run_classifiers(self) -> None:
         return_val = pre_run_checks(

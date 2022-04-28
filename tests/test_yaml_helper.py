@@ -211,11 +211,57 @@ class TestYamlHelper(TestCase):
         self.assertTrue(mock_download_file.called)
         self.assertEqual(2, mock_download_file.call_count)
 
-    @mock.patch("neat.yaml_helper.yaml_helper.Request")
-    @mock.patch("neat.yaml_helper.yaml_helper.urlopen")
-    @mock.patch("neat.yaml_helper.yaml_helper.open")
+    @mock.patch('neat.yaml_helper.yaml_helper.download_file')
+    @mock.patch('tarfile.open')
+    def test_graph_url_converted_to_path(self, mock_tarfile_open, mock_download_file):
+        this_yh = YamlHelper('tests/resources/test_url_for_graph_path.yaml')
+        self.assertTrue(is_url(this_yh.yaml['graph_data']['graph']['graph_path']))
+        this_yh.main_graph_args()
+        self.assertTrue(mock_download_file.called)
+        self.assertTrue(mock_tarfile_open.called)
+        self.assertEqual('nodes.tsv',
+                         this_yh.main_graph_args()['node_path'])
+        self.assertFalse(is_url(this_yh.main_graph_args()['edge_path']))
+        self.assertEqual('edges.tsv',
+                         this_yh.main_graph_args()['edge_path'])
+        
+    @mock.patch('neat.yaml_helper.yaml_helper.download_file')
+    @mock.patch('tarfile.open')
+    def test_graph_url_file_downloaded(self, mock_tarfile_open, mock_download_file):
+        this_yh = YamlHelper('tests/resources/test_url_for_graph_path.yaml')
+        this_yh.main_graph_args()
+        self.assertTrue(mock_download_file.called)
+        self.assertTrue(mock_tarfile_open.called)
+
+    @mock.patch('neat.yaml_helper.yaml_helper.download_file')
+    def test_embeddings_url_converted_to_path(self, mock_download_file):
+        this_yh = YamlHelper('tests/resources/test_url_for_embeddings.yaml')
+        self.assertFalse(is_url(this_yh.embedding_outfile()))
+        self.assertEqual('output_data/https___someremoteurl.com_embeddings.tsv',
+                         this_yh.embedding_outfile())
+
+    @mock.patch('neat.yaml_helper.yaml_helper.download_file')
+    def test_embeddings_url_file_downloaded(self, mock_download_file):
+        this_yh = YamlHelper('tests/resources/test_url_for_embeddings.yaml')
+        this_yh.embedding_outfile()
+        self.assertTrue(mock_download_file.called)
+
+    @mock.patch('neat.yaml_helper.yaml_helper.Request')
+    @mock.patch('neat.yaml_helper.yaml_helper.urlopen')
+    @mock.patch('neat.yaml_helper.yaml_helper.open')
+
     def test_download_file(self, mock_open, mock_urlopen, mock_Request):
         download_file("https://someurl.com/file.txt", outfile="someoutfile")
         for this_mock in [mock_open, mock_urlopen, mock_Request]:
+            self.assertTrue(this_mock.called)
+            self.assertEqual(1, this_mock.call_count)
+
+    @mock.patch('neat.yaml_helper.yaml_helper.Request')
+    @mock.patch('neat.yaml_helper.yaml_helper.urlopen')
+    @mock.patch('neat.yaml_helper.yaml_helper.open')
+    @mock.patch('tarfile.open')
+    def test_download_compressed_file(self, mock_tarfile_open, mock_open, mock_urlopen, mock_Request):
+        download_file("https://someurl.com/file.tar.gz", outfile="file.tar.gz")
+        for this_mock in [mock_tarfile_open, mock_open, mock_urlopen, mock_Request]:
             self.assertTrue(this_mock.called)
             self.assertEqual(1, this_mock.call_count)

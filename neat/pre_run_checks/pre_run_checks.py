@@ -6,6 +6,7 @@ from botocore.exceptions import ClientError  # type: ignore
 import pytest  # type: ignore
 from neat.yaml_helper.yaml_helper import YamlHelper
 
+PREFERRED_FORMATS = ('.tsv', '.tar.gz')
 
 def pre_run_checks(
     yhelp: YamlHelper,
@@ -22,6 +23,8 @@ def pre_run_checks(
             upload dir exists, this will pass
         check_s3_bucket: check that s3 bucket exists on s3
         check_s3_bucket_dir: check that s3 bucket directory doesn't already exist
+        check_file_extensions: check that files are in expected formats (tsv or tar.gz)
+            at least based on their extensions
 
     Returns:
         Boolean pass or fail

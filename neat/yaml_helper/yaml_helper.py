@@ -1,12 +1,11 @@
-import copy
 import functools
 import logging
 import os
 import pickle
 import string
-import urllib
 from typing import Optional, Callable, Any, Union
 from urllib.request import Request, urlopen
+import tarfile
 
 import yaml  # type: ignore
 from ensmallen import Graph # type: ignore
@@ -63,12 +62,36 @@ def is_valid_path(string_to_check: Union[str, Path]) -> bool:
 
     return False
 
+def download_file(url: str, outfile: str) -> list:
+    """
+    Downloads file at input url to outfile path.
+    URL must point to a TSV or a tar.gz compressed file.
+    (This is checked during pre_run_checks though.)
+    If it's tar.gz, decompress.
+    Return the names of all files as a list.
+    There should be just one,
+    unless the outfile was compressed.
+    """
 
-def download_file(url: str, outfile: str) -> None:
-    req = Request(url, headers={"User-Agent": "Mozilla/5.0"})
-    with urlopen(req) as response, open(outfile, "wb") as fh:  # type: ignore
+    outlist = []
+
+    req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+    with urlopen(req) as response, open(outfile, 'wb') as fh:  # type: ignore
         data = response.read()  # a `bytes` object
         fh.write(data)
+    if outfile.lower().endswith(".tar.gz"): # Need to decompress
+        decomp_outfile = tarfile.open(outfile)
+        outdir = os.path.dirname(outfile)
+        for filename in decomp_outfile.getnames():
+            outlist.append(os.path.join(outdir,filename))
+        if len(outlist) > 2:
+            logging.warning(f"{outfile} contains than two files.")
+        decomp_outfile.extractall(outdir)
+        decomp_outfile.close()
+    else:
+        outlist.append(outfile)
+
+    return outlist
 
 
 def catch_keyerror(f):
@@ -130,10 +153,44 @@ class YamlHelper:
         keys_to_add_indir: list = ["node_path", "edge_path"],
     ) -> dict:
         """
+        Updates the graph file paths 
+        with their input directory.
+        Also checks for existence of a 
+        graph_path key. If this exists,
+        download and decompress as needed.
+        The node_path and edge_path values
+        will still need to refer to the
+        node/edge filenames.
         :param graph_data - parsed yaml
         :param keys_to_add_indir: what keys to add indir to
         :return:
         """
+
+        graph_path = 'graph_path'
+
+        if graph_path in graph_data:
+            filepath = graph_data[graph_path]
+            if is_url(filepath):
+                url_as_filename = \
+                    ''.join(c if c in VALID_CHARS else "_" for c in filepath)
+                outfile = os.path.join(self.indir(), url_as_filename)
+                download_file(filepath, outfile)
+            # If this was a URL, it already got decompressed.
+            # but if it's local and still compressed, decompress now
+            # (this can happen if we already downloaded it but didn't decomp)
+            if filepath.endswith(".tar.gz"):
+                outlist = []
+                if is_url(filepath):
+                    decomp_outfile = tarfile.open(outfile)
+                else:
+                    decomp_outfile = tarfile.open(filepath)
+                for filename in decomp_outfile.getnames():
+                    outlist.append(os.path.join(self.indir(),filename))
+                if len(outlist) > 2:
+                    logging.warning(f"{outfile} contains than two files.")
+                decomp_outfile.extractall(self.indir())
+                decomp_outfile.close()
+
         for k in keys_to_add_indir:
             if k in graph_data:
                 graph_data[k] = os.path.join(self.indir(), graph_data[k])
@@ -164,7 +221,7 @@ class YamlHelper:
                 )
                 outfile = os.path.join(self.outdir(), url_as_filename)
                 download_file(filepath, outfile)
-                graph_args_with_indir[pathtype] = outfile
+                graph_args_with_indir[pathtype] = os.path.join(outfile)
             elif not is_valid_path(filepath):
                 raise FileNotFoundError(f"Please check path: {filepath}")
 
@@ -202,9 +259,16 @@ class YamlHelper:
         return "embeddings" in self.yaml
 
     def embedding_outfile(self) -> str:
-        return os.path.join(
-            self.outdir(), self.yaml["embeddings"]["embedding_file_name"]
-        )
+        filepath = self.yaml['embeddings']['embedding_file_name']
+        if is_url(filepath):
+            url_as_filename = \
+                ''.join(c if c in VALID_CHARS else "_" for c in filepath)
+            outfile = os.path.join(self.outdir(), url_as_filename)
+            download_file(filepath, outfile)
+            return outfile
+        else:
+            return os.path.join(self.outdir(),
+                            filepath)
 
     @catch_keyerror
     def embedding_history_outfile(self):

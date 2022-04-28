@@ -1,0 +1,32 @@
+name: "quick_neat"
+description: "A Quick NEAT Run"
+output_directory: quickstart_output
+
+graph_data:
+  graph:
+    node_path: tests/resources/test_graphs/test_small_nodes.tsv
+    edge_path: tests/resources/test_graphs/test_small_edges.tsv
+    directed: False
+    verbose: True
+    nodes_column: 'id'
+    node_list_node_types_column: 'category'
+    default_node_type: 'biolink:NamedThing'
+    sources_column: 'subject'
+    destinations_column: 'object'
+    default_edge_type: 'biolink:related_to'
+
+embeddings:
+  embedding_file_name: quickstart_embedding.csv
+  embedding_history_file_name: quickstart_embedding_history.json
+  node_embedding_params:
+    node_embedding_method_name: CBOW # one of 'CBOW', 'GloVe', 'SkipGram', 'Siamese', 'TransE', 'SimplE', 'TransH', 'TransR'
+    walk_length: 10 # typically 100 or so
+    batch_size: 128 # typically 512? or more
+    window_size: 4
+    return_weight: 1.0  # 1/p
+    explore_weight: 1.0  # 1/q
+    iterations: 5 # typically 20
+    use_mirrored_strategy: False
+  
+  tsne:
+    tsne_file_name: tsne.png
