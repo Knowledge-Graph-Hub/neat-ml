@@ -75,12 +75,6 @@ class TestPreRunChecks(TestCase):
         # returns true if bad creds, but we don't want to check credentials
         self.assertTrue(return_val)
     
-    def test_pre_run_check_bad_file_format(self) -> None:
-        return_val = pre_run_checks(YamlHelper('tests/resources/test_bad_file_format.yaml'),
-                                    check_s3_credentials=False,
-                                    check_file_extensions=True)
-        self.assertFalse(return_val)
-
     def test_pre_run_classifiers(self) -> None:
         return_val = pre_run_checks(
             self.classifier_yaml,
