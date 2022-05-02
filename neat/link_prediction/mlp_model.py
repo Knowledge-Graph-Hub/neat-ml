@@ -90,36 +90,6 @@ class MLPModel(Model):
         )
         return history
 
-    # TODO: Revisit the need for this function if `.predict()` does the job.
-    # def predict_proba(self, predict_data):
-    #     """Takes a model, generated from make_model(), and calls .predict_proba()
-
-    #     Args:
-    #         predict_data: edges to do prediction on
-
-    #     Returns:
-    #         array of probabilities for edges
-
-    #     """
-    #     try:
-    #         classifier_params = self.config["classifier"]["model_fit"][
-    #             "parameters"
-    #         ]
-    #     except KeyError:
-    #         classifier_params = {}
-
-    #     callback_list = []
-    #     if "callbacks" in classifier_params:
-    #         for callback in classifier_params["callbacks"]:
-    #             c_class = self.dynamically_import_class(callback["type"])
-    #             c_params = (
-    #                 callback["parameters"] if "parameters" in callback else {}
-    #             )
-    #             c_instance = c_class(**c_params)
-    #             callback_list.append(c_instance)
-    #         del classifier_params["callbacks"]
-    #     return self.model.predict_proba(predict_data)
-
     def save(self) -> None:
         self.model.save(
             os.path.join(self.outdir, self.config["model"]["outfile"])
