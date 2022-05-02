@@ -1,6 +1,5 @@
 import yaml
 
-
 def do_update_yaml(input_path: str, keys: list, values: list) -> None:
     with open(input_path, 'r') as yaml_file:
         contents = yaml.load(yaml_file, Loader=yaml.FullLoader)

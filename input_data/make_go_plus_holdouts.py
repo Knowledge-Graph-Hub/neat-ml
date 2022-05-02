@@ -1,6 +1,6 @@
 import os
 
-from ensmallen_graph import EnsmallenGraph
+from ensmallen import Graph # type: ignore
 from shutil import which
 from neat.graph_embedding.graph_embedding import get_node_data, \
     merge_and_write_complete_node_data
@@ -34,7 +34,7 @@ for edges in (
     edges_string = "_".join(edges)
     os.makedirs(edges_string, exist_ok=True)
 
-    graph = EnsmallenGraph.from_unsorted_csv(
+    graph = Graph.from_unsorted_csv(
         edge_path=go_plus_edges_file,
         sources_column="subject",
         destinations_column="object",

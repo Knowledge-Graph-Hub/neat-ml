@@ -1,5 +1,5 @@
-from ensmallen_graph import EnsmallenGraph
-from embiggen import GraphTransformer
+from ensmallen import Graph # type: ignore
+from embiggen import GraphTransformer # type: ignore
 import numpy as np
 import pandas as pd
 import yaml
@@ -24,7 +24,7 @@ node_data = node_data.filter(['id', 'name'])
 pos_graph_args = go_yaml['graph_data']['graph']
 pos_graph_args['directed'] = True
 pos_graph_args['edge_path'] = go_yaml['graph_data']['pos_validation']['edge_path']
-pos_validation_graph = EnsmallenGraph.from_unsorted_csv(**pos_graph_args)
+pos_validation_graph = Graph.from_unsorted_csv(**pos_graph_args)
 pos_edges = list(zip(pos_validation_graph.get_source_names(),
                      pos_validation_graph.get_destination_names()))
 
