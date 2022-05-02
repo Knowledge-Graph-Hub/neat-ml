@@ -3,10 +3,7 @@ import warnings
 
 import boto3  # type: ignore
 from botocore.exceptions import ClientError  # type: ignore
-import pytest  # type: ignore
 from neat.yaml_helper.yaml_helper import YamlHelper
-
-PREFERRED_FORMATS = ('.tsv', '.tar.gz')
 
 def pre_run_checks(
     yhelp: YamlHelper,
