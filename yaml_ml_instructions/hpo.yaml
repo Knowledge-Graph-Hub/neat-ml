@@ -9,15 +9,9 @@ graph_data:
     verbose: True
     skip_self_loops: False
     nodes_column: 'id'
-    node_types_column: 'category'
+    node_list_node_types_column: 'category'
     default_node_type: 'biolink:NamedThing'
     ignore_duplicated_nodes: True
-    # other parameters:
-    # nodes_column_number: int = None
-    # node_types_column_number: int = None,
-    # node_header: optional str
-    # node_rows_to_skip: int = 0
-    # node_separator: str = "\t"
     sources_column: 'subject'
     destinations_column: 'object'
     edge_types_column: 'label'
@@ -25,22 +19,7 @@ graph_data:
     ignore_duplicated_edges: True
     node_path: input_data/biolink:subclass_of/hpo_nodes_training.tsv
     edge_path: input_data/biolink:subclass_of/hpo_edges_training.tsv
-    # edge_header: str
-    # edge_rows_to_skip: int = 0,
-    # sources_column_number: int = 0
-    # destinations_column_number: int = 1
-    # edge_types_column_number: int = None
-    # edge_separator: str = "\t"
-    ### weight stuff
-    # weights_column: 'weight'
-    # default_weight: 1
-    # weights_column_number: int = None
 
-  #
-  # classifier-specific graphs:
-  #
-  # (when making a classifier, positive training graph is assumed to be 'graph' above)
-  # all params below override those in 'graph' above
   pos_validation:
     edge_path: input_data/biolink:subclass_of/hpo_edges_validation.tsv
   neg_training:
