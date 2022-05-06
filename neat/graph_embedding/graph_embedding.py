@@ -45,7 +45,7 @@ def make_node_embeddings(
     """
     # load main graph
     if "graph_path" in main_graph_args: # Remove this extra key if present
-        main_graph_args.remove("graph_path")
+        main_graph_args.pop("graph_path")
     graph: Graph = Graph.from_csv(**main_graph_args)
     node_embedding, training_history = compute_node_embedding(
         graph,

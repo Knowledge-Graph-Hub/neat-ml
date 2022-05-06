@@ -71,7 +71,7 @@ class Model:
 
         # load graphs
         if "graph_path" in training_graph_args: # Remove this extra key if present
-            training_graph_args.remove("graph_path")
+            training_graph_args.pop("graph_path")
         graphs = {"pos_training": Graph.from_csv(**training_graph_args)}
         is_directed = graphs["pos_training"].is_directed()
         for name, graph_args in [
