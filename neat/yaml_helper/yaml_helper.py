@@ -3,7 +3,7 @@ import logging
 import os
 import pickle
 import string
-from typing import Optional, Callable, Any, Union
+from typing import Optional, Union
 from urllib.request import Request, urlopen
 import tarfile
 
@@ -12,10 +12,7 @@ from ensmallen import Graph # type: ignore
 from neat.link_prediction.mlp_model import MLPModel  # type: ignore
 from neat.link_prediction.model import Model
 import validators  # type: ignore
-import pandas as pd  # type: ignore
-
 from pathlib import Path
-import pandas as pd  # type: ignore
 
 from neat.run_classifier.run_classifier import get_custom_model_path
 

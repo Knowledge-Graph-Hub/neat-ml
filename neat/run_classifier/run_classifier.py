@@ -3,11 +3,9 @@ from pathlib import Path
 from typing import List, Union
 from warnings import warn
 
-from embiggen import EdgeTransformer  # type: ignore
 from ensmallen import Graph  # type: ignore
 import pandas as pd  # type: ignore
 from itertools import combinations  # [READ DOCS]
-import numpy as np
 
 from neat.link_prediction.sklearn_model import SklearnModel
 
