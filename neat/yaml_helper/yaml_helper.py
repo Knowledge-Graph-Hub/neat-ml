@@ -16,7 +16,6 @@ import pandas as pd  # type: ignore
 
 from pathlib import Path
 import pandas as pd  # type: ignore
-import tempfile
 
 from neat.run_classifier.run_classifier import get_custom_model_path
 

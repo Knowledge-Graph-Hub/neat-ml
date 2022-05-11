@@ -59,8 +59,6 @@ def gen_src_dst_pair(
 
 def predict_links(
     graph: Graph,
-    # training_graph_args: dict,
-    # negative_graph_args: dict,
     model: object,
     node_types: List[List],
     cutoff: float,

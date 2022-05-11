@@ -115,8 +115,6 @@ class Model:
         embedding_file: str,
         edge_method: str,
         source_destination_list
-        # source_embeddings: np.array,
-        # destination_embeddings: np.array,
     ) -> np.ndarray:
         """Prepare training and validation data for training link prediction classifers
 
