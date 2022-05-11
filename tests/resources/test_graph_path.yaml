@@ -1,8 +1,9 @@
 ---
+graph_path: graph.tar.gz
+
 graph_data:
   graph:
     directed: False
-    graph_path: graph.tar.gz
     node_path: nodes.tsv
     edge_path: edges.tsv
     verbose: True

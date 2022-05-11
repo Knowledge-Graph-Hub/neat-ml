@@ -147,29 +147,19 @@ class YamlHelper:
             os.makedirs(outdir)
         return outdir
 
-    def add_indir_to_graph_data(
-        self,
-        graph_data: dict,
-        keys_to_add_indir: list = ["node_path", "edge_path"],
-    ) -> dict:
+    def retrieve_from_graph_path(self) -> None:
         """
-        Updates the graph file paths 
-        with their input directory.
-        Also checks for existence of a 
+        Checks for existence of a 
         graph_path key. If this exists,
         download and decompress as needed.
         The node_path and edge_path values
+        in graph_data
         will still need to refer to the
         node/edge filenames.
-        :param graph_data - parsed yaml
-        :param keys_to_add_indir: what keys to add indir to
-        :return:
         """
 
-        graph_path = 'graph_path'
-
-        if graph_path in graph_data:
-            filepath = graph_data[graph_path]
+        if "graph_path" in self.yaml:
+            filepath = self.yaml["graph_path"]
             if is_url(filepath):
                 url_as_filename = \
                     ''.join(c if c in VALID_CHARS else "_" for c in filepath)
@@ -187,9 +177,22 @@ class YamlHelper:
                 for filename in decomp_outfile.getnames():
                     outlist.append(os.path.join(self.indir(),filename))
                 if len(outlist) > 2:
-                    logging.warning(f"{outfile} contains than two files.")
+                    logging.warning(f"{outfile} contains more than two files.")
                 decomp_outfile.extractall(self.indir())
                 decomp_outfile.close()
+
+    def add_indir_to_graph_data(
+        self,
+        graph_data: dict,
+        keys_to_add_indir: list = ["node_path", "edge_path"],
+    ) -> dict:
+        """
+        Updates the graph file paths 
+        with their input directory.
+        :param graph_data - parsed yaml
+        :param keys_to_add_indir: what keys to add indir to
+        :return:
+        """
 
         for k in keys_to_add_indir:
             if k in graph_data:
