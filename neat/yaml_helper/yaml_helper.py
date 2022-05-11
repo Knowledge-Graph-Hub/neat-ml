@@ -175,8 +175,6 @@ class YamlHelper:
                     decomp_outfile = tarfile.open(filepath)
                 for filename in decomp_outfile.getnames():
                     outlist.append(os.path.join(self.indir(),filename))
-                if len(outlist) > 2:
-                    logging.warning(f"{outfile} contains more than two files.")
                 decomp_outfile.extractall(self.indir())
                 decomp_outfile.close()
 
