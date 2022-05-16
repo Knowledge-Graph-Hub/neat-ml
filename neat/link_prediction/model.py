@@ -7,7 +7,11 @@ import pandas as pd  # type: ignore
 from typing import Optional, Tuple, Union
 from embiggen import LinkPredictionTransformer, GraphTransformer  # type: ignore
 from ensmallen import Graph  # type: ignore
-
+import sklearn  # type: ignore
+import tensorflow  # type: ignore
+from sklearn.tree import DecisionTreeClassifier  # type: ignore
+from sklearn.ensemble import RandomForestClassifier  # type: ignore
+from sklearn.linear_model import LogisticRegression  # type: ignore
 import importlib
 
 
