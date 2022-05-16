@@ -1,8 +1,9 @@
 ---
+graph_path: https://someremoteurl.com/graph.tar.gz
+
 graph_data:
   graph:
     directed: False
-    graph_path: https://someremoteurl.com/graph.tar.gz
     node_path: nodes.tsv
     edge_path: edges.tsv
     verbose: True

@@ -3,10 +3,7 @@ import warnings
 
 import boto3  # type: ignore
 from botocore.exceptions import ClientError  # type: ignore
-import pytest  # type: ignore
 from neat.yaml_helper.yaml_helper import YamlHelper
-
-PREFERRED_FORMATS = ('.tsv', '.tar.gz')
 
 def pre_run_checks(
     yhelp: YamlHelper,
@@ -74,24 +71,8 @@ def pre_run_checks(
         check_s3_bucket_dir and yhelp.do_upload()
     ):  # make sure we are going to upload
         upload_args = yhelp.make_upload_args()
-        try:
-            client = boto3.client("s3")
-            if "s3_bucket_dir" not in upload_args:
-                warnings.warn("No 's3_bucket_dir' in upload block")
-                return_val = False
-            else:
-                result = client.list_objects(
-                    Bucket=upload_args["s3_bucket"],
-                    Prefix=upload_args["s3_bucket_dir"],
-                )
-                if "Contents" in result:
-                    warnings.warn(
-                        f"There are already objects in remote s3 directory: "
-                        f"{upload_args['s3_bucket_dir']}"
-                    )
-                    return_val = False
-        except ClientError as ce:
-            warnings.warn(f"Client error when trying S3 credentials: {ce}")
+        
+        if not pre_bucket_check(upload_args):
             return_val = False
 
     if check_classifiers and yhelp.classifiers():
@@ -130,6 +111,36 @@ def pre_run_checks(
 
     return return_val
 
+def pre_bucket_check(upload_args: dict) -> bool:
+    """
+    Given upload args, checks if the
+    target bucket and directory are
+    accessible and empty, respectively.
+    """
+
+    success = True
+
+    try:
+        client = boto3.client("s3")
+        if "s3_bucket_dir" not in upload_args:
+            warnings.warn("No 's3_bucket_dir' in upload block")
+            success = False
+        else:
+            result = client.list_objects(
+                Bucket=upload_args["s3_bucket"],
+                Prefix=upload_args["s3_bucket_dir"],
+            )
+            if "Contents" in result:
+                warnings.warn(
+                    f"There are already objects in remote s3 directory: "
+                    f"{upload_args['s3_bucket_dir']}"
+                )
+                success = False
+    except ClientError as ce:
+        warnings.warn(f"Client error when trying S3 credentials: {ce}")
+        success = False
+
+    return success
 
 if __name__ == "__main__":
     pre_run_checks(yhelp=YamlHelper())  # type: ignore

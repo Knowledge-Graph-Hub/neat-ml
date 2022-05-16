@@ -1,12 +1,6 @@
-import copy
-import re
-
-from embiggen import SkipGram, CBOW  # type: ignore
 from ensmallen import Graph  # type: ignore
 import numpy as np  # type: ignore
 import pandas as pd  # type: ignore
-from tensorflow.python.keras.callbacks import EarlyStopping  # type: ignore
-from tensorflow.keras.optimizers import Nadam  # type: ignore
 from tqdm.auto import tqdm  # type: ignore
 from transformers import BertModel, BertTokenizer  # type: ignore
 from embiggen.pipelines import compute_node_embedding  # type: ignore
@@ -35,7 +29,7 @@ def make_node_embeddings(
     Args:
         embedding_outfile: outfile to write out embeddings
         embedding_history_outfile: outfile to write out training history
-        main_graph_args: arguments passed to ensmallen_graph for graph loading
+        main_graph_args: arguments passed to Ensmallen for graph loading
         node_embedding_params: args passed to compute_node_embeddings() in Embiggen
         bert_columns: columns containing text info to use to make embeddings from Bert
                 pretrained embeddings

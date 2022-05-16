@@ -1,6 +1,5 @@
 import json
 import os
-from unicodedata import decimal
 import click
 from ensmallen import Graph # type: ignore
 import numpy as np  # type: ignore
@@ -104,10 +103,6 @@ def run(config: str) -> None:
 
             print(f"Correct label match in validation: {correct_label_match}")
 
-            # TODO: check if model is fitted - for sklearn this means
-            # catching a NotFittedError
-            # see https://stackoverflow.com/questions/39884009/whats-the-best-way-to-test-whether-an-sklearn-model-has-been-fitted
-            # TODO: Find an apt place for this JSON file to be exported
             if yhelp.classifier_history_file_name(classifier):
                 with open(yhelp.classifier_history_file_name(classifier), "w") as f:  # type: ignore
                     json.dump(history_obj.history, f)

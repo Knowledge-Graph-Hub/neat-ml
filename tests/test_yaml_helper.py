@@ -215,8 +215,8 @@ class TestYamlHelper(TestCase):
     @mock.patch('tarfile.open')
     def test_graph_url_converted_to_path(self, mock_tarfile_open, mock_download_file):
         this_yh = YamlHelper('tests/resources/test_url_for_graph_path.yaml')
-        self.assertTrue(is_url(this_yh.yaml['graph_data']['graph']['graph_path']))
-        this_yh.main_graph_args()
+        self.assertTrue(is_url(this_yh.yaml['graph_path']))
+        this_yh.retrieve_from_graph_path()
         self.assertTrue(mock_download_file.called)
         self.assertTrue(mock_tarfile_open.called)
         self.assertEqual('nodes.tsv',
@@ -229,7 +229,7 @@ class TestYamlHelper(TestCase):
     @mock.patch('tarfile.open')
     def test_graph_url_file_downloaded(self, mock_tarfile_open, mock_download_file):
         this_yh = YamlHelper('tests/resources/test_url_for_graph_path.yaml')
-        this_yh.main_graph_args()
+        this_yh.retrieve_from_graph_path()
         self.assertTrue(mock_download_file.called)
         self.assertTrue(mock_tarfile_open.called)
 

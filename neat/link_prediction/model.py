@@ -12,7 +12,6 @@ import tensorflow  # type: ignore
 from sklearn.tree import DecisionTreeClassifier  # type: ignore
 from sklearn.ensemble import RandomForestClassifier  # type: ignore
 from sklearn.linear_model import LogisticRegression  # type: ignore
-
 import importlib
 
 
@@ -57,10 +56,10 @@ class Model:
 
         Args:
             embedding_file: path to embedding file for nodes in graph
-            training_graph_args: EnsmallenGraph arguments to load training graph
-            pos_validation_args: EnsmallenGraph arguments to load positive validation graph
-            neg_training_args: EnsmallenGraph arguments to load negative training graph
-            neg_validation_args: EnsmallenGraph arguments to load negative validation graph
+            training_graph_args: Ensmallen arguments to load training graph
+            pos_validation_args: Ensmallen arguments to load positive validation graph
+            neg_training_args: Ensmallen arguments to load negative training graph
+            neg_validation_args: Ensmallen arguments to load negative validation graph
             edge_method: edge embedding method to use (average, L1, L2, etc)
         Returns:
             A tuple of tuples
@@ -122,8 +121,6 @@ class Model:
         embedding_file: str,
         edge_method: str,
         source_destination_list
-        # source_embeddings: np.array,
-        # destination_embeddings: np.array,
     ) -> np.ndarray:
         """Prepare training and validation data for training link prediction classifers
 

@@ -3,11 +3,9 @@ from pathlib import Path
 from typing import List, Union
 from warnings import warn
 
-from embiggen import EdgeTransformer  # type: ignore
 from ensmallen import Graph  # type: ignore
 import pandas as pd  # type: ignore
 from itertools import combinations  # [READ DOCS]
-import numpy as np
 
 from neat.link_prediction.sklearn_model import SklearnModel
 
@@ -59,8 +57,6 @@ def gen_src_dst_pair(
 
 def predict_links(
     graph: Graph,
-    # training_graph_args: dict,
-    # negative_graph_args: dict,
     model: object,
     node_types: List[List],
     cutoff: float,

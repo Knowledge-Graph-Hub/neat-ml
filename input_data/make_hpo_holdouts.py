@@ -1,6 +1,6 @@
 import os
 
-from ensmallen_graph import EnsmallenGraph
+from ensmallen import Graph # type: ignore
 from shutil import which
 
 train_percentage = 0.8
@@ -30,7 +30,7 @@ edge = 'biolink:subclass_of'
 edges_string = edge
 os.makedirs(edges_string, exist_ok=True)
 
-graph = EnsmallenGraph.from_unsorted_csv(
+graph = Graph.from_unsorted_csv(
     edge_path=hpo_edges_file,
     sources_column="subject",
     destinations_column="object",
