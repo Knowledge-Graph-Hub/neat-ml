@@ -47,14 +47,24 @@ neat run --config [your yaml]
 
 The pipeline is driven by a YAML file (e.g. `tests/resources/test.yaml`), which contains all parameters needed to complete the pipeline.
 This includes hyperparameters for machine learning and also things like files/paths to output results.
-Please note that the input paths in `node_path` and `edge_path`
+Specify paths to node and edge files:
 ```
 graph_data:
   graph:
     node_path: 
     edge_path: 
 ```
-may be local filepaths **OR** URLs.
+Please note that the input paths in `node_path` and `edge_path` may be local filepaths **OR** URLs.
+
+If the graph data is in a compressed file in a remote location (e.g., on KG-Hub), its URL may be specified in the `graph_path` argument:
+```
+graph_path: https://kg-hub.berkeleybop.io/kg-obo/bfo/2019-08-26/bfo_kgx_tsv.tar.gz
+graph_data:
+  graph:
+    node_path: bfo_kgx_tsv_nodes.tsv
+    edge_path: bfo_kgx_tsv_edges.tsv
+```
+The `node_path` and `edge_path` must be the names of the contents of the compressed file.
 
 A diagram explaining the design a bit is [here](https://app.diagrams.net/#G1XLKYf9ZiBfWmjfAIeI9yYv_CycE8GmIQ).
 
