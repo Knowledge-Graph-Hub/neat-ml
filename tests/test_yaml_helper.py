@@ -135,9 +135,9 @@ class TestYamlHelper(TestCase):
         self.assertEqual(3, len(cl))
         self.assertCountEqual(
             [
-                "<class 'keras.metrics.AUC'>",
-                "<class 'keras.metrics.Recall'>",
-                "<class 'keras.metrics.Precision'>",
+                "<class 'keras.metrics.metrics.AUC'>",
+                "<class 'keras.metrics.metrics.Recall'>",
+                "<class 'keras.metrics.metrics.Precision'>",
             ],
             [str(klass.__class__) for klass in cl],
         )
