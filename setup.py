@@ -79,6 +79,7 @@ setup(
         "boto3",
         "botocore",
         "validators",
+        "linkml"
     ],
     extras_require=extras,
 )
