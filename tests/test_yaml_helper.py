@@ -19,9 +19,6 @@ class TestYamlHelper(TestCase):
             "tests/resources/test_good_upload_info.yaml"
         )
         self.test_yaml_upload_bad = "tests/resources/test_bad_upload_info.yaml"
-        self.test_yaml_bert_tsne = (
-            "tests/resources/test_graph_embedding_bert_tsne.yaml"
-        )
 
     def test_no_indir(self) -> None:
         yh = YamlHelper("tests/resources/test_no_indir.yaml")
@@ -42,9 +39,7 @@ class TestYamlHelper(TestCase):
 
     def test_do_tsne(self):
         self.assertTrue(hasattr(YamlHelper, "do_tsne"))
-        self.assertTrue(not self.yh.do_tsne())
-        ybt = YamlHelper(self.test_yaml_bert_tsne)
-        self.assertTrue(ybt.do_tsne())
+        self.assertTrue(self.yh.do_tsne())
 
     def test_do_embeddings(self):
         self.assertTrue(hasattr(YamlHelper, "do_embeddings"))
@@ -56,14 +51,12 @@ class TestYamlHelper(TestCase):
 
     def test_do_upload(self):
         self.assertTrue(hasattr(YamlHelper, "do_upload"))
-        yg = YamlHelper(self.test_yaml_upload_good)
-        self.assertTrue(yg.do_upload())
+        self.assertTrue(self.yh.do_upload())
 
     def test_make_upload_args(self):
         self.assertTrue(hasattr(YamlHelper, "make_upload_args"))
-        yg = YamlHelper(self.test_yaml_upload_good)
         self.assertDictEqual(
-            yg.make_upload_args(),
+            self.yh.make_upload_args(),
             {
                 "local_directory": "tests/resources/test_output_data_dir/",
                 "s3_bucket": "some_bucket",
@@ -73,14 +66,13 @@ class TestYamlHelper(TestCase):
         )
 
     def test_classifier_history_file_name(self):
-        self.assertTrue(hasattr(YamlHelper, "classifier_history_file_name"))
-        yg = YamlHelper(self.test_yaml)
+        self.assertTrue(hasattr(YamlHelper, "history_filename"))
+        class_list = self.yh.yaml["ClassifierContainer"]["classifiers"]
+        expect_filename = [x["history_filename"] for x in class_list if x["classifier_id"] == "mlp_1"][0]
         self.assertEqual(
-            yg.classifier_history_file_name(
-                yg.yaml["classifiers"][0]
-            ),
+            expect_filename,
             "mlp_classifier_history.json",
-        )
+            )
 
     @parameterized.expand(
         [
@@ -116,7 +108,7 @@ class TestYamlHelper(TestCase):
                 "embedding_history_outfile",
                 "output_data/embedding_history.json",
             ),
-            ("bert_columns", ["category", "id"]),
+            #("bert_columns", ["category", "id"]),
         ]
     )
     def test_make_embedding_args(self, key, value):
@@ -141,10 +133,6 @@ class TestYamlHelper(TestCase):
             ],
             [str(klass.__class__) for klass in cl],
         )
-
-    def test_catch_keyerror(self):
-        yh = YamlHelper("tests/resources/test_no_graph.yaml")
-        yh.pos_val_graph_args()  # no assertion needed, just testing for no exception
 
     @parameterized.expand(
         [
