@@ -80,6 +80,7 @@ setup(
         "botocore",
         "validators",
         "linkml",
+        "more-itertools",
         "neat_schema"
     ],
     extras_require=extras,
