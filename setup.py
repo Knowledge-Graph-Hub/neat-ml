@@ -80,7 +80,7 @@ setup(
         "botocore",
         "validators",
         "linkml",
-        "NEAT_schema @ git+https://github.com/Knowledge-Graph-Hub/NEAT_schema.git"
+        "neat_schema"
     ],
     extras_require=extras,
 )
