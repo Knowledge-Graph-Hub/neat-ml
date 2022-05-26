@@ -20,10 +20,6 @@ class TestYamlHelper(TestCase):
         )
         self.test_yaml_upload_bad = "tests/resources/test_bad_upload_info.yaml"
 
-    def test_no_indir(self) -> None:
-        yh = YamlHelper("tests/resources/test_no_indir.yaml")
-        self.assertEqual("", yh.indir())
-
     def test_bad_indir(self) -> None:
         with self.assertRaises(FileNotFoundError) as context:
             YamlHelper("tests/resources/test_bad_indir.yaml").indir()

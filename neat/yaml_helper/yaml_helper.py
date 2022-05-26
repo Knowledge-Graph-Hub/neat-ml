@@ -113,18 +113,19 @@ class YamlHelper:
         self.yaml: dict = parse_yaml(config)
 
     def indir(self):
-        """Get input directory from config.
+        """Get input directory.
+            This is not currently specified in the
+            config and will be the current
+            working directory unless changed
+            directly through a call to the
+            YamlHelper object.
 
         Returns:
             The input directory
 
         """
-        if "input_directory" in self.yaml:
-            indir = self.yaml["input_directory"]
-            if not os.path.exists(indir):
-                raise FileNotFoundError(f"Can't find input dir {indir}")
-        else:
-            indir = self.default_indir
+        indir = self.default_indir
+        
         return indir
 
     def outdir(self):
