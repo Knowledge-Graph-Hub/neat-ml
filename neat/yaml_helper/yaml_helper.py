@@ -305,7 +305,7 @@ class YamlHelper:
             "bert_columns": self.yaml["embeddings"]["bert_params"][
                 "node_columns"
             ]
-            if "bert_params" in self.yaml["embeddings"]
+            if "bert_params" in self.yaml["EmbeddingsConfig"]
             else None,
         }
         return node_embedding_args
