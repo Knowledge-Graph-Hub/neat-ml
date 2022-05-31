@@ -300,7 +300,7 @@ class YamlHelper:
             "embedding_history_outfile": self.embedding_history_outfile(),
             "main_graph_args": self.main_graph_args(),
             "node_embedding_params": self.yaml["EmbeddingsConfig"][
-                "node_embedding_params"
+                "node_embeddings_params"
             ],
             "bert_columns": self.yaml["embeddings"]["bert_params"][
                 "node_columns"
