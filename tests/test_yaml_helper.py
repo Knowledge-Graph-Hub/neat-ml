@@ -114,21 +114,21 @@ class TestYamlHelper(TestCase):
         )
         self.assertEqual(value, self.embedding_args[key])
 
-    def test_make_embeddings_metrics_class_list(self):
-        self.assertTrue(
-            hasattr(YamlHelper, "make_embeddings_metrics_class_list")
-        )
-        yh = YamlHelper("tests/resources/test_make_embeddings_metrics.yaml")
-        cl = yh.make_embeddings_metrics_class_list()
-        self.assertEqual(3, len(cl))
-        self.assertCountEqual(
-            [
-                "<class 'keras.metrics.metrics.AUC'>",
-                "<class 'keras.metrics.metrics.Recall'>",
-                "<class 'keras.metrics.metrics.Precision'>",
-            ],
-            [str(klass.__class__) for klass in cl],
-        )
+    # def test_make_embeddings_metrics_class_list(self):
+    #     self.assertTrue(
+    #         hasattr(YamlHelper, "make_embeddings_metrics_class_list")
+    #     )
+    #     yh = YamlHelper("tests/resources/test_make_embeddings_metrics.yaml")
+    #     cl = yh.make_embeddings_metrics_class_list()
+    #     self.assertEqual(3, len(cl))
+    #     self.assertCountEqual(
+    #         [
+    #             "<class 'keras.metrics.metrics.AUC'>",
+    #             "<class 'keras.metrics.metrics.Recall'>",
+    #             "<class 'keras.metrics.metrics.Precision'>",
+    #         ],
+    #         [str(klass.__class__) for klass in cl],
+    #     )
 
     @parameterized.expand(
         [
@@ -200,7 +200,7 @@ class TestYamlHelper(TestCase):
     def test_graph_url_converted_to_path(self, mock_tarfile_open, mock_download_file):
         this_yh = YamlHelper('tests/resources/test_url_for_graph_path.yaml')
         self.assertTrue(is_url(this_yh.yaml['graph_path']))
-        this_yh.retrieve_from_graph_path()
+        this_yh.retrieve_from_sources()
         self.assertTrue(mock_download_file.called)
         self.assertTrue(mock_tarfile_open.called)
         self.assertEqual('nodes.tsv',
@@ -213,7 +213,7 @@ class TestYamlHelper(TestCase):
     @mock.patch('tarfile.open')
     def test_graph_url_file_downloaded(self, mock_tarfile_open, mock_download_file):
         this_yh = YamlHelper('tests/resources/test_url_for_graph_path.yaml')
-        this_yh.retrieve_from_graph_path()
+        this_yh.retrieve_from_sources()
         self.assertTrue(mock_download_file.called)
         self.assertTrue(mock_tarfile_open.called)
 

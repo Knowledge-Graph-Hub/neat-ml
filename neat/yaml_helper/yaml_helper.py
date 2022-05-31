@@ -229,24 +229,24 @@ class YamlHelper:
         return loaded_graph
 
     def main_graph_args(self) -> dict:
-        return self.add_indir_to_graph_data(self.yaml["graph_data"]["graph"])
+        return self.add_indir_to_graph_data(self.yaml["GraphDataConfiguration"]["graph"])
 
     @catch_keyerror
     def pos_val_graph_args(self) -> dict:
         return self.add_indir_to_graph_data(
-            self.yaml["graph_data"]["pos_validation"]
+            self.yaml["GraphDataConfiguration"]["data"]["valid_data"]["pos_edge_filepath"]
         )
 
     @catch_keyerror
     def neg_val_graph_args(self) -> dict:
         return self.add_indir_to_graph_data(
-            self.yaml["graph_data"]["neg_validation"]
+            self.yaml["GraphDataConfiguration"]["data"]["valid_data"]["neg_edge_filepath"]
         )
 
     @catch_keyerror
     def neg_train_graph_args(self) -> dict:
         return self.add_indir_to_graph_data(
-            self.yaml["graph_data"]["neg_training"]
+            self.yaml["GraphDataConfiguration"]["data"]["train_data"]["neg_edge_filepath"]
         )
 
     #
@@ -254,10 +254,10 @@ class YamlHelper:
     #
 
     def do_embeddings(self) -> bool:
-        return "embeddings" in self.yaml
+        return "EmbeddingsConfig" in self.yaml
 
     def embedding_outfile(self) -> str:
-        filepath = self.yaml['embeddings']['embedding_file_name']
+        filepath = self.yaml['EmbeddingsConfig']['filename']
         if is_url(filepath):
             url_as_filename = \
                 ''.join(c if c in VALID_CHARS else "_" for c in filepath)
@@ -272,34 +272,34 @@ class YamlHelper:
     def embedding_history_outfile(self):
         return os.path.join(
             self.outdir(),
-            self.yaml["embeddings"]["embedding_history_file_name"],
+            self.yaml["EmbeddingsConfig"]["history_filename"],
         )
 
-    def make_embeddings_metrics_class_list(self) -> list:
-        metrics_class_list = []
+    # def make_embeddings_metrics_class_list(self) -> list:
+    #     metrics_class_list = []
 
-        metrics = (
-            self.yaml["embeddings"]["metrics"]
-            if "metrics" in self.yaml["embeddings"]
-            else None
-        )
-        if metrics:
-            for m in metrics:
-                if m["type"].startswith("tensorflow.keras"):
-                    m_class = Model.dynamically_import_class(m["type"])
-                    m_parameters = m["parameters"]
-                    m_instance = m_class(**m_parameters)  # type: ignore
-                    metrics_class_list.append(m_instance)
-                else:
-                    metrics_class_list.append([m["type"]])
-        return metrics_class_list
+    #     metrics = (
+    #         self.yaml["EmbeddingsConfig"]["metrics"]
+    #         if "metrics" in self.yaml["embeddings"]
+    #         else None
+    #     )
+    #     if metrics:
+    #         for m in metrics:
+    #             if m["type"].startswith("tensorflow.keras"):
+    #                 m_class = Model.dynamically_import_class(m["type"])
+    #                 m_parameters = m["parameters"]
+    #                 m_instance = m_class(**m_parameters)  # type: ignore
+    #                 metrics_class_list.append(m_instance)
+    #             else:
+    #                 metrics_class_list.append([m["type"]])
+    #     return metrics_class_list
 
     def make_node_embeddings_args(self) -> dict:
         node_embedding_args = {
             "embedding_outfile": self.embedding_outfile(),
             "embedding_history_outfile": self.embedding_history_outfile(),
             "main_graph_args": self.main_graph_args(),
-            "node_embedding_params": self.yaml["embeddings"][
+            "node_embedding_params": self.yaml["EmbeddingsConfig"][
                 "node_embedding_params"
             ],
             "bert_columns": self.yaml["embeddings"]["bert_params"][
@@ -315,7 +315,7 @@ class YamlHelper:
     #
 
     def do_tsne(self) -> bool:
-        return "tsne" in self.yaml["embeddings"]
+        return "tsne_filename" in self.yaml["EmbeddingsConfig"]
 
     def make_tsne_args(self, graph: Graph) -> dict:
         make_tsne_args = {
@@ -327,7 +327,7 @@ class YamlHelper:
 
     def tsne_outfile(self) -> str:
         return os.path.join(
-            self.outdir(), self.yaml["embeddings"]["tsne"]["tsne_file_name"]
+            self.outdir(), self.yaml["EmbeddingsConfig"]["tsne_filename"]
         )
 
     #
@@ -335,10 +335,10 @@ class YamlHelper:
     #
 
     def do_classifier(self) -> bool:
-        return "classifiers" in self.yaml
+        return "ClassifierContainer" in self.yaml
 
     def classifier_type(self) -> str:
-        return self.yaml["classifiers"]["type"]
+        return self.yaml["ClassifierContainer"]["classifiers"]["classifier_name"]
 
     @catch_keyerror
     def classifiers(self) -> list:
@@ -346,25 +346,24 @@ class YamlHelper:
 
         :return: list of classifiers to be trained
         """
-        return self.yaml["classifiers"]
+        return self.yaml["ClassifierContainer"]["classifiers"]
 
     def get_all_classifier_ids(self):
-        return [c["classifier_id"] for c in self.yaml["classifiers"]]
+        return [c["classifier_id"] for c in self.yaml["ClassifierContainer"]["classifiers"]]
 
     def get_edge_embedding_method(self, classifier: dict) -> str:
         return classifier["edge_method"]
 
     def classifier_history_file_name(self, classifier: dict) -> Optional[str]:
         return (
-            classifier["model"]["classifier_history_file_name"]
-            if "model" in classifier
-            and "classifier_history_file_name" in classifier["model"]
+            classifier["history_filename"]
+            if "history_filename" in classifier
             else None
         )
 
     def classifier_outfile(self, classifier: dict) -> str:
         return os.path.join(
-            self.outdir(), classifier["model"]["outfile"]
+            self.outdir(), classifier["outfile"]
         )
 
     #
@@ -372,15 +371,15 @@ class YamlHelper:
     #
 
     def do_upload(self) -> bool:
-        return "upload" in self.yaml
+        return "Upload" in self.yaml
 
     def make_upload_args(self) -> dict:
         make_upload_args = {
             "local_directory": self.outdir(),
-            "s3_bucket": self.yaml["upload"]["s3_bucket"],
-            "s3_bucket_dir": self.yaml["upload"]["s3_bucket_dir"],
-            "extra_args": self.yaml["upload"]["extra_args"]
-            if "extra_args" in self.yaml["upload"]
+            "s3_bucket": self.yaml["Upload"]["s3_bucket"],
+            "s3_bucket_dir": self.yaml["Upload"]["s3_bucket_dir"],
+            "extra_args": self.yaml["Upload"]["extra_args"]
+            if "extra_args" in self.yaml["Upload"]
             else None,
         }
         return make_upload_args
@@ -389,12 +388,12 @@ class YamlHelper:
     # applying trained model to fresh data for predictions
     #
     def do_apply_classifier(self):
-        return "apply_trained_classifier" in self.yaml
+        return "ApplyTrainedModelsContainer" in self.yaml
 
     def get_classifier_id_for_prediction(self):
-        classifier_applications = self.yaml["apply_trained_classifier"]
+        classifier_applications = self.yaml["ApplyTrainedModelsContainer"]["models"]
         list_of_ids = [
-            cl["classifier_model_id"] for cl in classifier_applications
+            cl["model_id"] for cl in classifier_applications
         ]
         return list_of_ids
 
@@ -409,8 +408,8 @@ class YamlHelper:
     def make_classifier_args(self, cl_id: str):
         classifier_args = [
             arg
-            for arg in self.yaml["apply_trained_classifier"]
-            if cl_id == arg["classifier_model_id"]
+            for arg in self.yaml["ApplyTrainedModelsContainer"]["models"]
+            if cl_id == arg["model_id"]
         ][0]
         model = self.get_classifier_from_id(cl_id)
 
