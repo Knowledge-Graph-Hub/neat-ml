@@ -135,18 +135,18 @@ class YamlHelper:
 
         """
         outdir = (
-            self.yaml["output_directory"]
-            if "output_directory" in self.yaml
+            self.yaml["Target"]["target_path"]
+            if "Target" in self.yaml
             else self.default_outdir
         )
         if not os.path.exists(outdir):
             os.makedirs(outdir)
         return outdir
 
-    def retrieve_from_graph_path(self) -> None:
+    def retrieve_from_sources(self) -> None:
         """
         Checks for existence of a 
-        graph_path key. If this exists,
+        Source key. If this exists,
         download and decompress as needed.
         The node_path and edge_path values
         in graph_data
@@ -154,26 +154,27 @@ class YamlHelper:
         node/edge filenames.
         """
 
-        if "graph_path" in self.yaml:
-            filepath = self.yaml["graph_path"]
-            if is_url(filepath):
-                url_as_filename = \
-                    ''.join(c if c in VALID_CHARS else "_" for c in filepath)
-                outfile = os.path.join(self.indir(), url_as_filename)
-                download_file(filepath, outfile)
-            # If this was a URL, it already got decompressed.
-            # but if it's local and still compressed, decompress now
-            # (this can happen if we already downloaded it but didn't decomp)
-            if filepath.endswith(".tar.gz"):
-                outlist = []
+        if "Source" in self.yaml:
+            for entry in self.yaml["Source"]["source_paths"]:
+                filepath = self.yaml["Source"]["source_paths"][entry]
                 if is_url(filepath):
-                    decomp_outfile = tarfile.open(outfile)
-                else:
-                    decomp_outfile = tarfile.open(filepath)
-                for filename in decomp_outfile.getnames():
-                    outlist.append(os.path.join(self.indir(),filename))
-                decomp_outfile.extractall(self.indir())
-                decomp_outfile.close()
+                    url_as_filename = \
+                        ''.join(c if c in VALID_CHARS else "_" for c in filepath)
+                    outfile = os.path.join(self.indir(), url_as_filename)
+                    download_file(filepath, outfile)
+                # If this was a URL, it already got decompressed.
+                # but if it's local and still compressed, decompress now
+                # (this can happen if we already downloaded it but didn't decomp)
+                if filepath.endswith(".tar.gz"):
+                    outlist = []
+                    if is_url(filepath):
+                        decomp_outfile = tarfile.open(outfile)
+                    else:
+                        decomp_outfile = tarfile.open(filepath)
+                    for filename in decomp_outfile.getnames():
+                        outlist.append(os.path.join(self.indir(),filename))
+                    decomp_outfile.extractall(self.indir())
+                    decomp_outfile.close()
 
     def add_indir_to_graph_data(
         self,
