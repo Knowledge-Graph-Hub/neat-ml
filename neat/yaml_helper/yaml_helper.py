@@ -65,8 +65,6 @@ def download_file(url: str, outfile: str) -> list:
     (This is checked during pre_run_checks though.)
     If it's tar.gz, decompress.
     Return the names of all files as a list.
-    There should be just one,
-    unless the outfile was compressed.
     """
 
     outlist = []
@@ -80,8 +78,9 @@ def download_file(url: str, outfile: str) -> list:
         outdir = os.path.dirname(outfile)
         for filename in decomp_outfile.getnames():
             outlist.append(os.path.join(outdir,filename))
-        if len(outlist) > 2:
-            logging.warning(f"{outfile} contains more than two files.")
+        filecount = len(outlist)
+        if filecount > 2:
+            logging.warning(f"{outfile} contains {filecount} files.")
         decomp_outfile.extractall(outdir)
         decomp_outfile.close()
     else:
@@ -96,7 +95,7 @@ def catch_keyerror(f):
         try:
             return f(*args, **kwargs)
         except KeyError as e:
-            print("can't find key in YAML: ", e, "(possibly harmless)")
+            print("Can't find key in YAML: ", e, "(possibly harmless)")
             return None
 
     return func
@@ -125,7 +124,7 @@ class YamlHelper:
 
         """
         indir = self.default_indir
-        
+
         return indir
 
     def outdir(self):
