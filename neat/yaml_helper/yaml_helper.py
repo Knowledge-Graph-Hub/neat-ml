@@ -95,7 +95,7 @@ def catch_keyerror(f):
         try:
             return f(*args, **kwargs)
         except KeyError as e:
-            print("Can't find key in YAML: ", e, "(possibly harmless)")
+            print(f"Can't find key in YAML: {e} (possibly harmless)")
             return None
 
     return func
