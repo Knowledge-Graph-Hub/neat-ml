@@ -1,6 +1,17 @@
 ---
 # name: ""
 # description: ""
+
+Source:
+  source_paths:
+    - source1: https://someremoteurl.com/graph.tar.gz
+    - source2: https://someremoteurl.com/graph2.tar.gz
+    - source3: https://someremoteurl.com/graph3.tar.gz
+  source_desc: 
+    - source1: "This file contains the necessary graph files."
+    - source2: "This file may be necessary."
+    - source3: "This file may not be necessary."
+
 Target:
   target_path: tests/resources/test_output_data_dir/
 
