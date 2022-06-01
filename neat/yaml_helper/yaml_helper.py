@@ -302,7 +302,7 @@ class YamlHelper:
             "node_embedding_params": self.yaml["EmbeddingsConfig"][
                 "node_embeddings_params"
             ],
-            "bert_columns": self.yaml["embeddings"]["bert_params"][
+            "bert_columns": self.yaml["EmbeddingsConfig"]["bert_params"][
                 "node_columns"
             ]
             if "bert_params" in self.yaml["EmbeddingsConfig"]
@@ -418,12 +418,12 @@ class YamlHelper:
             **self.main_graph_args()
         )
 
-        if self.get_classifier_from_id(cl_id)["type"] == "neural network":
+        if self.get_classifier_from_id(cl_id)["classifier_name"] == "neural network":
             classifier_args_dict["model"] = pickle.load(
                 open(
                     os.path.join(
                         self.outdir(),
-                        get_custom_model_path(model["model"]["outfile"]),
+                        get_custom_model_path(model["outfile"]),
                     ),
                     "rb",
                 ),
@@ -432,19 +432,19 @@ class YamlHelper:
         else:
             classifier_args_dict["model"] = pickle.load(
                 open(
-                    os.path.join(self.outdir(), model["model"]["outfile"]),
+                    os.path.join(self.outdir(), model["outfile"]),
                     "rb",
                 ),
             )
 
         # YAML may specify node_types as dict with 'source' and 'destination'
         # or as a list of lists
-        if 'source' in classifier_args["link_node_types"] \
-            or 'destination' in classifier_args["link_node_types"]:
-            classifier_args_dict["node_types"] = [classifier_args["link_node_types"]['source'],
-                                                    classifier_args["link_node_types"]['destination']]
+        if 'source' in classifier_args["node_types"] \
+            or 'destination' in classifier_args["node_types"]:
+            classifier_args_dict["node_types"] = [classifier_args["node_types"]['source'],
+                                                    classifier_args["node_types"]['destination']]
         else:
-            classifier_args_dict["node_types"] = classifier_args["link_node_types"]
+            classifier_args_dict["node_types"] = classifier_args["node_types"]
 
         classifier_args_dict["cutoff"] = classifier_args["cutoff"]
         classifier_args_dict["output_file"] = os.path.join(

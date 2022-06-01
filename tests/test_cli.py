@@ -41,7 +41,7 @@ class TestRun(TestCase):
         result = self.runner.invoke(
             catch_exceptions=False,
             cli=run,
-            args=["--config", "tests/resources/test_neat.yaml"],
+            args=["--config", "tests/resources/test.yaml"],
         )
         self.assertTrue(mock_do_upload.called)
         self.assertTrue(mock_boto3_client.called)

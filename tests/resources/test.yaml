@@ -53,16 +53,6 @@ EmbeddingsConfig:
 
 ClassifierContainer:
   classifiers:
-    - classifier_id: lr_0
-      classifier_name: Logistic Regression
-      classifier_type: sklearn.linear_model.LogisticRegression
-      edge_method: Average
-      outfile: "model_lr0_test_yaml.h5"
-      parameters:
-        sklearn_params:
-          random_state: 42
-          max_iter: 100
-
     - classifier_id: lr_1
       classifier_name: Logistic Regression
       classifier_type: sklearn.linear_model.LogisticRegression
@@ -70,7 +60,7 @@ ClassifierContainer:
       outfile: "model_lr1_test_yaml.h5"
       parameters:
         sklearn_params:
-          random_state: 24
+          random_state: 42
           max_iter: 100
 
     - classifier_id: mlp_1
@@ -137,7 +127,7 @@ ClassifierContainer:
 
 ApplyTrainedModelsContainer:
   models:
-    - model_id: lr_0
+    - model_id: lr_1
       node_types:
         source:
           - "biolink:Protein"
@@ -145,15 +135,6 @@ ApplyTrainedModelsContainer:
           - "biolink:Protein"
       cutoff: 0.9
       outfile: lr_protein_predictions_kgx.tsv
-
-    - model_id: lr_1
-      node_types:
-        source:
-          - "biolink:Drug"
-        destination:
-          - "biolink:Drug"
-      cutoff: 0.8
-      outfile: lr_drug_predictions_kgx.tsv
 
 Upload:
   s3_bucket: some_bucket
