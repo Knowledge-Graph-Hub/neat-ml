@@ -69,7 +69,7 @@ class TestRun(TestCase):
         result = self.runner.invoke(
             catch_exceptions=False,
             cli=run,
-            args=["--config", "tests/resources/test_neat.yaml"],
+            args=["--config", "tests/resources/test.yaml"],
         )
         self.assertEqual(result.exit_code, 0)
 
@@ -95,7 +95,7 @@ class TestRun(TestCase):
         result = self.runner.invoke(
             catch_exceptions=False,
             cli=run,
-            args=["--config", "tests/resources/test_neat.yaml"],
+            args=["--config", "tests/resources/test.yaml"],
         )
         self.assertEqual(result.exit_code, 0)
 
@@ -123,21 +123,10 @@ class TestRun(TestCase):
         mock_do_classifier.return_value = True
         mock_do_upload.return_value = False
 
-        # # * TEST CODE ####################################
-        # # mock_model = Model()
-        # mock_sklearn_model.make_link_prediction_data = mock.MagicMock(
-        #     name="make_link_prediction_data"
-        # )
-        # mock_sklearn_model.make_link_prediction_data.return_value = (
-        #     self.mock_train,
-        #     self.mock_valid,
-        # # )
-        # # * ################################################
-
         result = self.runner.invoke(
             catch_exceptions=True,
             cli=run,
-            args=["--config", "tests/resources/test_neat.yaml"],
+            args=["--config", "tests/resources/test.yaml"],
         )
         print(result)
         self.assertEqual(result.exit_code, 0)
@@ -165,7 +154,7 @@ class TestRun(TestCase):
         result = self.runner.invoke(
             catch_exceptions=False,
             cli=run,
-            args=["--config", "tests/resources/test_neat.yaml"],
+            args=["--config", "tests/resources/test.yaml"],
         )
         self.assertTrue(mock_pre_run_checks.called)
         self.assertEqual(result.exit_code, 0)
@@ -197,7 +186,7 @@ class TestRun(TestCase):
         result = self.runner.invoke(
             catch_exceptions=False,
             cli=run,
-            args=["--config", "tests/resources/test_neat.yaml"],
+            args=["--config", "tests/resources/test.yaml"],
         )
         self.assertTrue(mock_deal_with_url_node_edge_paths.called)
         self.assertEqual(result.exit_code, 0)
@@ -207,7 +196,7 @@ class TestRun(TestCase):
         result = self.runner.invoke(
             catch_exceptions=False,
             cli=updateyaml,
-            args=["--input_path", "tests/resources/test_neat.yaml"],
+            args=["--input_path", "tests/resources/test.yaml"],
         )
         self.assertTrue(mock_do_update_yaml.called)
         self.assertEqual(result.exit_code, 0)
