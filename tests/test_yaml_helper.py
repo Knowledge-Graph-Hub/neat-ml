@@ -21,7 +21,7 @@ class TestYamlHelper(TestCase):
         self.test_yaml_upload_bad = "tests/resources/test_bad_upload_info.yaml"
 
     def test_outdir(self) -> None:
-        self.assertEqual("output_data", self.yh.outdir())
+        self.assertEqual("tests/resources/test_output_data_dir/", self.yh.outdir())
 
     def test_add_indir_to_graph_data(self):
         # emits error message to log, but continues:
@@ -53,12 +53,11 @@ class TestYamlHelper(TestCase):
                 "local_directory": "tests/resources/test_output_data_dir/",
                 "s3_bucket": "some_bucket",
                 "s3_bucket_dir": "some/remote/directory/",
-                "extra_args": {"ACL": "public-read"},
+                "extra_args": {"ACL": "public-read", "BCL": "private-read"},
             },
         )
 
     def test_classifier_history_file_name(self):
-        self.assertTrue(hasattr(YamlHelper, "history_filename"))
         class_list = self.yh.yaml["ClassifierContainer"]["classifiers"]
         expect_filename = [x["history_filename"] for x in class_list if x["classifier_id"] == "mlp_1"][0]
         self.assertEqual(
@@ -86,7 +85,7 @@ class TestYamlHelper(TestCase):
             (
                 "node_embedding_params",
                 {
-                    "node_embedding_method_name": "SkipGram",
+                    "method_name": "SkipGram",
                     "batch_size": 128,
                     "explore_weight": 1.0,
                     "iterations": 5,
@@ -95,10 +94,10 @@ class TestYamlHelper(TestCase):
                     "window_size": 4,
                 },
             ),
-            ("embedding_outfile", "output_data/test_embeddings_test_yaml.csv"),
+            ("embedding_outfile", "tests/resources/test_output_data_dir/test_embeddings_test_yaml.csv"),
             (
                 "embedding_history_outfile",
-                "output_data/embedding_history.json",
+                "tests/resources/test_output_data_dir/embedding_history.json",
             ),
             #("bert_columns", ["category", "id"]),
         ]
@@ -191,27 +190,27 @@ class TestYamlHelper(TestCase):
         self.assertTrue(mock_download_file.called)
         self.assertEqual(2, mock_download_file.call_count)
 
-    @mock.patch('neat.yaml_helper.yaml_helper.download_file')
-    @mock.patch('tarfile.open')
-    def test_graph_url_converted_to_path(self, mock_tarfile_open, mock_download_file):
-        this_yh = YamlHelper('tests/resources/test_url_for_graph_path.yaml')
-        self.assertTrue(is_url(this_yh.yaml['graph_path']))
-        this_yh.retrieve_from_sources()
-        self.assertTrue(mock_download_file.called)
-        self.assertTrue(mock_tarfile_open.called)
-        self.assertEqual('nodes.tsv',
-                         this_yh.main_graph_args()['node_path'])
-        self.assertFalse(is_url(this_yh.main_graph_args()['edge_path']))
-        self.assertEqual('edges.tsv',
-                         this_yh.main_graph_args()['edge_path'])
+    # @mock.patch('neat.yaml_helper.yaml_helper.download_file')
+    # @mock.patch('tarfile.open')
+    # def test_graph_url_converted_to_path(self, mock_tarfile_open, mock_download_file):
+    #     this_yh = YamlHelper('tests/resources/test_url_for_graph_path.yaml')
+    #     self.assertTrue(is_url(this_yh.yaml['graph_path']))
+    #     this_yh.retrieve_from_sources()
+    #     self.assertTrue(mock_download_file.called)
+    #     self.assertTrue(mock_tarfile_open.called)
+    #     self.assertEqual('nodes.tsv',
+    #                      this_yh.main_graph_args()['node_path'])
+    #     self.assertFalse(is_url(this_yh.main_graph_args()['edge_path']))
+    #     self.assertEqual('edges.tsv',
+    #                      this_yh.main_graph_args()['edge_path'])
         
-    @mock.patch('neat.yaml_helper.yaml_helper.download_file')
-    @mock.patch('tarfile.open')
-    def test_graph_url_file_downloaded(self, mock_tarfile_open, mock_download_file):
-        this_yh = YamlHelper('tests/resources/test_url_for_graph_path.yaml')
-        this_yh.retrieve_from_sources()
-        self.assertTrue(mock_download_file.called)
-        self.assertTrue(mock_tarfile_open.called)
+    # @mock.patch('neat.yaml_helper.yaml_helper.download_file')
+    # @mock.patch('tarfile.open')
+    # def test_graph_url_file_downloaded(self, mock_tarfile_open, mock_download_file):
+    #     this_yh = YamlHelper('tests/resources/test_url_for_graph_path.yaml')
+    #     this_yh.retrieve_from_sources()
+    #     self.assertTrue(mock_download_file.called)
+    #     self.assertTrue(mock_tarfile_open.called)
 
     @mock.patch('neat.yaml_helper.yaml_helper.download_file')
     def test_embeddings_url_converted_to_path(self, mock_download_file):

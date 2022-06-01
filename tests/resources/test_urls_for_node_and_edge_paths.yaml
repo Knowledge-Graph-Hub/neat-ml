@@ -1,5 +1,5 @@
 ---
-graph_data:
+GraphDataConfiguration:
   graph:
     directed: False
     node_path: https://someremoteurl.com/nodes.tsv
