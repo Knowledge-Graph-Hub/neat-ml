@@ -75,8 +75,7 @@ ClassifierContainer:
             layers:
               - type: tensorflow.keras.layers.Input
                 parameters:
-                  units: 128
-                  activation: relu
+                  shape: 868
               - type: tensorflow.keras.layers.Dense
                 parameters:
                   units: 128

@@ -6,7 +6,7 @@ class SklearnModel(Model):
     def __init__(self, config: dict, outdir: str = None):
         super().__init__(outdir=outdir)
         self.config = config
-        model_type = config["model"]["type"]
+        model_type = config["classifier_type"]
         model_class = self.dynamically_import_class(model_type)
         self.model = model_class()  # type: ignore
 
