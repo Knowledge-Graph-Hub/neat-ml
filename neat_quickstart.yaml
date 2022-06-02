@@ -1,50 +1,64 @@
-name: "quick_neat"
-description: "A Quick NEAT Run"
-output_directory: quickstart_output
+# name: "quick_neat"
+# description: "A Quick NEAT Run"
 
-graph_data:
+Source:
+  source_paths:
+    - source1: https://someremoteurl.com/graph.tar.gz
+    - source2: https://someremoteurl.com/graph2.tar.gz
+    - source3: https://someremoteurl.com/graph3.tar.gz
+  source_desc: 
+    - source1: "This file contains the necessary graph files."
+    - source2: "This file may be necessary."
+    - source3: "This file may not be necessary."
+
+Target:
+  target_path: quickstart_output
+
+GraphDataConfiguration:
   graph:
+    directed: False
     node_path: tests/resources/test_graphs/test_small_nodes.tsv
     edge_path: tests/resources/test_graphs/test_small_edges.tsv
-    directed: False
     verbose: True
-    nodes_column: 'id'
-    node_list_node_types_column: 'category'
-    default_node_type: 'biolink:NamedThing'
-    sources_column: 'subject'
-    destinations_column: 'object'
-    default_edge_type: 'biolink:related_to'
+    nodes_column: "id"
+    node_list_node_types_column: "category"
+    default_node_type: "biolink:NamedThing"
+    sources_column: "subject"
+    destinations_column: "object"
+    default_edge_type: "biolink:related_to"
 
-embeddings:
-  embedding_file_name: quickstart_embedding.csv
-  embedding_history_file_name: quickstart_embedding_history.json
-  node_embedding_params:
-    node_embedding_method_name: CBOW # one of 'CBOW', 'GloVe', 'SkipGram', 'Siamese', 'TransE', 'SimplE', 'TransH', 'TransR'
-    walk_length: 10 # typically 100 or so
-    batch_size: 128 # typically 512? or more
+EmbeddingsConfig:
+  filename: quickstart_embedding.csv
+  history_filename: quickstart_embedding_history.json
+  node_embeddings_params:
+    method_name: CBOW
+    walk_length: 10
+    batch_size: 128
     window_size: 4
-    return_weight: 1.0  # 1/p
-    explore_weight: 1.0  # 1/q
-    iterations: 5 # typically 20
-    use_mirrored_strategy: False
-  
-  tsne:
-    tsne_file_name: tsne_quickstart.png
+    return_weight: 1.0
+    explore_weight: 1.0
+    iterations: 5
+  tsne_filename: tsne_quickstart.png
 
-classifiers:
-  -
-    classifier_id: lr_0
-    type: Logistic Regression
-    edge_method: Average # one of EdgeTransformer.methods: Hadamard, Sum, Average, L1, AbsoluteL1, L2, or alternatively a lambda
-    model:
+ClassifierContainer:
+  classifiers:
+    - classifier_id: lr_1
+      classifier_name: Logistic Regression
+      classifier_type: sklearn.linear_model.LogisticRegression
+      edge_method: Average
       outfile: "model_lr_quickstart"
-      type: sklearn.linear_model.LogisticRegression
       parameters:
-        random_state: 42
-        max_iter: 100
+        sklearn_params:
+          random_state: 42
+          max_iter: 100
 
-apply_trained_classifier:
-  -
-    classifier_model_id: lr_0
-    cutoff: 0.9
-    outfile: lr_classifier_predictions_quickstart.tsv
+ApplyTrainedModelsContainer:
+  models:
+    - model_id: lr_1
+      node_types:
+        source:
+          - "biolink:Protein"
+        destination:
+          - "biolink:Protein"
+      cutoff: 0.9
+      outfile: lr_protein_predictions.tsv
