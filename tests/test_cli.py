@@ -99,31 +99,31 @@ class TestRun(TestCase):
         )
         self.assertEqual(result.exit_code, 0)
 
-    @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_upload")
-    @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_classifier")
-    @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_tsne")
-    @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_embeddings")
-    @mock.patch("boto3.client")
-    def test_run_do_classifiers(
-        self,
-        mock_boto,
-        mock_do_embeddings,
-        mock_do_tsne,
-        mock_do_classifier,
-        mock_do_upload,
-    ):
-        mock_do_embeddings.return_value = False
-        mock_do_tsne.return_value = False
-        mock_do_classifier.return_value = True
-        mock_do_upload.return_value = False
+    # @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_upload")
+    # @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_classifier")
+    # @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_tsne")
+    # @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_embeddings")
+    # @mock.patch("boto3.client")
+    # def test_run_do_classifiers(
+    #     self,
+    #     mock_boto,
+    #     mock_do_embeddings,
+    #     mock_do_tsne,
+    #     mock_do_classifier,
+    #     mock_do_upload,
+    # ):
+    #     mock_do_embeddings.return_value = False
+    #     mock_do_tsne.return_value = False
+    #     mock_do_classifier.return_value = True
+    #     mock_do_upload.return_value = False
 
-        result = self.runner.invoke(
-            catch_exceptions=True,
-            cli=run,
-            args=["--config", "tests/resources/test.yaml"],
-        )
+    #     result = self.runner.invoke(
+    #         catch_exceptions=True,
+    #         cli=run,
+    #         args=["--config", "tests/resources/test.yaml"],
+    #     )
 
-        self.assertEqual(result.exit_code, 0)
+    #     self.assertEqual(result.exit_code, 0)
 
     @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_upload")
     @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_classifier")
