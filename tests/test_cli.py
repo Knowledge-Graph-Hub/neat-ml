@@ -104,14 +104,8 @@ class TestRun(TestCase):
     @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_tsne")
     @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_embeddings")
     @mock.patch("boto3.client")
-    # @mock.patch("neat.cli.MLPModel")
-    # @mock.patch("neat.cli.SklearnModel")
-    # @mock.patch("neat.link_prediction.model.Model.make_link_prediction_data")
     def test_run_do_classifiers(
         self,
-        # mock_make_link_prediction_data,
-        # mock_sklearn_model,
-        # mock_mlp_model,
         mock_boto,
         mock_do_embeddings,
         mock_do_tsne,
@@ -128,7 +122,7 @@ class TestRun(TestCase):
             cli=run,
             args=["--config", "tests/resources/test.yaml"],
         )
-        print(result)
+
         self.assertEqual(result.exit_code, 0)
 
     @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_upload")
