@@ -1,4 +1,5 @@
 ---
-name: ""
-description: ""
-output_directory: output_data
+# name: ""
+# description: ""
+Target: 
+  target_path: output_data
