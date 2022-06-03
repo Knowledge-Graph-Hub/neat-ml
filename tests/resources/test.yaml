@@ -27,7 +27,7 @@ GraphDataConfiguration:
     sources_column: "subject"
     destinations_column: "object"
     default_edge_type: "biolink:related_to"
-  data:
+  evaluation_data:
     valid_data:
       pos_edge_filepath: tests/resources/test_graphs/pos_valid_edges.tsv
       neg_edge_filepath: tests/resources/test_graphs/neg_valid_edges.tsv
