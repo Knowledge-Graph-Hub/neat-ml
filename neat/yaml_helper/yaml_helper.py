@@ -42,7 +42,7 @@ def validate_config(config: dict) -> bool:
     for class_type in config:
         try:
             validator.validate(obj=config, target_class=class_type)
-        except KeyError:
+        except (KeyError, ValueError):
             validated = False
             print(f"Config failed validation for {class_type}")
 
