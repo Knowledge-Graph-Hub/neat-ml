@@ -2,16 +2,6 @@
 # name: ""
 # description: ""
 
-Source:
-  source_paths:
-    - source1: https://someremoteurl.com/graph.tar.gz
-    - source2: https://someremoteurl.com/graph2.tar.gz
-    - source3: https://someremoteurl.com/graph3.tar.gz
-  source_desc: 
-    - source1: "This file contains the necessary graph files."
-    - source2: "This file may be necessary."
-    - source3: "This file may not be necessary."
-
 Target:
   target_path: tests/resources/test_output_data_dir/
 
@@ -33,6 +23,15 @@ GraphDataConfiguration:
       neg_edge_filepath: tests/resources/test_graphs/neg_valid_edges.tsv
     train_data:
       neg_edge_filepath: tests/resources/test_graphs/neg_train_edges.tsv
+
+  source_data:
+    files:
+      - path: https://someremoteurl.com/graph.tar.gz
+        desc: "This file contains the necessary graph files."
+      - path: https://someremoteurl.com/graph2.tar.gz
+        desc: "This file may be necessary."
+      - path: https://someremoteurl.com/graph3.tar.gz
+        desc: "This file may not be necessary."
 
 EmbeddingsConfig:
   filename: test_embeddings_test_yaml.csv
