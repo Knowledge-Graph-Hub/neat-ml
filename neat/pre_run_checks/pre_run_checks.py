@@ -20,13 +20,13 @@ def pre_run_checks(
             upload dir exists, this will pass
         check_s3_bucket: check that s3 bucket exists on s3
         check_s3_bucket_dir: check that s3 bucket directory doesn't already exist
-        check_file_extensions: check that files are in expected formats (tsv or tar.gz)
-            at least based on their extensions
+        check_classifiers: verify that classifier ids don't conflict
 
     Returns:
         Boolean pass or fail
     """
     return_val = True
+
     if check_s3_credentials:
         try:
             client = boto3.client("s3")
