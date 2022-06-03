@@ -2,7 +2,7 @@ from unittest import TestCase, skip, mock
 from parameterized import parameterized
 
 from neat.yaml_helper.yaml_helper import YamlHelper, catch_keyerror, is_url, \
-    download_file, is_valid_path
+    download_file, is_valid_path, validate_config
 import os
 
 from ensmallen import Graph  # type: ignore
@@ -16,6 +16,15 @@ class TestYamlHelper(TestCase):
 
     def setUp(self) -> None:
         self.test_yaml_upload_bad = "tests/resources/test_bad_upload_info.yaml"
+
+    def test_validate_config(self):
+        good_config = {"Target":{"target_path":"tests/resources/test_output_data_dir/"},
+                        "GraphDataConfiguration":{"graph":{"directed": False}}}
+        bad_config = {"Potato":{"target_path":"tests/resources/test_output_data_dir/"},
+                        "GraphDataConfiguration":{"graph":{"directed": False}}}
+
+        self.assertTrue(validate_config(good_config))
+        self.assertFalse(validate_config(bad_config))
 
     def test_outdir(self) -> None:
         self.assertEqual("tests/resources/test_output_data_dir/", self.yh.outdir())
