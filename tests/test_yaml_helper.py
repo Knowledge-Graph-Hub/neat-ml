@@ -141,44 +141,30 @@ class TestYamlHelper(TestCase):
         else:
             self.assertEqual(expected_value, is_valid_path(string))
 
-    def test_load_graph(self):
+    @mock.patch('neat.yaml_helper.yaml_helper.Request')
+    @mock.patch('neat.yaml_helper.yaml_helper.urlopen')
+    @mock.patch('neat.yaml_helper.yaml_helper.open')
+    def test_load_graph(self, mock_open, mock_urlopen, mock_Request):
         self.yh.load_graph()
-        # No assertion here - this will error if it fails
+        self.assertTrue(mock_urlopen.called)
 
-    def test_graph_contains_node_types(self):
+    @mock.patch('neat.yaml_helper.yaml_helper.Request')
+    @mock.patch('neat.yaml_helper.yaml_helper.urlopen')
+    @mock.patch('neat.yaml_helper.yaml_helper.open')
+    def test_graph_contains_node_types(self, mock_open, mock_urlopen, mock_Request):
         g = self.yh.load_graph()
-    
+        self.assertTrue(mock_Request.called)
         self.assertEqual(g.get_node_types_number(), 2)
         self.assertCountEqual(g.get_unique_node_type_names(), 
                                 ['biolink:Gene', 'biolink:Protein'])
 
-    @mock.patch('neat.yaml_helper.yaml_helper.download_file')
-    @mock.patch('ensmallen.Graph.from_csv')
-    def test_node_edge_urls_converted_to_path(self, mock_from_csv, mock_download_file):
+    @mock.patch('neat.yaml_helper.yaml_helper.Request')
+    @mock.patch('neat.yaml_helper.yaml_helper.urlopen')
+    @mock.patch('neat.yaml_helper.yaml_helper.open')
+    def test_node_edge_urls_file_downloaded(self, mock_open, mock_urlopen, mock_Request):
         this_yh = YamlHelper('tests/resources/test_urls_for_node_and_edge_paths.yaml')
-        self.assertTrue(is_url(this_yh.main_graph_args()['node_path']))
-        self.assertTrue(is_url(this_yh.main_graph_args()['edge_path']))
-
-        this_yh.load_graph()
-
-        self.assertFalse(is_url(this_yh.main_graph_args()["node_path"]))
-        self.assertEqual(
-            "output_data/https___someremoteurl.com_nodes.tsv",
-            this_yh.main_graph_args()["node_path"],
-        )
-        self.assertFalse(is_url(this_yh.main_graph_args()["edge_path"]))
-        self.assertEqual(
-            "output_data/https___someremoteurl.com_edges.tsv",
-            this_yh.main_graph_args()["edge_path"],
-        )
-
-    @mock.patch('neat.yaml_helper.yaml_helper.download_file')
-    @mock.patch('ensmallen.Graph.from_csv')
-    def test_node_edge_urls_file_downloaded(self, mock_from_csv, mock_download_file):
-        this_yh = YamlHelper('tests/resources/test_urls_for_node_and_edge_paths.yaml')
-        this_yh.load_graph()
-        self.assertTrue(mock_download_file.called)
-        self.assertEqual(2, mock_download_file.call_count)
+        for this_mock in [mock_open, mock_urlopen, mock_Request]:
+            self.assertTrue(this_mock.called)
 
     @mock.patch('neat.yaml_helper.yaml_helper.download_file')
     def test_embeddings_url_converted_to_path(self, mock_download_file):
@@ -196,7 +182,6 @@ class TestYamlHelper(TestCase):
     @mock.patch('neat.yaml_helper.yaml_helper.Request')
     @mock.patch('neat.yaml_helper.yaml_helper.urlopen')
     @mock.patch('neat.yaml_helper.yaml_helper.open')
-
     def test_download_file(self, mock_open, mock_urlopen, mock_Request):
         download_file("https://someurl.com/file.txt", outfile="someoutfile")
         for this_mock in [mock_open, mock_urlopen, mock_Request]:

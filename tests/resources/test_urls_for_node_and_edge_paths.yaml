@@ -2,8 +2,8 @@
 GraphDataConfiguration:
   graph:
     directed: False
-    node_path: https://someremoteurl.com/nodes.tsv
-    edge_path: https://someremoteurl.com/edges.tsv
+    node_path: nodes.tsv
+    edge_path: edges.tsv
     verbose: True
     nodes_column: 'id'
     node_list_node_types_column: 'category'
@@ -11,4 +11,10 @@ GraphDataConfiguration:
     sources_column: 'subject'
     destinations_column: 'object'
     default_edge_type: 'biolink:related_to'
+  source_data:
+    files:
+      - path: https://someremoteurl.com/nodes.tsv
+        desc: "The graph nodes."
+      - path: https://someremoteurl.com/edges.tsv
+        desc: "The graph edges."
 

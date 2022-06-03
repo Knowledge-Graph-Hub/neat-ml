@@ -245,6 +245,9 @@ class YamlHelper:
         requires this to parse node types.
         :return: ensmallen Graph
         """
+        
+        #Load sources if necessary
+        self.retrieve_from_sources()
 
         graph_args_with_indir = self.main_graph_args()
 
