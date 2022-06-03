@@ -1,11 +1,14 @@
 import functools
 import logging
+
 import os
 import pickle
 import string
 from typing import Optional, Union
 from urllib.request import Request, urlopen
 import tarfile
+import sys
+import inspect
 
 import yaml  # type: ignore
 from ensmallen import Graph # type: ignore
@@ -14,15 +17,40 @@ from neat.link_prediction.model import Model
 import validators  # type: ignore
 from pathlib import Path
 
+import neat_schema
+from linkml_validator.validator import Validator
+
 from neat.run_classifier.run_classifier import get_custom_model_path
 
 VALID_CHARS = "-_.() %s%s" % (string.ascii_letters, string.digits)
 
+def validate_config(config: dict) -> bool:
+    """
+    Validate the provided config against the neat_schema.
+    :param config: dict of the parsed config file
+    :return: bool, false if validation failed
+    """
+    validated = True
+
+    # Get schema path first
+    schema_filename = "neat_schema.yaml"
+    neat_schema_moddir = os.path.split(inspect.getfile(neat_schema))[0]
+    neat_schema_dir = os.path.join(neat_schema_moddir,"src/linkml/")
+    schema_path = os.path.join(neat_schema_dir,schema_filename)
+
+    validator = Validator(schema=schema_path)
+    for class_type in config:
+        try:
+            validator.validate(obj=config, target_class=class_type)
+        except KeyError:
+            validated = False
+            print(f"Config failed validation for {class_type}")
+
+    return validated
 
 def parse_yaml(file: str) -> dict:
     with open(file, "r") as stream:
         return yaml.load(stream, Loader=yaml.FullLoader)
-
 
 def is_url(string_to_check: Union[str, Path]) -> bool:
     """Helper function to decide if a string is a
@@ -110,6 +138,9 @@ class YamlHelper:
         self.default_outdir = "output_data"
         self.default_indir = ""
         self.yaml: dict = parse_yaml(config)
+        
+        if not validate_config(self.yaml):
+            sys.exit("Please check config file! Exiting...")
 
     def indir(self):
         """Get input directory.
