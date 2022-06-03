@@ -81,7 +81,8 @@ setup(
         "validators",
         "linkml",
         "more-itertools",
-        "neat_schema"
+        "neat_schema",
+        "linkml-validator"
     ],
     extras_require=extras,
 )
