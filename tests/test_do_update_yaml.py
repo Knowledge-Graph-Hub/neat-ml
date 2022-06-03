@@ -21,26 +21,22 @@ class TestDoUpdateYaml(TestCase):
                                       os.path.basename(self.pristine_yaml_file))
         copyfile(self.pristine_yaml_file, self.yaml_file)
 
-    def test_key_replacement(self):
-        new_name = "this_new_name"
-        do_update_yaml(self.yaml_file, ["name"], [new_name])
-        new_yaml = parse_yaml_file(self.yaml_file)
-        self.assertEqual(new_name, new_yaml['name'])
-
     def test_key_replacement_nested(self):
         new_graph_node_path = "this_new_path"
-        do_update_yaml(self.yaml_file, ["graph_data:graph:node_path"], [new_graph_node_path])
+        do_update_yaml(self.yaml_file, ["GraphDataConfiguration:graph:node_path"], [new_graph_node_path])
         new_yaml = parse_yaml_file(self.yaml_file)
         self.assertEqual(new_graph_node_path,
-                         new_yaml['graph_data']['graph']['node_path'])
+                         new_yaml['GraphDataConfiguration']['graph']['node_path'])
 
     def test_key_multiple_replacements(self):
-        keys = ['description', 'output_directory', 
-                'graph_data:graph:node_path', 
-                'graph_data:graph:edge_path',
-                'upload:s3_bucket_dir']
-        values = ['kg-idg','20211202/graph_ml_artifacts','20211202/merged-kg_nodes.tsv',
-                  '20211202/merged-kg_edges.tsv', 'kg-idg/20211202/graph_ml_artifacts']
+        keys = ['Target:target_path', 
+                'GraphDataConfiguration:graph:node_path', 
+                'GraphDataConfiguration:graph:edge_path',
+                'Upload:s3_bucket_dir']
+        values = ['20211202/graph_ml_artifacts',
+                    '20211202/merged-kg_nodes.tsv',
+                    '20211202/merged-kg_edges.tsv', 
+                    'kg-idg/20211202/graph_ml_artifacts']
         do_update_yaml(self.yaml_file, keys=keys, values=values)
         new_yaml = parse_yaml_file(self.yaml_file)
         self.assertEqual(values[0], new_yaml[keys[0]])
