@@ -17,8 +17,8 @@ from neat.link_prediction.model import Model
 import validators  # type: ignore
 from pathlib import Path
 
-import neat_schema
-from linkml_validator.validator import Validator
+import neat_schema # type: ignore
+from linkml_validator.validator import Validator # type: ignore
 
 from neat.run_classifier.run_classifier import get_custom_model_path
 
