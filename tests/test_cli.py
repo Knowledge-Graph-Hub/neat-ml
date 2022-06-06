@@ -79,7 +79,7 @@ class TestRun(TestCase):
     @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_embeddings")
     @mock.patch("neat.visualization.visualization.make_tsne")
     @mock.patch("boto3.client")
-    def test_run_do_embeddings(
+    def test_run_do_tsne(
         self,
         mock_boto,
         mock_make_tnse,
