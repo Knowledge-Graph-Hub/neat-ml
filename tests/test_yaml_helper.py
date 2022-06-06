@@ -141,43 +141,20 @@ class TestYamlHelper(TestCase):
         else:
             self.assertEqual(expected_value, is_valid_path(string))
 
-    @mock.patch('neat.yaml_helper.yaml_helper.Request')
-    @mock.patch('neat.yaml_helper.yaml_helper.urlopen')
-    @mock.patch('neat.yaml_helper.yaml_helper.open')
-    def test_load_graph(self, mock_open, mock_urlopen, mock_Request):
+    @mock.patch('neat.yaml_helper.yaml_helper.download_file')
+    @mock.patch('tarfile.open')
+    def test_load_graph(self, mock_tarfile_open, mock_download_file):
         self.yh.load_graph()
-        self.assertTrue(mock_urlopen.called)
+        self.assertTrue(mock_download_file.called)
 
-    @mock.patch('neat.yaml_helper.yaml_helper.Request')
-    @mock.patch('neat.yaml_helper.yaml_helper.urlopen')
-    @mock.patch('neat.yaml_helper.yaml_helper.open')
-    def test_graph_contains_node_types(self, mock_open, mock_urlopen, mock_Request):
+    @mock.patch('neat.yaml_helper.yaml_helper.download_file')
+    @mock.patch('tarfile.open')
+    def test_graph_contains_node_types(self, mock_tarfile_open, mock_download_file):
         g = self.yh.load_graph()
-        self.assertTrue(mock_Request.called)
+        self.assertTrue(mock_download_file.called)
         self.assertEqual(g.get_node_types_number(), 2)
         self.assertCountEqual(g.get_unique_node_type_names(), 
                                 ['biolink:Gene', 'biolink:Protein'])
-
-    @mock.patch('neat.yaml_helper.yaml_helper.Request')
-    @mock.patch('neat.yaml_helper.yaml_helper.urlopen')
-    @mock.patch('neat.yaml_helper.yaml_helper.open')
-    def test_node_edge_urls_file_downloaded(self, mock_open, mock_urlopen, mock_Request):
-        this_yh = YamlHelper('tests/resources/test_urls_for_node_and_edge_paths.yaml')
-        for this_mock in [mock_open, mock_urlopen, mock_Request]:
-            self.assertTrue(this_mock.called)
-
-    @mock.patch('neat.yaml_helper.yaml_helper.download_file')
-    def test_embeddings_url_converted_to_path(self, mock_download_file):
-        this_yh = YamlHelper('tests/resources/test_url_for_embeddings.yaml')
-        self.assertFalse(is_url(this_yh.embedding_outfile()))
-        self.assertEqual('output_data/https___someremoteurl.com_embeddings.tsv',
-                         this_yh.embedding_outfile())
-
-    @mock.patch('neat.yaml_helper.yaml_helper.download_file')
-    def test_embeddings_url_file_downloaded(self, mock_download_file):
-        this_yh = YamlHelper('tests/resources/test_url_for_embeddings.yaml')
-        this_yh.embedding_outfile()
-        self.assertTrue(mock_download_file.called)
 
     @mock.patch('neat.yaml_helper.yaml_helper.Request')
     @mock.patch('neat.yaml_helper.yaml_helper.urlopen')
