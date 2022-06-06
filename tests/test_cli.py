@@ -73,6 +73,9 @@ class TestRun(TestCase):
         )
         self.assertEqual(result.exit_code, 0)
 
+    @mock.patch('neat.yaml_helper.yaml_helper.Request')
+    @mock.patch('neat.yaml_helper.yaml_helper.urlopen')
+    @mock.patch('neat.yaml_helper.yaml_helper.open')
     @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_upload")
     @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_classifier")
     @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_tsne")
@@ -87,6 +90,9 @@ class TestRun(TestCase):
         mock_do_tsne,
         mock_do_classifier,
         mock_do_upload,
+        mock_open, 
+        mock_urlopen, 
+        mock_Request
     ):
         mock_do_embeddings.return_value = False
         mock_do_tsne.return_value = True
