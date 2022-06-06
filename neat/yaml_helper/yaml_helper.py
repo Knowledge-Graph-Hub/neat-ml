@@ -8,7 +8,7 @@ from typing import Optional, Union
 from urllib.request import Request, urlopen
 import tarfile
 import sys
-import inspect
+import pkg_resources # type: ignore
 
 import yaml  # type: ignore
 from ensmallen import Graph # type: ignore
@@ -24,19 +24,23 @@ from neat.run_classifier.run_classifier import get_custom_model_path
 
 VALID_CHARS = "-_.() %s%s" % (string.ascii_letters, string.digits)
 
-def validate_config(config: dict) -> bool:
+
+def validate_config(config: dict, neat_schema_file: str = 'neat_schema.yaml') -> bool:
     """
     Validate the provided config against the neat_schema.
     :param config: dict of the parsed config file
+    :param neat_schema_file: name of the neat schema file in neat-schema package
     :return: bool, false if validation failed
     """
     validated = True
 
     # Get schema path first
-    schema_filename = "neat_schema.yaml"
-    neat_schema_moddir = os.path.split(inspect.getfile(neat_schema))[0]
-    neat_schema_dir = os.path.join(neat_schema_moddir,"src/linkml/")
-    schema_path = os.path.join(neat_schema_dir,schema_filename)
+    schema_path = pkg_resources.resource_filename('neat_schema',
+                                                  os.path.join('src/linkml/',
+                                                               neat_schema_file))
+
+    if not os.path.exists(schema_path):
+        raise RuntimeError
 
     validator = Validator(schema=schema_path)
     for class_type in config:
@@ -47,6 +51,7 @@ def validate_config(config: dict) -> bool:
             print(f"Config failed validation for {class_type}")
 
     return validated
+
 
 def parse_yaml(file: str) -> dict:
     with open(file, "r") as stream:
@@ -138,7 +143,7 @@ class YamlHelper:
         self.default_outdir = "output_data"
         self.default_indir = ""
         self.yaml: dict = parse_yaml(config)
-        
+
         if not validate_config(self.yaml):
             sys.exit("Please check config file! Exiting...")
 
@@ -176,7 +181,7 @@ class YamlHelper:
 
     def retrieve_from_sources(self) -> None:
         """
-        Checks for existence of a 
+        Checks for existence of a
         source_data key. If this exists,
         download and decompress as needed.
         The node_path and edge_path values
@@ -219,7 +224,7 @@ class YamlHelper:
         keys_to_add_indir: list = ["node_path", "edge_path"],
     ) -> dict:
         """
-        Updates the graph file paths 
+        Updates the graph file paths
         with their input directory.
         :param graph_data - parsed yaml
         :param keys_to_add_indir: what keys to add indir to
@@ -245,7 +250,7 @@ class YamlHelper:
         requires this to parse node types.
         :return: ensmallen Graph
         """
-        
+
         #Load sources if necessary
         self.retrieve_from_sources()
 

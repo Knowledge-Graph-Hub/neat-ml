@@ -48,9 +48,9 @@ setup(
     description="Neural-network Embedding All the Things",
     long_description=long_description,
     url="https://github.com/Knowledge-Graph-Hub/NEAT",
-    author="deepak.unni3@lbl.gov, justaddcoffee+github@gmail.com",
-    author_email="Deepak Unni, Justin Reese",
-    python_requires=">=3.7",
+    author="Deepak Unni, Justin Reese, J. Harry Caufield, Harshad Hegde",
+    author_email="deepak.unni3@lbl.gov, justaddcoffee+github@gmail.com, jhc@lbl.gov, hhegde@lbl.gov",
+    python_requires=">=3.8",
     license="BSD-3",
     include_package_data=True,
     classifiers=[
