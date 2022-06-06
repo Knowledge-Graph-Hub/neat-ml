@@ -50,7 +50,7 @@ setup(
     url="https://github.com/Knowledge-Graph-Hub/NEAT",
     author="deepak.unni3@lbl.gov, justaddcoffee+github@gmail.com",
     author_email="Deepak Unni, Justin Reese",
-    python_requires=">=3.7",
+    python_requires=">=3.8",
     license="BSD-3",
     include_package_data=True,
     classifiers=[
