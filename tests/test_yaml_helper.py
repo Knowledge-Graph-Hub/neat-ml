@@ -2,7 +2,7 @@ from unittest import TestCase, skip, mock
 from parameterized import parameterized
 
 from neat.yaml_helper.yaml_helper import YamlHelper, catch_keyerror, is_url, \
-    download_file, is_valid_path
+    download_file, is_valid_path, validate_config
 import os
 
 from ensmallen import Graph  # type: ignore
@@ -15,24 +15,19 @@ class TestYamlHelper(TestCase):
         cls.embedding_args = cls.yh.make_node_embeddings_args()
 
     def setUp(self) -> None:
-        self.test_yaml_upload_good = (
-            "tests/resources/test_good_upload_info.yaml"
-        )
         self.test_yaml_upload_bad = "tests/resources/test_bad_upload_info.yaml"
-        self.test_yaml_bert_tsne = (
-            "tests/resources/test_graph_embedding_bert_tsne.yaml"
-        )
 
-    def test_no_indir(self) -> None:
-        yh = YamlHelper("tests/resources/test_no_indir.yaml")
-        self.assertEqual("", yh.indir())
+    def test_validate_config(self):
+        good_config = {"Target":{"target_path":"tests/resources/test_output_data_dir/"},
+                        "GraphDataConfiguration":{"graph":{"directed": False}}}
+        bad_config = {"Potato":{"target_path":"tests/resources/test_output_data_dir/"},
+                        "GraphDataConfiguration":{"graph":{"directed": False}}}
 
-    def test_bad_indir(self) -> None:
-        with self.assertRaises(FileNotFoundError) as context:
-            YamlHelper("tests/resources/test_bad_indir.yaml").indir()
+        self.assertTrue(validate_config(good_config))
+        self.assertFalse(validate_config(bad_config))
 
     def test_outdir(self) -> None:
-        self.assertEqual("output_data", self.yh.outdir())
+        self.assertEqual("tests/resources/test_output_data_dir/", self.yh.outdir())
 
     def test_add_indir_to_graph_data(self):
         # emits error message to log, but continues:
@@ -42,9 +37,7 @@ class TestYamlHelper(TestCase):
 
     def test_do_tsne(self):
         self.assertTrue(hasattr(YamlHelper, "do_tsne"))
-        self.assertTrue(not self.yh.do_tsne())
-        ybt = YamlHelper(self.test_yaml_bert_tsne)
-        self.assertTrue(ybt.do_tsne())
+        self.assertTrue(self.yh.do_tsne())
 
     def test_do_embeddings(self):
         self.assertTrue(hasattr(YamlHelper, "do_embeddings"))
@@ -56,31 +49,27 @@ class TestYamlHelper(TestCase):
 
     def test_do_upload(self):
         self.assertTrue(hasattr(YamlHelper, "do_upload"))
-        yg = YamlHelper(self.test_yaml_upload_good)
-        self.assertTrue(yg.do_upload())
+        self.assertTrue(self.yh.do_upload())
 
     def test_make_upload_args(self):
         self.assertTrue(hasattr(YamlHelper, "make_upload_args"))
-        yg = YamlHelper(self.test_yaml_upload_good)
         self.assertDictEqual(
-            yg.make_upload_args(),
+            self.yh.make_upload_args(),
             {
                 "local_directory": "tests/resources/test_output_data_dir/",
                 "s3_bucket": "some_bucket",
                 "s3_bucket_dir": "some/remote/directory/",
-                "extra_args": {"ACL": "public-read"},
+                "extra_args": {"ACL": "public-read", "BCL": "private-read"},
             },
         )
 
     def test_classifier_history_file_name(self):
-        self.assertTrue(hasattr(YamlHelper, "classifier_history_file_name"))
-        yg = YamlHelper(self.test_yaml)
+        class_list = self.yh.yaml["ClassifierContainer"]["classifiers"]
+        expect_filename = [x["history_filename"] for x in class_list if x["classifier_id"] == "mlp_1"][0]
         self.assertEqual(
-            yg.classifier_history_file_name(
-                yg.yaml["classifiers"][0]
-            ),
+            expect_filename,
             "mlp_classifier_history.json",
-        )
+            )
 
     @parameterized.expand(
         [
@@ -102,7 +91,7 @@ class TestYamlHelper(TestCase):
             (
                 "node_embedding_params",
                 {
-                    "node_embedding_method_name": "SkipGram",
+                    "method_name": "SkipGram",
                     "batch_size": 128,
                     "explore_weight": 1.0,
                     "iterations": 5,
@@ -111,12 +100,12 @@ class TestYamlHelper(TestCase):
                     "window_size": 4,
                 },
             ),
-            ("embedding_outfile", "output_data/test_embeddings_test_yaml.csv"),
+            ("embedding_outfile", "tests/resources/test_output_data_dir/test_embeddings_test_yaml.csv"),
             (
                 "embedding_history_outfile",
-                "output_data/embedding_history.json",
+                "tests/resources/test_output_data_dir/embedding_history.json",
             ),
-            ("bert_columns", ["category", "id"]),
+            #("bert_columns", ["category", "id"]),
         ]
     )
     def test_make_embedding_args(self, key, value):
@@ -125,26 +114,6 @@ class TestYamlHelper(TestCase):
             msg=f"can't find key {key} in output of make_embedding_args()",
         )
         self.assertEqual(value, self.embedding_args[key])
-
-    def test_make_embeddings_metrics_class_list(self):
-        self.assertTrue(
-            hasattr(YamlHelper, "make_embeddings_metrics_class_list")
-        )
-        yh = YamlHelper("tests/resources/test_make_embeddings_metrics.yaml")
-        cl = yh.make_embeddings_metrics_class_list()
-        self.assertEqual(3, len(cl))
-        self.assertCountEqual(
-            [
-                "<class 'keras.metrics.AUC'>",
-                "<class 'keras.metrics.Recall'>",
-                "<class 'keras.metrics.Precision'>",
-            ],
-            [str(klass.__class__) for klass in cl],
-        )
-
-    def test_catch_keyerror(self):
-        yh = YamlHelper("tests/resources/test_no_graph.yaml")
-        yh.pos_val_graph_args()  # no assertion needed, just testing for no exception
 
     @parameterized.expand(
         [
@@ -172,84 +141,24 @@ class TestYamlHelper(TestCase):
         else:
             self.assertEqual(expected_value, is_valid_path(string))
 
-    def test_load_graph(self):
+    @mock.patch('neat.yaml_helper.yaml_helper.download_file')
+    @mock.patch('tarfile.open')
+    def test_load_graph(self, mock_tarfile_open, mock_download_file):
         self.yh.load_graph()
-        # No assertion here - this will error if it fails
+        self.assertTrue(mock_download_file.called)
 
-    def test_graph_contains_node_types(self):
+    @mock.patch('neat.yaml_helper.yaml_helper.download_file')
+    @mock.patch('tarfile.open')
+    def test_graph_contains_node_types(self, mock_tarfile_open, mock_download_file):
         g = self.yh.load_graph()
-    
+        self.assertTrue(mock_download_file.called)
         self.assertEqual(g.get_node_types_number(), 2)
         self.assertCountEqual(g.get_unique_node_type_names(), 
                                 ['biolink:Gene', 'biolink:Protein'])
 
-    @mock.patch('neat.yaml_helper.yaml_helper.download_file')
-    @mock.patch('ensmallen.Graph.from_csv')
-    def test_node_edge_urls_converted_to_path(self, mock_from_csv, mock_download_file):
-        this_yh = YamlHelper('tests/resources/test_urls_for_node_and_edge_paths.yaml')
-        self.assertTrue(is_url(this_yh.main_graph_args()['node_path']))
-        self.assertTrue(is_url(this_yh.main_graph_args()['edge_path']))
-
-        this_yh.load_graph()
-
-        self.assertFalse(is_url(this_yh.main_graph_args()["node_path"]))
-        self.assertEqual(
-            "output_data/https___someremoteurl.com_nodes.tsv",
-            this_yh.main_graph_args()["node_path"],
-        )
-        self.assertFalse(is_url(this_yh.main_graph_args()["edge_path"]))
-        self.assertEqual(
-            "output_data/https___someremoteurl.com_edges.tsv",
-            this_yh.main_graph_args()["edge_path"],
-        )
-
-    @mock.patch('neat.yaml_helper.yaml_helper.download_file')
-    @mock.patch('ensmallen.Graph.from_csv')
-    def test_node_edge_urls_file_downloaded(self, mock_from_csv, mock_download_file):
-        this_yh = YamlHelper('tests/resources/test_urls_for_node_and_edge_paths.yaml')
-        this_yh.load_graph()
-        self.assertTrue(mock_download_file.called)
-        self.assertEqual(2, mock_download_file.call_count)
-
-    @mock.patch('neat.yaml_helper.yaml_helper.download_file')
-    @mock.patch('tarfile.open')
-    def test_graph_url_converted_to_path(self, mock_tarfile_open, mock_download_file):
-        this_yh = YamlHelper('tests/resources/test_url_for_graph_path.yaml')
-        self.assertTrue(is_url(this_yh.yaml['graph_path']))
-        this_yh.retrieve_from_graph_path()
-        self.assertTrue(mock_download_file.called)
-        self.assertTrue(mock_tarfile_open.called)
-        self.assertEqual('nodes.tsv',
-                         this_yh.main_graph_args()['node_path'])
-        self.assertFalse(is_url(this_yh.main_graph_args()['edge_path']))
-        self.assertEqual('edges.tsv',
-                         this_yh.main_graph_args()['edge_path'])
-        
-    @mock.patch('neat.yaml_helper.yaml_helper.download_file')
-    @mock.patch('tarfile.open')
-    def test_graph_url_file_downloaded(self, mock_tarfile_open, mock_download_file):
-        this_yh = YamlHelper('tests/resources/test_url_for_graph_path.yaml')
-        this_yh.retrieve_from_graph_path()
-        self.assertTrue(mock_download_file.called)
-        self.assertTrue(mock_tarfile_open.called)
-
-    @mock.patch('neat.yaml_helper.yaml_helper.download_file')
-    def test_embeddings_url_converted_to_path(self, mock_download_file):
-        this_yh = YamlHelper('tests/resources/test_url_for_embeddings.yaml')
-        self.assertFalse(is_url(this_yh.embedding_outfile()))
-        self.assertEqual('output_data/https___someremoteurl.com_embeddings.tsv',
-                         this_yh.embedding_outfile())
-
-    @mock.patch('neat.yaml_helper.yaml_helper.download_file')
-    def test_embeddings_url_file_downloaded(self, mock_download_file):
-        this_yh = YamlHelper('tests/resources/test_url_for_embeddings.yaml')
-        this_yh.embedding_outfile()
-        self.assertTrue(mock_download_file.called)
-
     @mock.patch('neat.yaml_helper.yaml_helper.Request')
     @mock.patch('neat.yaml_helper.yaml_helper.urlopen')
     @mock.patch('neat.yaml_helper.yaml_helper.open')
-
     def test_download_file(self, mock_open, mock_urlopen, mock_Request):
         download_file("https://someurl.com/file.txt", outfile="someoutfile")
         for this_mock in [mock_open, mock_urlopen, mock_Request]:

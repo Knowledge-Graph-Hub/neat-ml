@@ -46,25 +46,29 @@ neat run --config [your yaml]
 ```
 
 The pipeline is driven by a YAML file (e.g. `tests/resources/test.yaml`), which contains all parameters needed to complete the pipeline.
+The contents and expected values for this file are defined by the [neat_schema](https://github.com/Knowledge-Graph-Hub/NEAT-schema).
+
 This includes hyperparameters for machine learning and also things like files/paths to output results.
 Specify paths to node and edge files:
 ```
-graph_data:
+GraphDataConfiguration:
   graph:
-    node_path: 
-    edge_path: 
+    directed: False
+    node_path: path/to/nodes.tsv
+    edge_path: path/to/edges.tsv
 ```
-Please note that the input paths in `node_path` and `edge_path` may be local filepaths **OR** URLs.
 
-If the graph data is in a compressed file in a remote location (e.g., on KG-Hub), its URL may be specified in the `graph_path` argument:
+If the graph data is in a compressed file and/or a remote location (e.g., on KG-Hub), one or more URLs may be specified in the `source_data` parameter:
 ```
-graph_path: https://kg-hub.berkeleybop.io/kg-obo/bfo/2019-08-26/bfo_kgx_tsv.tar.gz
-graph_data:
-  graph:
-    node_path: bfo_kgx_tsv_nodes.tsv
-    edge_path: bfo_kgx_tsv_edges.tsv
+GraphDataConfiguration:
+  source_data:
+    files:
+      - path: https://kg-hub.berkeleybop.io/kg-obo/bfo/2019-08-26/bfo_kgx_tsv.tar.gz
+        desc: "This is BFO, your favorite basic formal ontology, now in graph form."
+      - path: https://someremoteurl.com/graph2.tar.gz
+        desc: "This is some other graph - it may be useful."
+
 ```
-The `node_path` and `edge_path` must be the names of the contents of the compressed file.
 
 A diagram explaining the design a bit is [here](https://app.diagrams.net/#G1XLKYf9ZiBfWmjfAIeI9yYv_CycE8GmIQ).
 

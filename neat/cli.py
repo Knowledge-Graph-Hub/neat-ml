@@ -68,12 +68,12 @@ def run(config: str) -> None:
                 continue
 
             model: object = None
-            if classifier["type"] == "neural network":
+            if classifier["classifier_name"].lower() == "neural network":
                 model = MLPModel(classifier, outdir=yhelp.outdir())
-            elif classifier["type"] in [
-                "Decision Tree",
-                "Logistic Regression",
-                "Random Forest",
+            elif classifier["classifier_name"].lower() in [
+                "decision tree",
+                "logistic regression",
+                "random forest",
             ]:
                 model = SklearnModel(classifier, outdir=yhelp.outdir())
             else:

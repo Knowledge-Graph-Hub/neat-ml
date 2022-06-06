@@ -1,11 +1,14 @@
 import functools
 import logging
+
 import os
 import pickle
 import string
 from typing import Optional, Union
 from urllib.request import Request, urlopen
 import tarfile
+import sys
+import inspect
 
 import yaml  # type: ignore
 from ensmallen import Graph # type: ignore
@@ -14,15 +17,40 @@ from neat.link_prediction.model import Model
 import validators  # type: ignore
 from pathlib import Path
 
+import neat_schema # type: ignore
+from linkml_validator.validator import Validator # type: ignore
+
 from neat.run_classifier.run_classifier import get_custom_model_path
 
 VALID_CHARS = "-_.() %s%s" % (string.ascii_letters, string.digits)
 
+def validate_config(config: dict) -> bool:
+    """
+    Validate the provided config against the neat_schema.
+    :param config: dict of the parsed config file
+    :return: bool, false if validation failed
+    """
+    validated = True
+
+    # Get schema path first
+    schema_filename = "neat_schema.yaml"
+    neat_schema_moddir = os.path.split(inspect.getfile(neat_schema))[0]
+    neat_schema_dir = os.path.join(neat_schema_moddir,"src/linkml/")
+    schema_path = os.path.join(neat_schema_dir,schema_filename)
+
+    validator = Validator(schema=schema_path)
+    for class_type in config:
+        try:
+            validator.validate(obj=config, target_class=class_type)
+        except (KeyError, ValueError):
+            validated = False
+            print(f"Config failed validation for {class_type}")
+
+    return validated
 
 def parse_yaml(file: str) -> dict:
     with open(file, "r") as stream:
         return yaml.load(stream, Loader=yaml.FullLoader)
-
 
 def is_url(string_to_check: Union[str, Path]) -> bool:
     """Helper function to decide if a string is a
@@ -65,8 +93,6 @@ def download_file(url: str, outfile: str) -> list:
     (This is checked during pre_run_checks though.)
     If it's tar.gz, decompress.
     Return the names of all files as a list.
-    There should be just one,
-    unless the outfile was compressed.
     """
 
     outlist = []
@@ -80,8 +106,9 @@ def download_file(url: str, outfile: str) -> list:
         outdir = os.path.dirname(outfile)
         for filename in decomp_outfile.getnames():
             outlist.append(os.path.join(outdir,filename))
-        if len(outlist) > 2:
-            logging.warning(f"{outfile} contains than two files.")
+        filecount = len(outlist)
+        if filecount > 2:
+            logging.warning(f"{outfile} contains {filecount} files.")
         decomp_outfile.extractall(outdir)
         decomp_outfile.close()
     else:
@@ -96,7 +123,7 @@ def catch_keyerror(f):
         try:
             return f(*args, **kwargs)
         except KeyError as e:
-            print("can't find key in YAML: ", e, "(possibly harmless)")
+            print(f"Can't find key in YAML: {e} (possibly harmless)")
             return None
 
     return func
@@ -111,20 +138,24 @@ class YamlHelper:
         self.default_outdir = "output_data"
         self.default_indir = ""
         self.yaml: dict = parse_yaml(config)
+        
+        if not validate_config(self.yaml):
+            sys.exit("Please check config file! Exiting...")
 
     def indir(self):
-        """Get input directory from config.
+        """Get input directory.
+            This is not currently specified in the
+            config and will be the current
+            working directory unless changed
+            directly through a call to the
+            YamlHelper object.
 
         Returns:
             The input directory
 
         """
-        if "input_directory" in self.yaml:
-            indir = self.yaml["input_directory"]
-            if not os.path.exists(indir):
-                raise FileNotFoundError(f"Can't find input dir {indir}")
-        else:
-            indir = self.default_indir
+        indir = self.default_indir
+
         return indir
 
     def outdir(self):
@@ -135,18 +166,18 @@ class YamlHelper:
 
         """
         outdir = (
-            self.yaml["output_directory"]
-            if "output_directory" in self.yaml
+            self.yaml["Target"]["target_path"]
+            if "Target" in self.yaml
             else self.default_outdir
         )
         if not os.path.exists(outdir):
             os.makedirs(outdir)
         return outdir
 
-    def retrieve_from_graph_path(self) -> None:
+    def retrieve_from_sources(self) -> None:
         """
         Checks for existence of a 
-        graph_path key. If this exists,
+        source_data key. If this exists,
         download and decompress as needed.
         The node_path and edge_path values
         in graph_data
@@ -154,26 +185,33 @@ class YamlHelper:
         node/edge filenames.
         """
 
-        if "graph_path" in self.yaml:
-            filepath = self.yaml["graph_path"]
-            if is_url(filepath):
-                url_as_filename = \
-                    ''.join(c if c in VALID_CHARS else "_" for c in filepath)
-                outfile = os.path.join(self.indir(), url_as_filename)
-                download_file(filepath, outfile)
-            # If this was a URL, it already got decompressed.
-            # but if it's local and still compressed, decompress now
-            # (this can happen if we already downloaded it but didn't decomp)
-            if filepath.endswith(".tar.gz"):
-                outlist = []
-                if is_url(filepath):
-                    decomp_outfile = tarfile.open(outfile)
-                else:
-                    decomp_outfile = tarfile.open(filepath)
-                for filename in decomp_outfile.getnames():
-                    outlist.append(os.path.join(self.indir(),filename))
-                decomp_outfile.extractall(self.indir())
-                decomp_outfile.close()
+        if "GraphDataConfiguration" in self.yaml:
+            if "source_data" in self.yaml["GraphDataConfiguration"]:
+                for entry in self.yaml["GraphDataConfiguration"]["source_data"]["files"]:
+                    filepath = entry["path"]
+                    if "desc" in entry:
+                        desc = entry["desc"]
+                        print(f"Retrieving {filepath}: {desc}")
+                    else:
+                        print(f"Retrieving {filepath}")
+                    if is_url(filepath):
+                        url_as_filename = \
+                            ''.join(c if c in VALID_CHARS else "_" for c in filepath)
+                        outfile = os.path.join(self.indir(), url_as_filename)
+                        download_file(filepath, outfile)
+                    # If this was a URL, it already got decompressed.
+                    # but if it's local and still compressed, decompress now
+                    # (this can happen if we already downloaded it but didn't decomp)
+                    if filepath.endswith(".tar.gz"):
+                        outlist = []
+                        if is_url(filepath):
+                            decomp_outfile = tarfile.open(outfile)
+                        else:
+                            decomp_outfile = tarfile.open(filepath)
+                        for filename in decomp_outfile.getnames():
+                            outlist.append(os.path.join(self.indir(),filename))
+                        decomp_outfile.extractall(self.indir())
+                        decomp_outfile.close()
 
     def add_indir_to_graph_data(
         self,
@@ -207,6 +245,9 @@ class YamlHelper:
         requires this to parse node types.
         :return: ensmallen Graph
         """
+        
+        #Load sources if necessary
+        self.retrieve_from_sources()
 
         graph_args_with_indir = self.main_graph_args()
 
@@ -228,24 +269,24 @@ class YamlHelper:
         return loaded_graph
 
     def main_graph_args(self) -> dict:
-        return self.add_indir_to_graph_data(self.yaml["graph_data"]["graph"])
+        return self.add_indir_to_graph_data(self.yaml["GraphDataConfiguration"]["graph"])
 
     @catch_keyerror
     def pos_val_graph_args(self) -> dict:
         return self.add_indir_to_graph_data(
-            self.yaml["graph_data"]["pos_validation"]
+            self.yaml["GraphDataConfiguration"]["evaluation_data"]["valid_data"]["pos_edge_filepath"]
         )
 
     @catch_keyerror
     def neg_val_graph_args(self) -> dict:
         return self.add_indir_to_graph_data(
-            self.yaml["graph_data"]["neg_validation"]
+            self.yaml["GraphDataConfiguration"]["evaluation_data"]["valid_data"]["neg_edge_filepath"]
         )
 
     @catch_keyerror
     def neg_train_graph_args(self) -> dict:
         return self.add_indir_to_graph_data(
-            self.yaml["graph_data"]["neg_training"]
+            self.yaml["GraphDataConfiguration"]["evaluation_data"]["train_data"]["neg_edge_filepath"]
         )
 
     #
@@ -253,10 +294,10 @@ class YamlHelper:
     #
 
     def do_embeddings(self) -> bool:
-        return "embeddings" in self.yaml
+        return "EmbeddingsConfig" in self.yaml
 
     def embedding_outfile(self) -> str:
-        filepath = self.yaml['embeddings']['embedding_file_name']
+        filepath = self.yaml['EmbeddingsConfig']['filename']
         if is_url(filepath):
             url_as_filename = \
                 ''.join(c if c in VALID_CHARS else "_" for c in filepath)
@@ -271,40 +312,40 @@ class YamlHelper:
     def embedding_history_outfile(self):
         return os.path.join(
             self.outdir(),
-            self.yaml["embeddings"]["embedding_history_file_name"],
+            self.yaml["EmbeddingsConfig"]["history_filename"],
         )
 
-    def make_embeddings_metrics_class_list(self) -> list:
-        metrics_class_list = []
+    # def make_embeddings_metrics_class_list(self) -> list:
+    #     metrics_class_list = []
 
-        metrics = (
-            self.yaml["embeddings"]["metrics"]
-            if "metrics" in self.yaml["embeddings"]
-            else None
-        )
-        if metrics:
-            for m in metrics:
-                if m["type"].startswith("tensorflow.keras"):
-                    m_class = Model.dynamically_import_class(m["type"])
-                    m_parameters = m["parameters"]
-                    m_instance = m_class(**m_parameters)  # type: ignore
-                    metrics_class_list.append(m_instance)
-                else:
-                    metrics_class_list.append([m["type"]])
-        return metrics_class_list
+    #     metrics = (
+    #         self.yaml["EmbeddingsConfig"]["metrics"]
+    #         if "metrics" in self.yaml["embeddings"]
+    #         else None
+    #     )
+    #     if metrics:
+    #         for m in metrics:
+    #             if m["type"].startswith("tensorflow.keras"):
+    #                 m_class = Model.dynamically_import_class(m["type"])
+    #                 m_parameters = m["parameters"]
+    #                 m_instance = m_class(**m_parameters)  # type: ignore
+    #                 metrics_class_list.append(m_instance)
+    #             else:
+    #                 metrics_class_list.append([m["type"]])
+    #     return metrics_class_list
 
     def make_node_embeddings_args(self) -> dict:
         node_embedding_args = {
             "embedding_outfile": self.embedding_outfile(),
             "embedding_history_outfile": self.embedding_history_outfile(),
             "main_graph_args": self.main_graph_args(),
-            "node_embedding_params": self.yaml["embeddings"][
-                "node_embedding_params"
+            "node_embedding_params": self.yaml["EmbeddingsConfig"][
+                "node_embeddings_params"
             ],
-            "bert_columns": self.yaml["embeddings"]["bert_params"][
+            "bert_columns": self.yaml["EmbeddingsConfig"]["bert_params"][
                 "node_columns"
             ]
-            if "bert_params" in self.yaml["embeddings"]
+            if "bert_params" in self.yaml["EmbeddingsConfig"]
             else None,
         }
         return node_embedding_args
@@ -314,7 +355,7 @@ class YamlHelper:
     #
 
     def do_tsne(self) -> bool:
-        return "tsne" in self.yaml["embeddings"]
+        return "tsne_filename" in self.yaml["EmbeddingsConfig"]
 
     def make_tsne_args(self, graph: Graph) -> dict:
         make_tsne_args = {
@@ -326,7 +367,7 @@ class YamlHelper:
 
     def tsne_outfile(self) -> str:
         return os.path.join(
-            self.outdir(), self.yaml["embeddings"]["tsne"]["tsne_file_name"]
+            self.outdir(), self.yaml["EmbeddingsConfig"]["tsne_filename"]
         )
 
     #
@@ -334,10 +375,10 @@ class YamlHelper:
     #
 
     def do_classifier(self) -> bool:
-        return "classifiers" in self.yaml
+        return "ClassifierContainer" in self.yaml
 
     def classifier_type(self) -> str:
-        return self.yaml["classifiers"]["type"]
+        return self.yaml["ClassifierContainer"]["classifiers"]["classifier_name"]
 
     @catch_keyerror
     def classifiers(self) -> list:
@@ -345,25 +386,24 @@ class YamlHelper:
 
         :return: list of classifiers to be trained
         """
-        return self.yaml["classifiers"]
+        return self.yaml["ClassifierContainer"]["classifiers"]
 
     def get_all_classifier_ids(self):
-        return [c["classifier_id"] for c in self.yaml["classifiers"]]
+        return [c["classifier_id"] for c in self.yaml["ClassifierContainer"]["classifiers"]]
 
     def get_edge_embedding_method(self, classifier: dict) -> str:
         return classifier["edge_method"]
 
     def classifier_history_file_name(self, classifier: dict) -> Optional[str]:
         return (
-            classifier["model"]["classifier_history_file_name"]
-            if "model" in classifier
-            and "classifier_history_file_name" in classifier["model"]
+            classifier["history_filename"]
+            if "history_filename" in classifier
             else None
         )
 
     def classifier_outfile(self, classifier: dict) -> str:
         return os.path.join(
-            self.outdir(), classifier["model"]["outfile"]
+            self.outdir(), classifier["outfile"]
         )
 
     #
@@ -371,15 +411,15 @@ class YamlHelper:
     #
 
     def do_upload(self) -> bool:
-        return "upload" in self.yaml
+        return "Upload" in self.yaml
 
     def make_upload_args(self) -> dict:
         make_upload_args = {
             "local_directory": self.outdir(),
-            "s3_bucket": self.yaml["upload"]["s3_bucket"],
-            "s3_bucket_dir": self.yaml["upload"]["s3_bucket_dir"],
-            "extra_args": self.yaml["upload"]["extra_args"]
-            if "extra_args" in self.yaml["upload"]
+            "s3_bucket": self.yaml["Upload"]["s3_bucket"],
+            "s3_bucket_dir": self.yaml["Upload"]["s3_bucket_dir"],
+            "extra_args": self.yaml["Upload"]["extra_args"]
+            if "extra_args" in self.yaml["Upload"]
             else None,
         }
         return make_upload_args
@@ -388,12 +428,12 @@ class YamlHelper:
     # applying trained model to fresh data for predictions
     #
     def do_apply_classifier(self):
-        return "apply_trained_classifier" in self.yaml
+        return "ApplyTrainedModelsContainer" in self.yaml
 
     def get_classifier_id_for_prediction(self):
-        classifier_applications = self.yaml["apply_trained_classifier"]
+        classifier_applications = self.yaml["ApplyTrainedModelsContainer"]["models"]
         list_of_ids = [
-            cl["classifier_model_id"] for cl in classifier_applications
+            cl["model_id"] for cl in classifier_applications
         ]
         return list_of_ids
 
@@ -408,8 +448,8 @@ class YamlHelper:
     def make_classifier_args(self, cl_id: str):
         classifier_args = [
             arg
-            for arg in self.yaml["apply_trained_classifier"]
-            if cl_id == arg["classifier_model_id"]
+            for arg in self.yaml["ApplyTrainedModelsContainer"]["models"]
+            if cl_id == arg["model_id"]
         ][0]
         model = self.get_classifier_from_id(cl_id)
 
@@ -418,12 +458,12 @@ class YamlHelper:
             **self.main_graph_args()
         )
 
-        if self.get_classifier_from_id(cl_id)["type"] == "neural network":
+        if self.get_classifier_from_id(cl_id)["classifier_name"] == "neural network":
             classifier_args_dict["model"] = pickle.load(
                 open(
                     os.path.join(
                         self.outdir(),
-                        get_custom_model_path(model["model"]["outfile"]),
+                        get_custom_model_path(model["outfile"]),
                     ),
                     "rb",
                 ),
@@ -432,19 +472,19 @@ class YamlHelper:
         else:
             classifier_args_dict["model"] = pickle.load(
                 open(
-                    os.path.join(self.outdir(), model["model"]["outfile"]),
+                    os.path.join(self.outdir(), model["outfile"]),
                     "rb",
                 ),
             )
 
         # YAML may specify node_types as dict with 'source' and 'destination'
         # or as a list of lists
-        if 'source' in classifier_args["link_node_types"] \
-            or 'destination' in classifier_args["link_node_types"]:
-            classifier_args_dict["node_types"] = [classifier_args["link_node_types"]['source'],
-                                                    classifier_args["link_node_types"]['destination']]
+        if 'source' in classifier_args["node_types"] \
+            or 'destination' in classifier_args["node_types"]:
+            classifier_args_dict["node_types"] = [classifier_args["node_types"]['source'],
+                                                    classifier_args["node_types"]['destination']]
         else:
-            classifier_args_dict["node_types"] = classifier_args["link_node_types"]
+            classifier_args_dict["node_types"] = classifier_args["node_types"]
 
         classifier_args_dict["cutoff"] = classifier_args["cutoff"]
         classifier_args_dict["output_file"] = os.path.join(

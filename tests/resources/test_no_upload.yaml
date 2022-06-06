@@ -1,3 +1,10 @@
 ---
-name: ""
-description: ""
+# name: ""
+# description: ""
+
+Target:
+  target_path: tests/resources/test_output_data_dir/
+
+GraphDataConfiguration:
+  graph:
+    directed: False

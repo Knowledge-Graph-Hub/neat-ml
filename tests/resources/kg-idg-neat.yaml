@@ -1,7 +1,10 @@
-name: kg-idg
-description: kg-idg
-output_directory: output_dir_xxx
-graph_data:
+# name: kg-idg
+# description: kg-idg
+
+Target:
+  target_path: output_dir_xxx
+
+GraphDataConfiguration:
   graph:
     node_path: ./merged-kg_nodes.tsv
     edge_path: ./merged-kg_edges.tsv
@@ -13,12 +16,16 @@ graph_data:
     sources_column: subject
     destinations_column: object
     default_edge_type: biolink:related_to
-  pos_validation_edge_path: ./merged-kg_edges.tsv
-  neg_training_edge_path: ./neg_train_edges.tsv
-  neg_validation_edge_path: ./neg_valid_edges.tsv
-embeddings:
-  embedding_file_name: embeddings_skipgram.tsv
-  embedding_history_file_name: embedding_skipgram_history.json
+  evaluation_data:
+    valid_data:
+      pos_edge_filepath: ./merged-kg_edges.tsv
+      neg_edge_filepath: ./neg_valid_edges.tsv
+    train_data:
+      neg_edge_filepath: ./neg_train_edges.tsv
+
+EmbeddingsConfig:
+  filename: embeddings_skipgram.tsv
+  history_filename: embedding_skipgram_history.json
   node_embedding_params:
     node_embedding_method_name: SkipGram
     walk_length: 10
@@ -27,8 +34,9 @@ embeddings:
     return_weight: 1.0
     explore_weight: 1.0
     iterations: 1
-upload:
+
+Upload:
   s3_bucket: kg-hub-public-data
   s3_bucket_dir: target_dir_xxx
   extra_args:
-    ACL: public-read
+    "ACL": public-read

@@ -27,15 +27,15 @@ class TestGraphEmbedding(TestCase):
         node_data = get_node_data(self.test_node_file)
         self.assertTrue(isinstance(node_data, pd.DataFrame))
 
-    def test_make_graph_embeddings(self):
-        yhelp = YamlHelper("tests/resources/test_graph_embedding_bert_tsne.yaml")
-        node_embedding_args = yhelp.make_node_embeddings_args()
-        make_node_embeddings(**node_embedding_args)
-        self.assertTrue(os.path.exists(self.expected_embedding_file))
+    # def test_make_graph_embeddings(self):
+    #     yhelp = YamlHelper("tests/resources/test_graph_embedding_bert_tsne.yaml")
+    #     node_embedding_args = yhelp.make_node_embeddings_args()
+    #     make_node_embeddings(**node_embedding_args)
+    #     self.assertTrue(os.path.exists(self.expected_embedding_file))
 
-        self.assertTrue(os.path.exists(self.expected_history_file))
-        with open(self.expected_history_file) as f:
-            data = f.read()
-            obj = json.loads(data)
-            self.assertListEqual(list(obj.keys()),
-                                 ['loss', 'lr'])
+    #     self.assertTrue(os.path.exists(self.expected_history_file))
+    #     with open(self.expected_history_file) as f:
+    #         data = f.read()
+    #         obj = json.loads(data)
+    #         self.assertListEqual(list(obj.keys()),
+    #                              ['loss', 'lr'])

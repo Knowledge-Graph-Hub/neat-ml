@@ -16,7 +16,7 @@ class TestUpload(TestCase):
 
     def setUp(self) -> None:
         self.bad_yaml = 'tests/resources/test_bad_upload_info.yaml'
-        self.good_yaml = 'tests/resources/test_good_upload_info.yaml'
+        self.good_yaml = 'tests/resources/test.yaml'
         self.good_kwargs = YamlHelper(self.good_yaml).make_upload_args()
 
     @mock.patch("boto3.client")

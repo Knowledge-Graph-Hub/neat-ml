@@ -11,20 +11,20 @@ class TestTsne(TestCase):
         pass
 
     def setUp(self) -> None:
-        self.expected_tsne_file = 'output_data/test_embedding_tsne.png'
+        self.expected_tsne_file = 'tests/resources/test_output_data_dir/tsne.png'
         if os.path.exists(self.expected_tsne_file):
             print(
                 f"removing existing test tsne file {self.expected_tsne_file}")
             os.unlink(self.expected_tsne_file)
 
     def test_make_tsne(self):
-        yhelp = YamlHelper("tests/resources/test_graph_embedding_bert_tsne.yaml")
+        yhelp = YamlHelper("tests/resources/test.yaml")
         g = Graph.from_csv(
             nodes_column="id",
             node_list_node_types_column="category",
             default_node_type="biolink:NamedThing",
-            node_path=os.path.join(yhelp.yaml['input_directory'], yhelp.yaml['graph_data']['graph']['node_path']),
-            edge_path=os.path.join(yhelp.yaml['input_directory'], yhelp.yaml['graph_data']['graph']['edge_path']),
+            node_path='tests/resources/test_graphs/test_small_nodes.tsv',
+            edge_path='tests/resources/test_graphs/test_small_edges.tsv',
             sources_column="subject",
             destinations_column="object",
             directed=False

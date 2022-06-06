@@ -32,7 +32,7 @@ class Model:
 
     def save(self):
         with open(
-            os.path.join(self.outdir, self.config["model"]["outfile"]), "wb"
+            os.path.join(self.outdir, self.config["outfile"]), "wb"
         ) as f:
             pickle.dump(self, f)
 

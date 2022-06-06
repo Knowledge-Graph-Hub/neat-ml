@@ -17,10 +17,10 @@ class MLPModel(Model):
         """
         super().__init__(outdir=outdir)
         self.config = config
-        model_type = config["model"]["type"]
+        model_type = config["classifier_type"]
         model_class = self.dynamically_import_class(model_type)
         model_layers = []
-        for layer in config["model"]["layers"]:
+        for layer in config["parameters"]["tf_keras_params"]["layers_config"]["layers"]:
             layer_type = layer["type"]
             layer_class = self.dynamically_import_class(layer_type)
             parameters = layer["parameters"]
@@ -32,10 +32,10 @@ class MLPModel(Model):
         self.model = model_instance
 
     def compile(self):
-        model_compile_parameters = self.config["model_compile"]
+        model_compile_parameters = self.config["parameters"]["tf_keras_params"]
         metrics = (
-            model_compile_parameters["metrics"]
-            if "metrics" in model_compile_parameters
+            model_compile_parameters["metrics_config"]["metrics"]
+            if "metrics_config" in model_compile_parameters
             else None
         )
         metrics_class_list = []
@@ -65,15 +65,15 @@ class MLPModel(Model):
 
         """
         try:
-            classifier_params = self.config["classifier"]["model_fit"][
-                "parameters"
+            classifier_params = self.config["parameters"]["tf_keras_params"][
+                "fit_config"
             ]
         except KeyError:
             classifier_params = {}
 
         callback_list = []
-        if "callbacks" in classifier_params:
-            for callback in classifier_params["callbacks"]:
+        if "callbacks_list" in classifier_params:
+            for callback in classifier_params["callbacks_list"]["callbacks"]:
                 c_class = self.dynamically_import_class(callback["type"])
                 c_params = (
                     callback["parameters"] if "parameters" in callback else {}
@@ -92,10 +92,10 @@ class MLPModel(Model):
 
     def save(self) -> None:
         self.model.save(
-            os.path.join(self.outdir, self.config["model"]["outfile"])
+            os.path.join(self.outdir, self.config["outfile"])
         )
 
-        fn, ext = os.path.splitext(self.config["model"]["outfile"])
+        fn, ext = os.path.splitext(self.config["outfile"])
         model_outfile = fn + "_custom" + ext
 
         with open(os.path.join(self.outdir, model_outfile), "wb") as f:

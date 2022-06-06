@@ -18,7 +18,7 @@ import pandas as pd
 class TestLinkPrediction(TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        cls.yaml_file_sklearn = "tests/resources/test_neat.yaml"
+        cls.yaml_file_sklearn = "tests/resources/test.yaml"
         cls.yaml_file_tf = "tests/resources/test.yaml"
         cls.embed_file = "tests/resources/test_link_prediction/test_embeddings_test_yaml.csv"
         cls.yhelp_sklearn = YamlHelper(cls.yaml_file_sklearn)
@@ -29,14 +29,10 @@ class TestLinkPrediction(TestCase):
             (cls.yhelp_sklearn.classifiers())[0], cls.test_model_path
         )
         cls.tf_model = MLPModel(
-            (cls.yhelp_tf.classifiers())[0], cls.test_model_path
+            (cls.yhelp_tf.classifiers())[1], cls.test_model_path
         )
-        cls.sklearn_outfile = ((cls.yhelp_sklearn.classifiers())[0])["model"][
-            "outfile"
-        ]
-        cls.generic_tf_outfile = ((cls.yhelp_tf.classifiers())[0])["model"][
-            "outfile"
-        ]
+        cls.sklearn_outfile = ((cls.yhelp_sklearn.classifiers())[0])["outfile"]
+        cls.generic_tf_outfile = ((cls.yhelp_tf.classifiers())[1])["outfile"]
         cls.custom_tf_outfile = get_custom_model_path(cls.generic_tf_outfile)
         cls.training_graph_args = {
             "directed": False,
@@ -78,16 +74,6 @@ class TestLinkPrediction(TestCase):
 
     def test_tf_save(self) -> None:
         model_object = self.tf_model
-
-        # Need to have a fitted model here - but this doesn't quite work yet -
-        # it raises:
-        # RuntimeError: You must compile your model before training/testing. Use `model.compile(optimizer, loss)`.
-
-        # embed_contents = pd.read_csv(self.embed_file, index_col=0, header=None)
-
-        # dummy_labels = np.random.randint(0,high=2,size=(embed_contents.shape[0],),dtype=np.bool)
-
-        # model_object.fit(embed_contents, dummy_labels)
 
         model_object.save()
 

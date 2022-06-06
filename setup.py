@@ -79,6 +79,10 @@ setup(
         "boto3",
         "botocore",
         "validators",
+        "linkml",
+        "more-itertools",
+        "neat_schema",
+        "linkml-validator"
     ],
     extras_require=extras,
 )

@@ -12,9 +12,9 @@ class TestPreRunChecks(TestCase):
         pass
 
     def setUp(self) -> None:
-        self.upload_yaml = YamlHelper("tests/resources/test_upload_full.yaml")
+        self.upload_yaml = YamlHelper("tests/resources/test.yaml")
         self.classifier_yaml = YamlHelper(
-            "tests/resources/test_classifiers.yaml"
+            "tests/resources/test.yaml"
         )
 
     @mock.patch("boto3.client")

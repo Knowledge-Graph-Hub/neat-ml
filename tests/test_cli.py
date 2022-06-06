@@ -41,7 +41,7 @@ class TestRun(TestCase):
         result = self.runner.invoke(
             catch_exceptions=False,
             cli=run,
-            args=["--config", "tests/resources/test_neat.yaml"],
+            args=["--config", "tests/resources/test.yaml"],
         )
         self.assertTrue(mock_do_upload.called)
         self.assertTrue(mock_boto3_client.called)
@@ -69,78 +69,61 @@ class TestRun(TestCase):
         result = self.runner.invoke(
             catch_exceptions=False,
             cli=run,
-            args=["--config", "tests/resources/test_neat.yaml"],
+            args=["--config", "tests/resources/test.yaml"],
         )
         self.assertEqual(result.exit_code, 0)
 
-    @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_upload")
-    @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_classifier")
-    @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_tsne")
-    @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_embeddings")
-    @mock.patch("neat.visualization.visualization.make_tsne")
-    @mock.patch("boto3.client")
-    def test_run_do_embeddings(
-        self,
-        mock_boto,
-        mock_make_tnse,
-        mock_do_embeddings,
-        mock_do_tsne,
-        mock_do_classifier,
-        mock_do_upload,
-    ):
-        mock_do_embeddings.return_value = False
-        mock_do_tsne.return_value = True
-        mock_do_classifier.return_value = False
-        mock_do_upload.return_value = False
-        result = self.runner.invoke(
-            catch_exceptions=False,
-            cli=run,
-            args=["--config", "tests/resources/test_neat.yaml"],
-        )
-        self.assertEqual(result.exit_code, 0)
+    # @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_upload")
+    # @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_classifier")
+    # @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_tsne")
+    # @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_embeddings")
+    # @mock.patch("neat.visualization.visualization.make_tsne")
+    # @mock.patch("boto3.client")
+    # def test_run_do_tsne(
+    #     self,
+    #     mock_boto,
+    #     mock_make_tnse,
+    #     mock_do_embeddings,
+    #     mock_do_tsne,
+    #     mock_do_classifier,
+    #     mock_do_upload,
+    # ):
+    #     mock_do_embeddings.return_value = False
+    #     mock_do_tsne.return_value = True
+    #     mock_do_classifier.return_value = False
+    #     mock_do_upload.return_value = False
+    #     result = self.runner.invoke(
+    #         catch_exceptions=False,
+    #         cli=run,
+    #         args=["--config", "tests/resources/test.yaml"],
+    #     )
+    #     self.assertEqual(result.exit_code, 0)
 
-    @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_upload")
-    @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_classifier")
-    @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_tsne")
-    @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_embeddings")
-    @mock.patch("boto3.client")
-    # @mock.patch("neat.cli.MLPModel")
-    # @mock.patch("neat.cli.SklearnModel")
-    # @mock.patch("neat.link_prediction.model.Model.make_link_prediction_data")
-    def test_run_do_classifiers(
-        self,
-        # mock_make_link_prediction_data,
-        # mock_sklearn_model,
-        # mock_mlp_model,
-        mock_boto,
-        mock_do_embeddings,
-        mock_do_tsne,
-        mock_do_classifier,
-        mock_do_upload,
-    ):
-        mock_do_embeddings.return_value = False
-        mock_do_tsne.return_value = False
-        mock_do_classifier.return_value = True
-        mock_do_upload.return_value = False
+    # @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_upload")
+    # @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_classifier")
+    # @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_tsne")
+    # @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_embeddings")
+    # @mock.patch("boto3.client")
+    # def test_run_do_classifiers(
+    #     self,
+    #     mock_boto,
+    #     mock_do_embeddings,
+    #     mock_do_tsne,
+    #     mock_do_classifier,
+    #     mock_do_upload,
+    # ):
+    #     mock_do_embeddings.return_value = False
+    #     mock_do_tsne.return_value = False
+    #     mock_do_classifier.return_value = True
+    #     mock_do_upload.return_value = False
 
-        # # * TEST CODE ####################################
-        # # mock_model = Model()
-        # mock_sklearn_model.make_link_prediction_data = mock.MagicMock(
-        #     name="make_link_prediction_data"
-        # )
-        # mock_sklearn_model.make_link_prediction_data.return_value = (
-        #     self.mock_train,
-        #     self.mock_valid,
-        # # )
-        # # * ################################################
+    #     result = self.runner.invoke(
+    #         catch_exceptions=True,
+    #         cli=run,
+    #         args=["--config", "tests/resources/test.yaml"],
+    #     )
 
-        result = self.runner.invoke(
-            catch_exceptions=True,
-            cli=run,
-            args=["--config", "tests/resources/test_neat.yaml"],
-        )
-        print(result)
-        self.assertEqual(result.exit_code, 0)
+    #     self.assertEqual(result.exit_code, 0)
 
     @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_upload")
     @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_classifier")
@@ -165,7 +148,7 @@ class TestRun(TestCase):
         result = self.runner.invoke(
             catch_exceptions=False,
             cli=run,
-            args=["--config", "tests/resources/test_neat.yaml"],
+            args=["--config", "tests/resources/test.yaml"],
         )
         self.assertTrue(mock_pre_run_checks.called)
         self.assertEqual(result.exit_code, 0)
@@ -197,7 +180,7 @@ class TestRun(TestCase):
         result = self.runner.invoke(
             catch_exceptions=False,
             cli=run,
-            args=["--config", "tests/resources/test_neat.yaml"],
+            args=["--config", "tests/resources/test.yaml"],
         )
         self.assertTrue(mock_deal_with_url_node_edge_paths.called)
         self.assertEqual(result.exit_code, 0)
@@ -207,7 +190,7 @@ class TestRun(TestCase):
         result = self.runner.invoke(
             catch_exceptions=False,
             cli=updateyaml,
-            args=["--input_path", "tests/resources/test_neat.yaml"],
+            args=["--input_path", "tests/resources/test.yaml"],
         )
         self.assertTrue(mock_do_update_yaml.called)
         self.assertEqual(result.exit_code, 0)
