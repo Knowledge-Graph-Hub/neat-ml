@@ -8,8 +8,7 @@ from typing import Optional, Union
 from urllib.request import Request, urlopen
 import tarfile
 import sys
-import inspect
-import pkg_resources
+import pkg_resources # type: ignore
 
 import yaml  # type: ignore
 from ensmallen import Graph # type: ignore
