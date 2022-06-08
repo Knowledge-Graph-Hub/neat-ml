@@ -5,8 +5,8 @@ import numpy as np  # type: ignore
 import copy
 import pandas as pd  # type: ignore
 from typing import Optional, Tuple, Union
-from embiggen import LinkPredictionTransformer, GraphTransformer  # type: ignore
-from ensmallen import Graph  # type: ignore
+from grape import LinkPredictionTransformer, GraphTransformer  # type: ignore
+from grape import Graph  # type: ignore
 import sklearn  # type: ignore
 import tensorflow  # type: ignore
 from sklearn.tree import DecisionTreeClassifier  # type: ignore

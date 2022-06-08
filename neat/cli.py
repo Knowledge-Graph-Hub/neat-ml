@@ -1,7 +1,7 @@
 import json
 import os
 import click
-from ensmallen import Graph # type: ignore
+from grape import Graph # type: ignore
 import numpy as np  # type: ignore
 
 from neat.link_prediction.sklearn_model import SklearnModel

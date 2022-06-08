@@ -11,7 +11,7 @@ import sys
 import pkg_resources # type: ignore
 
 import yaml  # type: ignore
-from ensmallen import Graph # type: ignore
+from grape import Graph # type: ignore
 from neat.link_prediction.mlp_model import MLPModel  # type: ignore
 from neat.link_prediction.model import Model
 import validators  # type: ignore

@@ -1,7 +1,7 @@
 import pandas as pd  # type: ignore
-from ensmallen import Graph  # type: ignore
+from grape import Graph  # type: ignore
 from matplotlib import pyplot as plt  # type: ignore
-from embiggen.visualizations import GraphVisualization  # type: ignore
+from grape.visualizations import GraphVisualization  # type: ignore
 
 
 def make_tsne(

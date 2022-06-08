@@ -1,9 +1,9 @@
-from ensmallen import Graph  # type: ignore
+from grape import Graph  # type: ignore
 import numpy as np  # type: ignore
 import pandas as pd  # type: ignore
 from tqdm.auto import tqdm  # type: ignore
 from transformers import BertModel, BertTokenizer  # type: ignore
-from embiggen.pipelines import compute_node_embedding  # type: ignore
+from grape.pipelines import compute_node_embedding  # type: ignore
 
 
 def get_node_data(file: str, sep="\t") -> pd.DataFrame:
