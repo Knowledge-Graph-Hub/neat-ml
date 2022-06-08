@@ -62,12 +62,13 @@ setup(
     entry_points={"console_scripts": ["neat=neat.cli:cli"]},
     tests_require=test_deps,
     install_requires=[
+        # tensorflow and torch may also be required,
+        # but should be installed separately
+        # to avoid version conflicts
         "tqdm",
         "click",
         "pyyaml",
-        "tensorflow",
-        "ensmallen==0.7.0.dev7",
-        "embiggen==0.10.0.dev3",
+        "grape",
         "opencv-python",  # for embiggen's 4d tSNEs
         "numpy",
         "matplotlib",
