@@ -3,7 +3,7 @@ import numpy as np  # type: ignore
 import pandas as pd  # type: ignore
 from tqdm.auto import tqdm  # type: ignore
 from grape import Graph  # type: ignore
-from grape.embedders import embed_graph
+from grape.embedders import embed_graph # type: ignore
 
 def get_node_data(file: str, sep="\t") -> pd.DataFrame:
     """Read node TSV file and return pandas dataframe
