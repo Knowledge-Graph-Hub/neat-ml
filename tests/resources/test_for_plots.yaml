@@ -1,0 +1,142 @@
+---
+# name: ""
+# description: ""
+
+Target:
+  target_path: tests/resources/test_output_data_dir/
+
+GraphDataConfiguration:
+  graph:
+    directed: False
+    node_path: tests/resources/test_graphs/pos_train_nodes.tsv
+    edge_path: tests/resources/test_graphs/pos_train_edges.tsv
+    verbose: True
+    nodes_column: "id"
+    node_list_node_types_column: "category"
+    default_node_type: "biolink:NamedThing"
+    sources_column: "subject"
+    destinations_column: "object"
+    default_edge_type: "biolink:related_to"
+  evaluation_data:
+    valid_data:
+      pos_edge_filepath: tests/resources/test_graphs/pos_valid_edges.tsv
+      neg_edge_filepath: tests/resources/test_graphs/neg_valid_edges.tsv
+    train_data:
+      neg_edge_filepath: tests/resources/test_graphs/neg_train_edges.tsv
+
+  source_data:
+    files:
+      - path: https://someremoteurl.com/graph.tar.gz
+        desc: "This file contains the necessary graph files."
+      - path: https://someremoteurl.com/graph2.tar.gz
+        desc: "This file may be necessary."
+      - path: https://someremoteurl.com/graph3.tar.gz
+        desc: "This file may not be necessary."
+
+EmbeddingsConfig:
+  filename: test_embeddings_test_yaml.csv
+  history_filename: embedding_history.json
+  node_embeddings_params:
+    method_name: SkipGram
+    walk_length: 10 # typically 100 or so
+    batch_size: 128 # typically 512? or more
+    window_size: 4
+    return_weight: 1.0  # 1/p
+    explore_weight: 1.0  # 1/q
+    iterations: 5 # typically 20
+  tsne_filename: fullplots.png
+  #bert_params:
+  #  node_columns:  # ideally these would have more text than category or ID (description)
+  #    - category
+  #    - id
+
+ClassifierContainer:
+  classifiers:
+    - classifier_id: lr_1
+      classifier_name: Logistic Regression
+      classifier_type: sklearn.linear_model.LogisticRegression
+      edge_method: Average
+      outfile: "model_lr1_test_yaml.h5"
+      parameters:
+        sklearn_params:
+          random_state: 42
+          max_iter: 100
+
+    - classifier_id: mlp_1
+      classifier_name: neural network
+      classifier_type: tensorflow.keras.models.Sequential
+      edge_method: Average
+      outfile: "model_mlp_test_yaml.h5"
+      history_filename: "mlp_classifier_history.json"
+      parameters:
+        tf_keras_params:
+          layers_config:
+            layers:
+              - type: tensorflow.keras.layers.Input
+                parameters:
+                  shape: 868
+              - type: tensorflow.keras.layers.Dense
+                parameters:
+                  units: 128
+                  activation: relu
+              - type: tensorflow.keras.layers.Dense
+                parameters:
+                  units: 32
+                  activation: relu
+              - type: tensorflow.keras.layers.Dropout
+                parameters:
+                  rate: 0.5
+              - type: tensorflow.keras.layers.Dense
+                parameters:
+                  units: 16
+                  activation: relu
+              - type: tensorflow.keras.layers.Dense
+                parameters:
+                  units: 1
+                  activation: sigmoid
+
+          optimizer: nadam
+          loss: binary_crossentropy
+          
+          metrics_config:
+            metrics:
+              - name: auprc
+                type: tensorflow.keras.metrics.AUC
+                curve: PR
+              - name: auroc
+                type: tensorflow.keras.metrics.AUC
+                curve: ROC
+              - name: Recall
+                type: tensorflow.keras.metrics.Recall
+              - name: Precision
+                type: tensorflow.keras.metrics.Precision
+              - type: accuracy
+
+          fit_config:
+            batch_size: 4096
+            epochs: 5
+            callbacks_list:
+              callbacks:
+                - type: tensorflow.keras.callbacks.EarlyStopping
+                  monitor: val_loss
+                  patience: 5
+                  min_delta: 0.001
+                - type: tensorflow.keras.callbacks.ReduceLROnPlateau
+
+ApplyTrainedModelsContainer:
+  models:
+    - model_id: lr_1
+      node_types:
+        source:
+          - "biolink:Protein"
+        destination:
+          - "biolink:Protein"
+      cutoff: 0.9
+      outfile: lr_protein_predictions_kgx.tsv
+
+Upload:
+  s3_bucket: some_bucket
+  s3_bucket_dir: some/remote/directory/
+  extra_args:
+    "ACL": "public-read"
+    "BCL": "private-read"
