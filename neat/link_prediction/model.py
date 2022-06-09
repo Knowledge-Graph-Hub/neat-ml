@@ -83,7 +83,7 @@ class Model:
                         neg_edge_number = neg_edge_number * 2
 
                     graphs[name] = (graphs["pos_training"]).sample_negative_graph(
-                        negatives_number=neg_edge_number
+                        number_of_negative_samples=neg_edge_number
                     )
                 else:
                     these_params = copy.deepcopy(training_graph_args)
