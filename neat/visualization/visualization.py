@@ -1,7 +1,7 @@
 import pandas as pd  # type: ignore
 from grape import Graph  # type: ignore
 from matplotlib import pyplot as plt  # type: ignore
-from grape.visualizations import GraphVisualization  # type: ignore
+from grape import GraphVisualizer  # type: ignore
 
 
 def make_tsne(
@@ -47,7 +47,7 @@ def make_tsne(
     # plt.colorbar(ticks=ticks, format=formatter)
     # plt.savefig(tsne_outfile)
 
-    visualizer = GraphVisualization(graph)
+    visualizer = GraphVisualizer(graph)
     visualizer.fit_transform_nodes(node_embeddings)
 
     figure, _ = visualizer.plot_node_types(show_legend=False)
