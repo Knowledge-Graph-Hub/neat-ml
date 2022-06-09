@@ -82,7 +82,7 @@ class Model:
                     if not is_directed:
                         neg_edge_number = neg_edge_number * 2
 
-                    graphs[name] = (graphs["pos_training"]).sample_negatives(
+                    graphs[name] = (graphs["pos_training"]).sample_negative_graph(
                         negatives_number=neg_edge_number
                     )
                 else:
