@@ -71,8 +71,6 @@ setup(
         "grape",
         "opencv-python",  # for embiggen's 4d tSNEs
         "numpy",
-        "matplotlib",
-        "sanitize_ml_labels",
         "sklearn",
         "pandas",
         "transformers",
@@ -80,7 +78,6 @@ setup(
         "botocore",
         "validators",
         "linkml",
-        "more-itertools",
         "neat_schema",
         "linkml-validator"
     ],

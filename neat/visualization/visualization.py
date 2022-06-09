@@ -1,6 +1,5 @@
 import pandas as pd  # type: ignore
 from grape import Graph  # type: ignore
-from matplotlib import pyplot as plt  # type: ignore
 from grape import GraphVisualizer  # type: ignore
 
 
