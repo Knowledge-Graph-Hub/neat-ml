@@ -76,7 +76,6 @@ setup(
         "sklearn",
         "pandas",
         "transformers",
-        "torch",
         "boto3",
         "botocore",
         "validators",
