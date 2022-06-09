@@ -3,9 +3,8 @@ from parameterized import parameterized
 
 from neat.yaml_helper.yaml_helper import YamlHelper, catch_keyerror, is_url, \
     download_file, is_valid_path, validate_config
-import os
 
-from ensmallen import Graph  # type: ignore
+from grape import Graph  # type: ignore
 
 class TestYamlHelper(TestCase):
     @classmethod

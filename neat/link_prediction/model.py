@@ -5,10 +5,8 @@ import numpy as np  # type: ignore
 import copy
 import pandas as pd  # type: ignore
 from typing import Optional, Tuple, Union
-from grape import LinkPredictionTransformer, GraphTransformer  # type: ignore
+from grape.transformers import EdgePredictionTransformer, GraphTransformer  # type: ignore
 from grape import Graph  # type: ignore
-import sklearn  # type: ignore
-import tensorflow  # type: ignore
 from sklearn.tree import DecisionTreeClassifier  # type: ignore
 from sklearn.ensemble import RandomForestClassifier  # type: ignore
 from sklearn.linear_model import LogisticRegression  # type: ignore
@@ -99,7 +97,7 @@ class Model:
                 graphs[name] = Graph.from_csv(**graph_args)
 
         # create transformer object to convert graphs into edge embeddings
-        lpt = LinkPredictionTransformer(method=edge_method)
+        lpt = EdgePredictionTransformer(method=edge_method)
 
         lpt.fit(
             embedding

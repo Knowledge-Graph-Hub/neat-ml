@@ -2,7 +2,7 @@ import os
 from unittest import TestCase
 from neat.yaml_helper.yaml_helper import YamlHelper
 from neat.visualization.visualization import make_tsne
-from ensmallen import Graph
+from grape import Graph
 
 class TestTsne(TestCase):
 
