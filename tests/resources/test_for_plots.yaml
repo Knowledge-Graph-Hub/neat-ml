@@ -46,7 +46,7 @@ EmbeddingsConfig:
     iterations: 5 # typically 20
   tsne_filename: fullplots.png
   #bert_params:
-  #  node_columns:  # ideally these would have more text than category or ID (description)
+  #  node_columns:
   #    - category
   #    - id
 
@@ -97,7 +97,7 @@ ClassifierContainer:
 
           optimizer: nadam
           loss: binary_crossentropy
-          
+
           metrics_config:
             metrics:
               - name: auprc
