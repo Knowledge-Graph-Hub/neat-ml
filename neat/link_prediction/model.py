@@ -7,9 +7,6 @@ import pandas as pd  # type: ignore
 from typing import Optional, Tuple, Union
 from grape.transformers import EdgePredictionTransformer, GraphTransformer  # type: ignore
 from grape import Graph  # type: ignore
-from sklearn.tree import DecisionTreeClassifier  # type: ignore
-from sklearn.ensemble import RandomForestClassifier  # type: ignore
-from sklearn.linear_model import LogisticRegression  # type: ignore
 import importlib
 
 
