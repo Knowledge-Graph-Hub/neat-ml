@@ -17,6 +17,7 @@ def get_node_data(file: str, sep="\t") -> pd.DataFrame:
 
 def make_node_embeddings(
                          embedding_outfile: str,
+                         embedding_history_outfile: str,
                          main_graph_args: dict,
                          node_embedding_params: dict,
                          bert_columns: dict,
@@ -26,6 +27,7 @@ def make_node_embeddings(
 
     Args:
         embedding_outfile: outfile to write out embeddings
+        embedding_history_outfile: outfile to write out embedding history
         main_graph_args: arguments passed to Ensmallen for graph loading
         node_embedding_params: args passed to Embiggen
         bert_columns: columns containing text info to use to make embeddings from Bert
@@ -36,9 +38,11 @@ def make_node_embeddings(
     """
     # load main graph
     graph: Graph = Graph.from_csv(**main_graph_args)
+
     node_embedding = embed_graph(
         graph,
-        **node_embedding_params
+        node_embedding_params["method_name"],
+        node_embedding_params
     ).get_node_embedding_from_index(0)
 
     # embed columns with BERT first (if we're gonna)
