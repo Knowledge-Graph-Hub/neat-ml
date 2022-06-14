@@ -5,7 +5,7 @@ import numpy as np  # type: ignore
 import copy
 import pandas as pd  # type: ignore
 from typing import Optional, Tuple, Union
-from grape.transformers import EdgePredictionTransformer, GraphTransformer  # type: ignore
+from grape.embedding_transformers import EdgePredictionTransformer, GraphTransformer  # type: ignore
 from grape import Graph  # type: ignore
 import importlib
 
