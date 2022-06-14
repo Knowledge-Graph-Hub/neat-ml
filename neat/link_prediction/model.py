@@ -64,6 +64,8 @@ class Model:
         embedding = pd.read_csv(embedding_file, index_col=0, header=None)
 
         # load graphs
+        # It's possible that the only arg for a graph will be
+        # a path to it, in which case it will be a string (of that path)
         graphs = {"pos_training": Graph.from_csv(**training_graph_args)}
         is_directed = graphs["pos_training"].is_directed()
         for name, graph_args in [
@@ -88,9 +90,13 @@ class Model:
                         ]
                     graphs[name] = Graph.from_csv(**these_params)
             else:
-                graph_args["directed"] = training_graph_args["directed"]
-                graphs[name] = Graph.from_csv(**graph_args)
-
+                if isinstance(graph_args, str):
+                    these_params = copy.deepcopy(training_graph_args)
+                    these_params["edge_path"] = graph_args
+                    graphs[name] = Graph.from_csv(**these_params)
+                else:
+                    graphs[name] = Graph.from_csv(**graph_args)
+                                                    
         # create transformer object to convert graphs into edge embeddings
         lpt = EdgePredictionTransformer(method=edge_method)
 
