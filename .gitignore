@@ -3,7 +3,7 @@ venv/
 __pycache__
 build/
 dist/
-neat.egg-info/
+neat_ml.egg-info/
 output_data
 input_data
 node_embeddings/*

@@ -1,8 +1,8 @@
 from unittest import TestCase
 from botocore.exceptions import ClientError
 
-from neat.pre_run_checks.pre_run_checks import pre_run_checks
-from neat.yaml_helper.yaml_helper import YamlHelper
+from neat_ml.pre_run_checks.pre_run_checks import pre_run_checks
+from neat_ml.yaml_helper.yaml_helper import YamlHelper
 from unittest import mock
 
 

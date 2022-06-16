@@ -3,8 +3,8 @@ from unittest.mock import MagicMock, patch
 
 import boto3
 from botocore.exceptions import ClientError
-from neat.upload.upload import upload_dir_to_s3
-from neat.yaml_helper.yaml_helper import YamlHelper
+from neat_ml.upload.upload import upload_dir_to_s3
+from neat_ml.yaml_helper.yaml_helper import YamlHelper
 from unittest import mock
 
 

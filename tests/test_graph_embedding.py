@@ -1,9 +1,9 @@
 import os
 from unittest import TestCase
 import json
-from neat.yaml_helper.yaml_helper import YamlHelper
+from neat_ml.yaml_helper.yaml_helper import YamlHelper
 
-from neat.graph_embedding.graph_embedding import get_node_data, make_node_embeddings
+from neat_ml.graph_embedding.graph_embedding import get_node_data, make_node_embeddings
 import pandas as pd
 
 

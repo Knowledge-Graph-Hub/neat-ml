@@ -43,11 +43,11 @@ extras = {
 }
 
 setup(
-    name="neat",
+    name="neat_ml",
     version=__version__,
     description="Neural-network Embedding All the Things",
     long_description=long_description,
-    url="https://github.com/Knowledge-Graph-Hub/NEAT",
+    url="https://github.com/Knowledge-Graph-Hub/neat_ml",
     author="Deepak Unni, Justin Reese, J. Harry Caufield, Harshad Hegde",
     author_email="deepak.unni3@lbl.gov, justaddcoffee+github@gmail.com, jhc@lbl.gov, hhegde@lbl.gov",
     python_requires=">=3.8",

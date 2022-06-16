@@ -1,7 +1,7 @@
 import os
 from unittest import TestCase
-from neat.yaml_helper.yaml_helper import YamlHelper
-from neat.visualization.visualization import make_tsne, make_all_plots
+from neat_ml.yaml_helper.yaml_helper import YamlHelper
+from neat_ml.visualization.visualization import make_tsne, make_all_plots
 from grape import Graph
 
 class TestVisuals(TestCase):
