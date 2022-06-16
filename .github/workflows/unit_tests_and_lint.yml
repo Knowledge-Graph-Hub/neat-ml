@@ -34,12 +34,12 @@ jobs:
       - name: run pytest
         run: |
           coverage erase
-          pytest --cov=neat --cov-report xml:coverage.xml
+          pytest --cov=neat_ml --cov-report xml:coverage.xml
           coverage combine --append || true
           coverage report
           coverage xml
       - name: run mypy
-        run: mypy --strict-optional neat
+        run: mypy --strict-optional neat_ml
       - name: run yamllint
         run: yamllint -d relaxed tests/resources/*.yaml
       - name: SonarCloud Scan

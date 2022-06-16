@@ -1,7 +1,7 @@
 from unittest import TestCase, skip, mock
 from parameterized import parameterized
 
-from neat.yaml_helper.yaml_helper import YamlHelper, catch_keyerror, is_url, \
+from neat_ml.yaml_helper.yaml_helper import YamlHelper, catch_keyerror, is_url, \
     download_file, is_valid_path, validate_config
 
 from grape import Graph  # type: ignore
@@ -140,13 +140,13 @@ class TestYamlHelper(TestCase):
         else:
             self.assertEqual(expected_value, is_valid_path(string))
 
-    @mock.patch('neat.yaml_helper.yaml_helper.download_file')
+    @mock.patch('neat_ml.yaml_helper.yaml_helper.download_file')
     @mock.patch('tarfile.open')
     def test_load_graph(self, mock_tarfile_open, mock_download_file):
         self.yh.load_graph()
         self.assertTrue(mock_download_file.called)
 
-    @mock.patch('neat.yaml_helper.yaml_helper.download_file')
+    @mock.patch('neat_ml.yaml_helper.yaml_helper.download_file')
     @mock.patch('tarfile.open')
     def test_graph_contains_node_types(self, mock_tarfile_open, mock_download_file):
         g = self.yh.load_graph()
@@ -155,18 +155,18 @@ class TestYamlHelper(TestCase):
         self.assertCountEqual(g.get_unique_node_type_names(), 
                                 ['biolink:Gene', 'biolink:Protein'])
 
-    @mock.patch('neat.yaml_helper.yaml_helper.Request')
-    @mock.patch('neat.yaml_helper.yaml_helper.urlopen')
-    @mock.patch('neat.yaml_helper.yaml_helper.open')
+    @mock.patch('neat_ml.yaml_helper.yaml_helper.Request')
+    @mock.patch('neat_ml.yaml_helper.yaml_helper.urlopen')
+    @mock.patch('neat_ml.yaml_helper.yaml_helper.open')
     def test_download_file(self, mock_open, mock_urlopen, mock_Request):
         download_file("https://someurl.com/file.txt", outfile="someoutfile")
         for this_mock in [mock_open, mock_urlopen, mock_Request]:
             self.assertTrue(this_mock.called)
             self.assertEqual(1, this_mock.call_count)
 
-    @mock.patch('neat.yaml_helper.yaml_helper.Request')
-    @mock.patch('neat.yaml_helper.yaml_helper.urlopen')
-    @mock.patch('neat.yaml_helper.yaml_helper.open')
+    @mock.patch('neat_ml.yaml_helper.yaml_helper.Request')
+    @mock.patch('neat_ml.yaml_helper.yaml_helper.urlopen')
+    @mock.patch('neat_ml.yaml_helper.yaml_helper.open')
     @mock.patch('tarfile.open')
     def test_download_compressed_file(self, mock_tarfile_open, mock_open, mock_urlopen, mock_Request):
         download_file("https://someurl.com/file.tar.gz", outfile="file.tar.gz")

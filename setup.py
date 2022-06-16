@@ -26,7 +26,7 @@ def find_version(*file_paths):
     raise RuntimeError("Unable to find version string.")
 
 
-__version__ = "0.0.1"
+__version__ = "0.1.0"
 
 test_deps = [
     "pytest",
@@ -43,23 +43,20 @@ extras = {
 }
 
 setup(
-    name="neat",
+    name="neat_ml",
     version=__version__,
     description="Neural-network Embedding All the Things",
     long_description=long_description,
-    url="https://github.com/Knowledge-Graph-Hub/NEAT",
+    long_description_content_type='text/markdown',
+    url="https://github.com/Knowledge-Graph-Hub/neat_ml",
     author="Deepak Unni, Justin Reese, J. Harry Caufield, Harshad Hegde",
     author_email="deepak.unni3@lbl.gov, justaddcoffee+github@gmail.com, jhc@lbl.gov, hhegde@lbl.gov",
     python_requires=">=3.8",
     license="BSD-3",
     include_package_data=True,
-    classifiers=[
-        "Development Status :: 3 - Beta",
-        "License :: OSI Approved :: BSD License",
-        "Programming Language :: Python :: 3",
-    ],
+    classifiers=[],
     packages=find_packages(exclude=["contrib", "docs", "tests*"]),
-    entry_points={"console_scripts": ["neat=neat.cli:cli"]},
+    entry_points={"console_scripts": ["neat=neat_ml.cli:cli"]},
     tests_require=test_deps,
     install_requires=[
         # tensorflow and torch may also be required,
@@ -78,7 +75,7 @@ setup(
         "botocore",
         "validators",
         "linkml",
-        "neat_schema",
+        "neat-ml-schema",
         "linkml-validator"
     ],
     extras_require=extras,

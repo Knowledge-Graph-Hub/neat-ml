@@ -12,20 +12,20 @@ import pkg_resources # type: ignore
 
 import yaml  # type: ignore
 from grape import Graph # type: ignore
-from neat.link_prediction.mlp_model import MLPModel  # type: ignore
-from neat.link_prediction.model import Model
+from neat_ml.link_prediction.mlp_model import MLPModel  # type: ignore
+from neat_ml.link_prediction.model import Model
 import validators  # type: ignore
 from pathlib import Path
 
-import neat_schema # type: ignore
+import neat_ml_schema # type: ignore
 from linkml_validator.validator import Validator # type: ignore
 
-from neat.run_classifier.run_classifier import get_custom_model_path
+from neat_ml.run_classifier.run_classifier import get_custom_model_path
 
 VALID_CHARS = "-_.() %s%s" % (string.ascii_letters, string.digits)
 
 
-def validate_config(config: dict, neat_schema_file: str = 'neat_schema.yaml') -> bool:
+def validate_config(config: dict, neat_schema_file: str = 'neat_ml_schema.yaml') -> bool:
     """
     Validate the provided config against the neat_schema.
     :param config: dict of the parsed config file
@@ -35,8 +35,8 @@ def validate_config(config: dict, neat_schema_file: str = 'neat_schema.yaml') ->
     validated = True
 
     # Get schema path first
-    schema_path = pkg_resources.resource_filename('neat_schema',
-                                                  os.path.join('src/linkml/',
+    schema_path = pkg_resources.resource_filename('neat_ml_schema',
+                                                  os.path.join('src/schema/',
                                                                neat_schema_file))
 
     if not os.path.exists(schema_path):

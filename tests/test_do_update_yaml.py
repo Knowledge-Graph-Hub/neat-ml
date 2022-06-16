@@ -3,7 +3,7 @@ from unittest import TestCase, skip
 from parameterized import parameterized
 import tempfile
 from shutil import copyfile
-from neat.update_yaml.update_yaml import do_update_yaml
+from neat_ml.update_yaml.update_yaml import do_update_yaml
 import yaml
 
 

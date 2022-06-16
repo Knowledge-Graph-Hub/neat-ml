@@ -17,6 +17,7 @@ def get_node_data(file: str, sep="\t") -> pd.DataFrame:
 
 def make_node_embeddings(
                          embedding_outfile: str,
+                         embedding_history_outfile: str,
                          main_graph_args: dict,
                          node_embedding_params: dict,
                          bert_columns: dict,

@@ -2,11 +2,11 @@ import os
 import pathlib
 from unittest import TestCase, skip
 
-from neat.link_prediction import model
-from neat.link_prediction.sklearn_model import SklearnModel
-from neat.link_prediction.mlp_model import MLPModel
-from neat.run_classifier.run_classifier import get_custom_model_path
-from neat.yaml_helper.yaml_helper import YamlHelper
+from neat_ml.link_prediction import model
+from neat_ml.link_prediction.sklearn_model import SklearnModel
+from neat_ml.link_prediction.mlp_model import MLPModel
+from neat_ml.run_classifier.run_classifier import get_custom_model_path
+from neat_ml.yaml_helper.yaml_helper import YamlHelper
 
 from sklearn.linear_model._logistic import LogisticRegression
 from keras.engine.sequential import Sequential
