@@ -78,7 +78,7 @@ setup(
         "botocore",
         "validators",
         "linkml",
-        "neat_schema",
+        "neat-ml-schema",
         "linkml-validator"
     ],
     extras_require=extras,
