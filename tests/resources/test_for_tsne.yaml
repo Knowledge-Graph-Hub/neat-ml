@@ -28,3 +28,4 @@ EmbeddingsConfig:
     return_weight: 1.0  # 1/p
     explore_weight: 1.0  # 1/q
     iterations: 5 # typically 20
+  tsne_filename: test_tsne.png
