@@ -3,7 +3,7 @@ import warnings
 
 import boto3  # type: ignore
 from botocore.exceptions import ClientError  # type: ignore
-from neat.yaml_helper.yaml_helper import YamlHelper
+from neat_ml.yaml_helper.yaml_helper import YamlHelper
 
 def pre_run_checks(
     yhelp: YamlHelper,

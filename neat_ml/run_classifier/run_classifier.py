@@ -7,7 +7,7 @@ from grape import Graph  # type: ignore
 import pandas as pd  # type: ignore
 from itertools import combinations  # [READ DOCS]
 
-from neat.link_prediction.sklearn_model import SklearnModel
+from neat_ml.link_prediction.sklearn_model import SklearnModel
 
 OUTPUT_COL_NAMES = ["source_node", "destination_node"]
 
