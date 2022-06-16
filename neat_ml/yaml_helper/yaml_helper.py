@@ -17,7 +17,7 @@ from neat_ml.link_prediction.model import Model
 import validators  # type: ignore
 from pathlib import Path
 
-import neat_schema # type: ignore
+import neat_ml_schema # type: ignore
 from linkml_validator.validator import Validator # type: ignore
 
 from neat_ml.run_classifier.run_classifier import get_custom_model_path
@@ -36,7 +36,7 @@ def validate_config(config: dict, neat_schema_file: str = 'neat_schema.yaml') ->
 
     # Get schema path first
     schema_path = pkg_resources.resource_filename('neat_schema',
-                                                  os.path.join('src/linkml/',
+                                                  os.path.join('src/schema/',
                                                                neat_schema_file))
 
     if not os.path.exists(schema_path):
