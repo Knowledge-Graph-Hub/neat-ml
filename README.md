@@ -37,9 +37,7 @@ conda install tensorflow
 ## Installation
 
 ```
-git clone https://github.com/Knowledge-Graph-Hub/NEAT.git
-cd NEAT
-pip install .
+pip install neat-ml
 ```
 
 ## Running NEAT
@@ -49,7 +47,7 @@ neat run --config [your yaml]
 ```
 
 The pipeline is driven by a YAML file (e.g. `tests/resources/test.yaml`), which contains all parameters needed to complete the pipeline.
-The contents and expected values for this file are defined by the [neat_schema](https://github.com/Knowledge-Graph-Hub/NEAT-schema).
+The contents and expected values for this file are defined by the [neat-ml-schema](https://github.com/Knowledge-Graph-Hub/neat-ml-schema).
 
 This includes hyperparameters for machine learning and also things like files/paths to output results.
 Specify paths to node and edge files:
