@@ -25,7 +25,7 @@ from neat_ml.run_classifier.run_classifier import get_custom_model_path
 VALID_CHARS = "-_.() %s%s" % (string.ascii_letters, string.digits)
 
 
-def validate_config(config: dict, neat_schema_file: str = 'neat_schema.yaml') -> bool:
+def validate_config(config: dict, neat_schema_file: str = 'neat_ml_schema.yaml') -> bool:
     """
     Validate the provided config against the neat_schema.
     :param config: dict of the parsed config file
@@ -35,7 +35,7 @@ def validate_config(config: dict, neat_schema_file: str = 'neat_schema.yaml') ->
     validated = True
 
     # Get schema path first
-    schema_path = pkg_resources.resource_filename('neat_schema',
+    schema_path = pkg_resources.resource_filename('neat_ml_schema',
                                                   os.path.join('src/schema/',
                                                                neat_schema_file))
 
