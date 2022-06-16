@@ -20,7 +20,7 @@ class TestVisuals(TestCase):
                 os.unlink(filepath)
 
     def test_make_tsne(self):
-        yhelp = YamlHelper("tests/resources/test.yaml")
+        yhelp = YamlHelper("tests/resources/test_for_plots.yaml")
         g = Graph.from_csv(
             nodes_column="id",
             node_list_node_types_column="category",

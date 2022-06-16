@@ -18,12 +18,12 @@ class TestRun(TestCase):
         self.assertTrue(re.search("doesntexist", result.output))
         self.assertNotEqual(result.exit_code, 0)
 
-    @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_upload")
-    @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_classifier")
-    @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_tsne")
-    @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_embeddings")
+    @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_upload")
+    @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_classifier")
+    @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_tsne")
+    @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_embeddings")
     @mock.patch("boto3.client")
-    @mock.patch("neat.cli.pre_run_checks")
+    @mock.patch("neat_ml.cli.pre_run_checks")
     def test_run_do_upload(
         self,
         mock_pre_run_checks,
@@ -47,11 +47,11 @@ class TestRun(TestCase):
         self.assertTrue(mock_boto3_client.called)
         self.assertEqual(result.exit_code, 0)
 
-    @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_upload")
-    @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_classifier")
-    @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_tsne")
-    @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_embeddings")
-    @mock.patch("neat.graph_embedding.graph_embedding.make_node_embeddings")
+    @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_upload")
+    @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_classifier")
+    @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_tsne")
+    @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_embeddings")
+    @mock.patch("neat_ml.graph_embedding.graph_embedding.make_node_embeddings")
     @mock.patch("boto3.client")
     def test_run_do_embeddings(
         self,
@@ -73,11 +73,11 @@ class TestRun(TestCase):
         )
         self.assertEqual(result.exit_code, 0)
 
-    # @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_upload")
-    # @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_classifier")
-    # @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_tsne")
-    # @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_embeddings")
-    # @mock.patch("neat.visualization.visualization.make_tsne")
+    # @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_upload")
+    # @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_classifier")
+    # @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_tsne")
+    # @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_embeddings")
+    # @mock.patch("neat_ml.visualization.visualization.make_tsne")
     # @mock.patch("boto3.client")
     # def test_run_do_tsne(
     #     self,
@@ -99,10 +99,10 @@ class TestRun(TestCase):
     #     )
     #     self.assertEqual(result.exit_code, 0)
 
-    # @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_upload")
-    # @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_classifier")
-    # @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_tsne")
-    # @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_embeddings")
+    # @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_upload")
+    # @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_classifier")
+    # @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_tsne")
+    # @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_embeddings")
     # @mock.patch("boto3.client")
     # def test_run_do_classifiers(
     #     self,
@@ -125,11 +125,11 @@ class TestRun(TestCase):
 
     #     self.assertEqual(result.exit_code, 0)
 
-    @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_upload")
-    @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_classifier")
-    @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_tsne")
-    @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_embeddings")
-    @mock.patch("neat.cli.pre_run_checks")
+    @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_upload")
+    @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_classifier")
+    @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_tsne")
+    @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_embeddings")
+    @mock.patch("neat_ml.cli.pre_run_checks")
     @mock.patch("boto3.client")
     def test_run_pre_run_checks(
         self,
@@ -153,14 +153,14 @@ class TestRun(TestCase):
         self.assertTrue(mock_pre_run_checks.called)
         self.assertEqual(result.exit_code, 0)
 
-    @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_upload")
-    @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_classifier")
-    @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_tsne")
-    @mock.patch("neat.yaml_helper.yaml_helper.YamlHelper.do_embeddings")
-    @mock.patch("neat.cli.pre_run_checks")
+    @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_upload")
+    @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_classifier")
+    @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_tsne")
+    @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_embeddings")
+    @mock.patch("neat_ml.cli.pre_run_checks")
     @mock.patch("boto3.client")
     @mock.patch(
-        "neat.yaml_helper.yaml_helper.YamlHelper.deal_with_url_node_edge_paths"
+        "neat_ml.yaml_helper.yaml_helper.YamlHelper.deal_with_url_node_edge_paths"
     )
     def test_run_pre_run_checks(
         self,
@@ -185,7 +185,7 @@ class TestRun(TestCase):
         self.assertTrue(mock_deal_with_url_node_edge_paths.called)
         self.assertEqual(result.exit_code, 0)
 
-    @mock.patch("neat.cli.do_update_yaml")
+    @mock.patch("neat_ml.cli.do_update_yaml")
     def test_run_pre_run_checks(self, mock_do_update_yaml):
         result = self.runner.invoke(
             catch_exceptions=False,
