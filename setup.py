@@ -26,7 +26,7 @@ def find_version(*file_paths):
     raise RuntimeError("Unable to find version string.")
 
 
-__version__ = "0.0.1"
+__version__ = "0.1.0"
 
 test_deps = [
     "pytest",
