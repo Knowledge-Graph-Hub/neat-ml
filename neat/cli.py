@@ -84,9 +84,8 @@ def run(config: str) -> None:
             train_data, validation_data = model.make_train_valid_data(
                 embedding_file=yhelp.embedding_outfile(),
                 training_graph_args=yhelp.main_graph_args(),
-                pos_validation_args=yhelp.pos_val_graph_args(),
-                neg_training_args=yhelp.neg_train_graph_args(),
-                neg_validation_args=yhelp.neg_val_graph_args(),
+                validation_args=yhelp.val_graph_args(),
+                training_args=yhelp.train_graph_args(),
                 edge_method=yhelp.get_edge_embedding_method(classifier),
             )
             history_obj = model.fit(*train_data)
