@@ -20,7 +20,6 @@ GraphDataConfiguration:
 
 EmbeddingsConfig:
   filename: test_embeddings.tsv
-  history_filename: embedding_history.json
   node_embeddings_params:
     method_name: SkipGram
     walk_length: 10 # typically 100 or so
