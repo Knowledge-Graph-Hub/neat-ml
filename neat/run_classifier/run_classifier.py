@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import List, Union
 from warnings import warn
 
-from ensmallen import Graph  # type: ignore
+from grape import Graph  # type: ignore
 import pandas as pd  # type: ignore
 from itertools import combinations  # [READ DOCS]
 

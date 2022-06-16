@@ -44,7 +44,7 @@ EmbeddingsConfig:
     return_weight: 1.0  # 1/p
     explore_weight: 1.0  # 1/q
     iterations: 5 # typically 20
-  tsne_filename: tsne.png
+  tsne_filename: fullplots.png
   #bert_params:
   #  node_columns:
   #    - category

@@ -18,8 +18,11 @@ NEAT will write graph embeddings to a new `quickstart_output` directory.
 
 ## Requirements
 
-This pipeline has [Embiggen](https://github.com/monarch-initiative/embiggen) and [tensorflow](https://github.com/tensorflow/tensorflow) as major dependencies.
-Please install the versions of `tensorflow`, `CUDA`, and `cudnn` compatible with your system and with each other prior to installing NEAT.
+This pipeline has [grape](https://github.com/AnacletoLAB/grape) as a major dependency.
+
+Methods from [tensorflow](https://github.com/tensorflow/tensorflow) are supported, but are not installed as dependencies to avoid version conflicts.
+
+Please install the versions of `tensorflow`, `CUDA`, and `cudnn` compatible with your system and with each other prior to installing NEAT if you wish to use these methods.
 
 On Linux, this may be easiest using `conda` as follows:
 ```

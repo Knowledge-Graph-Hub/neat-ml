@@ -17,4 +17,3 @@ GraphDataConfiguration:
         desc: "The graph nodes."
       - path: https://someremoteurl.com/edges.tsv
         desc: "The graph edges."
-

@@ -41,7 +41,7 @@ jobs:
       - name: run mypy
         run: mypy --strict-optional neat
       - name: run yamllint
-        run: yamllint -d relaxed yaml_ml_instructions/*.yaml
+        run: yamllint -d relaxed tests/resources/*.yaml
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@master
         env:

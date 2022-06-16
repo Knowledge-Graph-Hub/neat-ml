@@ -5,13 +5,8 @@ import numpy as np  # type: ignore
 import copy
 import pandas as pd  # type: ignore
 from typing import Optional, Tuple, Union
-from embiggen import LinkPredictionTransformer, GraphTransformer  # type: ignore
-from ensmallen import Graph  # type: ignore
-import sklearn  # type: ignore
-import tensorflow  # type: ignore
-from sklearn.tree import DecisionTreeClassifier  # type: ignore
-from sklearn.ensemble import RandomForestClassifier  # type: ignore
-from sklearn.linear_model import LogisticRegression  # type: ignore
+from grape.embedding_transformers import EdgePredictionTransformer, GraphTransformer  # type: ignore
+from grape import Graph  # type: ignore
 import importlib
 
 
@@ -47,9 +42,8 @@ class Model:
         self,
         embedding_file: str,
         training_graph_args: dict,
-        pos_validation_args: Optional[dict] = None,
-        neg_training_args: Optional[dict] = None,
-        neg_validation_args: Optional[dict] = None,
+        validation_args: Optional[dict] = None,
+        training_args: Optional[dict] = None,
         edge_method: str = "Average",
     ) -> Tuple[Tuple, Tuple]:
         """Prepare training and validation data for training link prediction classifers
@@ -57,9 +51,8 @@ class Model:
         Args:
             embedding_file: path to embedding file for nodes in graph
             training_graph_args: Ensmallen arguments to load training graph
-            pos_validation_args: Ensmallen arguments to load positive validation graph
-            neg_training_args: Ensmallen arguments to load negative training graph
-            neg_validation_args: Ensmallen arguments to load negative validation graph
+            validation_args: Ensmallen arguments to load positive and negative validation graphs
+            training_args: Ensmallen arguments to load negative training graph
             edge_method: edge embedding method to use (average, L1, L2, etc)
         Returns:
             A tuple of tuples
@@ -69,14 +62,17 @@ class Model:
         embedding = pd.read_csv(embedding_file, index_col=0, header=None)
 
         # load graphs
-        if "graph_path" in training_graph_args: # Remove this extra key if present
-            training_graph_args.pop("graph_path")
         graphs = {"pos_training": Graph.from_csv(**training_graph_args)}
         is_directed = graphs["pos_training"].is_directed()
+        graph_filepaths = {
+            "pos_validation": "pos_edge_filepath",
+            "neg_training": "neg_edge_filepath",
+            "neg_validation": "neg_edge_filepath"
+        }
         for name, graph_args in [
-            ("pos_validation", pos_validation_args),
-            ("neg_training", neg_training_args),
-            ("neg_validation", neg_validation_args),
+            ("pos_validation", validation_args),
+            ("neg_training", training_args),
+            ("neg_validation", validation_args),
         ]:
             if not graph_args:
                 if name in ["neg_training", "neg_validation"]:
@@ -84,8 +80,8 @@ class Model:
                     if not is_directed:
                         neg_edge_number = neg_edge_number * 2
 
-                    graphs[name] = (graphs["pos_training"]).sample_negatives(
-                        negatives_number=neg_edge_number
+                    graphs[name] = (graphs["pos_training"]).sample_negative_graph(
+                        number_of_negative_samples=neg_edge_number
                     )
                 else:
                     these_params = copy.deepcopy(training_graph_args)
@@ -95,11 +91,12 @@ class Model:
                         ]
                     graphs[name] = Graph.from_csv(**these_params)
             else:
-                graph_args["directed"] = training_graph_args["directed"]
-                graphs[name] = Graph.from_csv(**graph_args)
-
+                these_params = copy.deepcopy(training_graph_args)
+                these_params["edge_path"] = graph_args[graph_filepaths[name]]
+                graphs[name] = Graph.from_csv(**these_params)
+                                                    
         # create transformer object to convert graphs into edge embeddings
-        lpt = LinkPredictionTransformer(method=edge_method)
+        lpt = EdgePredictionTransformer(method=edge_method)
 
         lpt.fit(
             embedding

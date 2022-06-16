@@ -1,10 +1,9 @@
-from ensmallen import Graph  # type: ignore
+import transformers # type: ignore
 import numpy as np  # type: ignore
 import pandas as pd  # type: ignore
 from tqdm.auto import tqdm  # type: ignore
-from transformers import BertModel, BertTokenizer  # type: ignore
-from embiggen.pipelines import compute_node_embedding  # type: ignore
-
+from grape import Graph  # type: ignore
+from grape.embedders import embed_graph # type: ignore
 
 def get_node_data(file: str, sep="\t") -> pd.DataFrame:
     """Read node TSV file and return pandas dataframe
@@ -18,7 +17,6 @@ def get_node_data(file: str, sep="\t") -> pd.DataFrame:
 
 def make_node_embeddings(
                          embedding_outfile: str,
-                         embedding_history_outfile: str,
                          main_graph_args: dict,
                          node_embedding_params: dict,
                          bert_columns: dict,
@@ -28,9 +26,8 @@ def make_node_embeddings(
 
     Args:
         embedding_outfile: outfile to write out embeddings
-        embedding_history_outfile: outfile to write out training history
         main_graph_args: arguments passed to Ensmallen for graph loading
-        node_embedding_params: args passed to compute_node_embeddings() in Embiggen
+        node_embedding_params: args passed to Embiggen
         bert_columns: columns containing text info to use to make embeddings from Bert
                 pretrained embeddings
     Returns:
@@ -38,20 +35,20 @@ def make_node_embeddings(
 
     """
     # load main graph
-    if "graph_path" in main_graph_args: # Remove this extra key if present
-        main_graph_args.pop("graph_path")
     graph: Graph = Graph.from_csv(**main_graph_args)
-    node_embedding, training_history = compute_node_embedding(
+
+    node_embedding = embed_graph(
         graph,
-        **node_embedding_params
-    )
+        node_embedding_params["method_name"],
+        node_embedding_params
+    ).get_node_embedding_from_index(0)
 
     # embed columns with BERT first (if we're gonna)
     bert_embeddings = pd.DataFrame()
     if bert_columns:
-        bert_model = BertModel.from_pretrained(bert_pretrained_model,
+        bert_model = transformers.BertModel.from_pretrained(bert_pretrained_model,
                                                output_hidden_states=True)
-        bert_tokenizer = BertTokenizer.from_pretrained(bert_pretrained_model)
+        bert_tokenizer = transformers.BertTokenizer.from_pretrained(bert_pretrained_model)
         bert_model.eval()
         all_bert_embeddings = bert_model.embeddings.word_embeddings.weight.data.numpy()
 
@@ -76,10 +73,6 @@ def make_node_embeddings(
         node_embedding = pd.concat([node_embedding, bert_embeddings],
                                    axis=1,
                                    ignore_index=False)
-
-    if not training_history.empty:
-        with open(embedding_history_outfile, 'w') as f:
-            f.write(training_history.to_json())
 
     node_embedding.to_csv(embedding_outfile, header=False)
     return None

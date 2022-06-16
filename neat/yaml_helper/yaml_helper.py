@@ -11,7 +11,7 @@ import sys
 import pkg_resources # type: ignore
 
 import yaml  # type: ignore
-from ensmallen import Graph # type: ignore
+from grape import Graph # type: ignore
 from neat.link_prediction.mlp_model import MLPModel  # type: ignore
 from neat.link_prediction.model import Model
 import validators  # type: ignore
@@ -277,21 +277,15 @@ class YamlHelper:
         return self.add_indir_to_graph_data(self.yaml["GraphDataConfiguration"]["graph"])
 
     @catch_keyerror
-    def pos_val_graph_args(self) -> dict:
+    def val_graph_args(self) -> dict:
         return self.add_indir_to_graph_data(
-            self.yaml["GraphDataConfiguration"]["evaluation_data"]["valid_data"]["pos_edge_filepath"]
+            self.yaml["GraphDataConfiguration"]["evaluation_data"]["valid_data"]
         )
 
     @catch_keyerror
-    def neg_val_graph_args(self) -> dict:
+    def train_graph_args(self) -> dict:
         return self.add_indir_to_graph_data(
-            self.yaml["GraphDataConfiguration"]["evaluation_data"]["valid_data"]["neg_edge_filepath"]
-        )
-
-    @catch_keyerror
-    def neg_train_graph_args(self) -> dict:
-        return self.add_indir_to_graph_data(
-            self.yaml["GraphDataConfiguration"]["evaluation_data"]["train_data"]["neg_edge_filepath"]
+            self.yaml["GraphDataConfiguration"]["evaluation_data"]["train_data"]
         )
 
     #
