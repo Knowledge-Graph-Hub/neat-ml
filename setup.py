@@ -68,10 +68,10 @@ setup(
         "tqdm",
         "click",
         "pyyaml",
+        "sklearn",
         "grape",
         "opencv-python",  # for embiggen's 4d tSNEs
         "numpy",
-        "sklearn",
         "pandas",
         "transformers",
         "boto3",
