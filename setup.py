@@ -59,7 +59,7 @@ setup(
         "Programming Language :: Python :: 3",
     ],
     packages=find_packages(exclude=["contrib", "docs", "tests*"]),
-    entry_points={"console_scripts": ["neat=neat.cli:cli"]},
+    entry_points={"console_scripts": ["neat=neat_ml.cli:cli"]},
     tests_require=test_deps,
     install_requires=[
         # tensorflow and torch may also be required,
