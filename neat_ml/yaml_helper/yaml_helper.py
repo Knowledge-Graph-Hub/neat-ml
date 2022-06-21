@@ -33,11 +33,10 @@ def validate_config(config: dict, neat_schema_file: str = 'neat_ml_schema.yaml')
     :return: bool, false if validation failed
     """
     validated = True
-
     # Get schema path first
     try:
         schema_path = pkg_resources.resource_filename('neat_ml_schema',
-                                                  os.path.join('src/schema/',
+                                                  os.path.join('schema/',
                                                                neat_schema_file))
     except TypeError as e:
         sys.exit(f"Cannot find {neat_schema_file}! \n"

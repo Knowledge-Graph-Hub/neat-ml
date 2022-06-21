@@ -87,14 +87,14 @@ python-versions = "*"
 
 [[package]]
 name = "boto3"
-version = "1.24.13"
+version = "1.24.14"
 description = "The AWS SDK for Python"
 category = "main"
 optional = false
 python-versions = ">= 3.7"
 
 [package.dependencies]
-botocore = ">=1.27.13,<1.28.0"
+botocore = ">=1.27.14,<1.28.0"
 jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.6.0,<0.7.0"
 
@@ -103,7 +103,7 @@ crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "botocore"
-version = "1.27.13"
+version = "1.27.14"
 description = "Low-level, data-driven core of boto 3."
 category = "main"
 optional = false
@@ -1018,7 +1018,7 @@ testing = ["beautifulsoup4", "coverage", "pytest (>=6,<7)", "pytest-cov", "pytes
 
 [[package]]
 name = "neat-ml-schema"
-version = "0.1.10"
+version = "0.1.11"
 description = "A linkml based schema for the neat-ml project."
 category = "main"
 optional = false
@@ -1541,7 +1541,7 @@ numpy = ">=1.16.5"
 
 [[package]]
 name = "setuptools-scm"
-version = "7.0.0"
+version = "7.0.1"
 description = "the blessed package to manage your versions by scm tags"
 category = "main"
 optional = false
@@ -1884,7 +1884,7 @@ test = ["pre-commit", "pytest"]
 
 [[package]]
 name = "transformers"
-version = "4.20.0"
+version = "4.20.1"
 description = "State-of-the-art Machine Learning for JAX, PyTorch and TensorFlow"
 category = "main"
 optional = false
@@ -2114,12 +2114,12 @@ backcall = [
     {file = "backcall-0.2.0.tar.gz", hash = "sha256:5cbdbf27be5e7cfadb448baf0aa95508f91f2bbc6c6437cd9cd06e2a4c215e1e"},
 ]
 boto3 = [
-    {file = "boto3-1.24.13-py3-none-any.whl", hash = "sha256:13efff22f1cb6d25ec7027edaccdfdd515ba593e093173beb09094cff898a8cc"},
-    {file = "boto3-1.24.13.tar.gz", hash = "sha256:945d49941541a3cbb02710361be64b22f98e68c2e447229f0d51f7c215009e28"},
+    {file = "boto3-1.24.14-py3-none-any.whl", hash = "sha256:490f5e88f5551b33ae3019a37412158b76426d63d1fb910968ade9b6a024e5fe"},
+    {file = "boto3-1.24.14.tar.gz", hash = "sha256:e284705da36faa668c715ae1f74ebbff4320dbfbe3a733df3a8ab076d1ed1226"},
 ]
 botocore = [
-    {file = "botocore-1.27.13-py3-none-any.whl", hash = "sha256:fbc09558c02d415e8646520f95db7e8d313460938780fa6040b00865f098fd55"},
-    {file = "botocore-1.27.13.tar.gz", hash = "sha256:df75e53576b061818bbce4bd70221749e40cc91d16a2b6c03fbeec8023665734"},
+    {file = "botocore-1.27.14-py3-none-any.whl", hash = "sha256:df1e9b208ff93daac7c645b0b04fb6dccd7f20262eae24d87941727025cbeece"},
+    {file = "botocore-1.27.14.tar.gz", hash = "sha256:bb56fa77b8fa1ec367c2e16dee62d60000451aac5140dcce3ebddc167fd5c593"},
 ]
 cache-decorator = [
     {file = "cache_decorator-2.1.7.tar.gz", hash = "sha256:eee6ce16f194fd0b9a85281727ea4710f5d5c987361ceca4599b103489f44396"},
@@ -2539,8 +2539,8 @@ myst-parser = [
     {file = "myst_parser-0.18.0-py3-none-any.whl", hash = "sha256:4965e51918837c13bf1c6f6fe2c6bddddf193148360fbdaefe743a4981358f6a"},
 ]
 neat-ml-schema = [
-    {file = "neat-ml-schema-0.1.10.tar.gz", hash = "sha256:77640d173c044f3f24a1b1a672b0106630f6bb77e94519129cf5b866986bd220"},
-    {file = "neat_ml_schema-0.1.10-py3-none-any.whl", hash = "sha256:7a79852e103cb5b5273176a528165ffe393a2c8c2df91cfc5f5dc1d45f1f990a"},
+    {file = "neat-ml-schema-0.1.11.tar.gz", hash = "sha256:16bb7fcb3c6e088c100fc8008d02c0ca0719f0fd39aa8d87c630009dcd542a51"},
+    {file = "neat_ml_schema-0.1.11-py3-none-any.whl", hash = "sha256:2cfbf72a0b97b26c24956c30a5b6ee380c5bfba342e975615021d669c8ca2f1b"},
 ]
 numpy = [
     {file = "numpy-1.22.4-cp310-cp310-macosx_10_14_x86_64.whl", hash = "sha256:ba9ead61dfb5d971d77b6c131a9dbee62294a932bf6a356e48c75ae684e635b3"},
@@ -2999,8 +2999,8 @@ scipy = [
     {file = "scipy-1.6.1.tar.gz", hash = "sha256:c4fceb864890b6168e79b0e714c585dbe2fd4222768ee90bc1aa0f8218691b11"},
 ]
 setuptools-scm = [
-    {file = "setuptools_scm-7.0.0-py3-none-any.whl", hash = "sha256:187cd31d78998d8226b68d4066dbfbf9c1fa8b61c10ff65cebe950379d3b9175"},
-    {file = "setuptools_scm-7.0.0.tar.gz", hash = "sha256:136fe07547645fee2dcc7d21b192dad95932e70aa4b603f45b8907ed78f44a11"},
+    {file = "setuptools_scm-7.0.1-py3-none-any.whl", hash = "sha256:23b2e561fd3db49d168f282384af4730092a8c8c6db6d3451ce93a5813c14509"},
+    {file = "setuptools_scm-7.0.1.tar.gz", hash = "sha256:d1c631fc3a4281754274155ef4a40de24b1d1c718df00ead147b08ab690615b2"},
 ]
 shexjsg = [
     {file = "ShExJSG-0.8.2-py2.py3-none-any.whl", hash = "sha256:3b0d8432dd313bee9e1343382c5e02e9908dd941a7dd7342bf8c0200fe523766"},
@@ -3162,8 +3162,8 @@ traitlets = [
     {file = "traitlets-5.3.0.tar.gz", hash = "sha256:0bb9f1f9f017aa8ec187d8b1b2a7a6626a2a1d877116baba52a129bfa124f8e2"},
 ]
 transformers = [
-    {file = "transformers-4.20.0-py3-none-any.whl", hash = "sha256:6f14dd3f0560fed2b4fb084e2e36ba7fac8b0335ecad2b41b5368c85a8810970"},
-    {file = "transformers-4.20.0.tar.gz", hash = "sha256:e4d240ec9e743827655a81a3d58c6d57af9c216ac5709b601b0406c6152d7a8d"},
+    {file = "transformers-4.20.1-py3-none-any.whl", hash = "sha256:d284eaf60b10fee45b24688423b5f7ba2d194f8c2dadf8df76cd58c1a9d08b52"},
+    {file = "transformers-4.20.1.tar.gz", hash = "sha256:65ee4ae9abdeca8fe3a9e351256345e3c4db2a6a68accd5d6a141cfff6192751"},
 ]
 typing-extensions = [
     {file = "typing_extensions-4.2.0-py3-none-any.whl", hash = "sha256:6657594ee297170d19f67d55c05852a874e7eb634f4f753dbd667855e07c1708"},
