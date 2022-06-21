@@ -1,13 +1,14 @@
+import copy
+import importlib
 import os
 import pickle
+from typing import Optional, Tuple, Union
 
 import numpy as np  # type: ignore
-import copy
 import pandas as pd  # type: ignore
-from typing import Optional, Tuple, Union
-from grape.embedding_transformers import EdgePredictionTransformer, GraphTransformer  # type: ignore
 from grape import Graph  # type: ignore
-import importlib
+from grape.embedding_transformers import (  # type: ignore
+    EdgePredictionTransformer, GraphTransformer)
 
 
 class Model:
@@ -26,13 +27,11 @@ class Model:
         pass
 
     def save(self):
-        with open(
-            os.path.join(self.outdir, self.config["outfile"]), "wb"
-        ) as f:
+        with open(os.path.join(self.outdir, self.config["outfile"]), "wb") as f:
             pickle.dump(self, f)
 
     def predict(self, predict_data) -> np.ndarray:
-        return self.model.predict(predict_data) # type: ignore
+        return self.model.predict(predict_data)  # type: ignore
 
     def predict_proba(self, X) -> np.ndarray:
         pass
@@ -67,7 +66,7 @@ class Model:
         graph_filepaths = {
             "pos_validation": "pos_edge_filepath",
             "neg_training": "neg_edge_filepath",
-            "neg_validation": "neg_edge_filepath"
+            "neg_validation": "neg_edge_filepath",
         }
         for name, graph_args in [
             ("pos_validation", validation_args),
@@ -86,21 +85,17 @@ class Model:
                 else:
                     these_params = copy.deepcopy(training_graph_args)
                     if "directed" not in these_params.keys():
-                        these_params["directed"] = training_graph_args[
-                            "directed"
-                        ]
+                        these_params["directed"] = training_graph_args["directed"]
                     graphs[name] = Graph.from_csv(**these_params)
             else:
                 these_params = copy.deepcopy(training_graph_args)
                 these_params["edge_path"] = graph_args[graph_filepaths[name]]
                 graphs[name] = Graph.from_csv(**these_params)
-                                                    
+
         # create transformer object to convert graphs into edge embeddings
         lpt = EdgePredictionTransformer(method=edge_method)
 
-        lpt.fit(
-            embedding
-        )  # pass node embeddings to be used to create edge embeddings
+        lpt.fit(embedding)  # pass node embeddings to be used to create edge embeddings
 
         train_edges, train_labels = lpt.transform(
             positive_graph=graphs["pos_training"],
@@ -114,10 +109,7 @@ class Model:
 
     @classmethod
     def make_edge_embedding_for_predict(
-        self,
-        embedding_file: str,
-        edge_method: str,
-        source_destination_list
+        self, embedding_file: str, edge_method: str, source_destination_list
     ) -> np.ndarray:
         """Prepare training and validation data for training link prediction classifers
 
@@ -137,9 +129,7 @@ class Model:
 
         gt.fit(embedding)
 
-        edge_embedding_for_predict = gt.transform(
-            graph=source_destination_list
-        )
+        edge_embedding_for_predict = gt.transform(graph=source_destination_list)
 
         return edge_embedding_for_predict
 

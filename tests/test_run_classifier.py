@@ -2,10 +2,12 @@ import os
 import pickle
 from posixpath import dirname
 from unittest import TestCase, skip
+
+import pandas as pd
+from grape import Graph
+
 from neat_ml.run_classifier.run_classifier import predict_links
 from neat_ml.yaml_helper.yaml_helper import YamlHelper
-from grape import Graph
-import pandas as pd
 
 
 class TestRunClassifier(TestCase):
@@ -49,16 +51,15 @@ class TestRunClassifier(TestCase):
         outdir = "tests/resources/tmp/"
         if not os.path.isdir(outdir):
             os.mkdir(outdir)
-        
+
         with open(self.test_model_path, "rb") as f:
             m = pickle.load(f)
-
 
         outfile = os.path.join(dirname(__file__), "resources/tmp/test.tsv")
         predict_links(
             graph=self.graph,
             model=m,
-            node_types=None, # No filter
+            node_types=None,  # No filter
             cutoff=0.0001,
             output_file=outfile,
             embeddings_file=self.test_embeddings,
@@ -66,15 +67,16 @@ class TestRunClassifier(TestCase):
             verbose=True,
         )
         with open(outfile) as f:
-            self.assertGreater(len(f.readlines()), 9000, 
-                                "Link prediction output is too short.")
+            self.assertGreater(
+                len(f.readlines()), 9000, "Link prediction output is too short."
+            )
 
         # This file should just have the header
         outfile = os.path.join(dirname(__file__), "resources/tmp/test2.tsv")
         predict_links(
             graph=self.graph,
             model=m,
-            node_types=None, # No filter
+            node_types=None,  # No filter
             cutoff=0.9,
             output_file=outfile,
             embeddings_file=self.test_embeddings,
@@ -89,7 +91,7 @@ class TestRunClassifier(TestCase):
         outdir = "tests/resources/tmp/"
         if not os.path.isdir(outdir):
             os.mkdir(outdir)
-        
+
         with open(self.test_model_path, "rb") as f:
             m = pickle.load(f)
 
@@ -97,7 +99,7 @@ class TestRunClassifier(TestCase):
         predict_links(
             graph=self.graph,
             model=m,
-            node_types=[["biolink:Gene","biolink:Protein"],["biolink:Protein"]],
+            node_types=[["biolink:Gene", "biolink:Protein"], ["biolink:Protein"]],
             cutoff=0.0001,
             output_file=outfile,
             embeddings_file=self.test_embeddings,
@@ -105,5 +107,6 @@ class TestRunClassifier(TestCase):
             verbose=True,
         )
         with open(outfile) as f:
-            self.assertGreater(len(f.readlines()), 3000, 
-                                "Link prediction output is too short.")
+            self.assertGreater(
+                len(f.readlines()), 3000, "Link prediction output is too short."
+            )

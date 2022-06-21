@@ -1,11 +1,11 @@
 import os
+from itertools import combinations  # [READ DOCS]
 from pathlib import Path
 from typing import List, Union
 from warnings import warn
 
-from grape import Graph  # type: ignore
 import pandas as pd  # type: ignore
-from itertools import combinations  # [READ DOCS]
+from grape import Graph  # type: ignore
 
 from neat_ml.link_prediction.sklearn_model import SklearnModel
 
@@ -34,9 +34,7 @@ def gen_src_dst_pair(
             if ignore_existing_edges:
                 if not graph.has_edge_from_node_ids(
                     *combo
-                ) and not graph.has_edge_from_node_ids(
-                    *tuple(reversed(combo))
-                ):
+                ) and not graph.has_edge_from_node_ids(*tuple(reversed(combo))):
                     yield combo
             # INCLUDE Existing edges: yield every combo
             else:
@@ -98,8 +96,10 @@ def predict_links(
             dst_types = graph.get_node_type_names_from_node_id(dst)
 
             # Test if any intersection between node_types and src/dst types
-            if len(list(set(src_types) & set(node_types[0]))) == 0 or \
-                len(list(set(dst_types) & set(node_types[1]))) == 0 :
+            if (
+                len(list(set(src_types) & set(node_types[0]))) == 0
+                or len(list(set(dst_types) & set(node_types[1]))) == 0
+            ):
                 continue
 
         # see if src and dst are actually in embedding.tsv
@@ -112,7 +112,9 @@ def predict_links(
                 src_dst_list.append((src_name, dst_name))
 
     if len(src_dst_list) == 0:
-        warn("Filter has excluded all edges or no edges found - cannot apply classifier.")
+        warn(
+            "Filter has excluded all edges or no edges found - cannot apply classifier."
+        )
 
     edge_embedding_for_predict = model.make_edge_embedding_for_predict(  # type: ignore
         embedding_file=embeddings_file,  # this should be the new embeddings
@@ -126,9 +128,7 @@ def predict_links(
     # to a class (binary).
 
     if type(model) == SklearnModel:
-        pred_probas = [
-            y for x, y in model.predict_proba(edge_embedding_for_predict)
-        ]
+        pred_probas = [y for x, y in model.predict_proba(edge_embedding_for_predict)]
         pred_proba_df = pd.DataFrame(pred_probas, columns=["score"])
         full_embed_df = pd.concat([embed_df, pred_proba_df], axis=1)
     else:

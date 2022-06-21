@@ -1,4 +1,5 @@
 import pickle
+
 from .model import Model
 
 
@@ -16,7 +17,7 @@ class SklearnModel(Model):
     def predict_proba(self, predict_data):
         return self.model.predict_proba(predict_data)
 
-    def load(self, path: str) -> tuple(): # type: ignore
+    def load(self, path: str) -> tuple():  # type: ignore
         with open(path, "rb") as mf1:
             model_object = pickle.load(mf1)
         return model_object  # , custom_model_object

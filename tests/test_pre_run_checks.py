@@ -1,9 +1,9 @@
-from unittest import TestCase
+from unittest import TestCase, mock
+
 from botocore.exceptions import ClientError
 
 from neat_ml.pre_run_checks.pre_run_checks import pre_run_checks
 from neat_ml.yaml_helper.yaml_helper import YamlHelper
-from unittest import mock
 
 
 class TestPreRunChecks(TestCase):
@@ -13,9 +13,7 @@ class TestPreRunChecks(TestCase):
 
     def setUp(self) -> None:
         self.upload_yaml = YamlHelper("tests/resources/test.yaml")
-        self.classifier_yaml = YamlHelper(
-            "tests/resources/test.yaml"
-        )
+        self.classifier_yaml = YamlHelper("tests/resources/test.yaml")
 
     @mock.patch("boto3.client")
     def test_pre_run_check_confirm_boto_called(self, mock_boto_client) -> None:
@@ -41,7 +39,6 @@ class TestPreRunChecks(TestCase):
         self.assertTrue(mock_boto_client.called)
 
     @mock.patch("boto3.client")
-
     def test_pre_run_check_bad_credentials_but_no_upload(
         self, mock_boto_client
     ) -> None:
@@ -59,10 +56,7 @@ class TestPreRunChecks(TestCase):
         self.assertTrue(mock_boto_client.called)
 
     @mock.patch("boto3.client")
-
-    def test_pre_run_check_bad_credentials_but_no_check(
-        self, mock_boto_client
-    ) -> None:
+    def test_pre_run_check_bad_credentials_but_no_check(self, mock_boto_client) -> None:
         mock_boto_client.side_effect = ClientError(
             error_response=mock_boto_client, operation_name=mock_boto_client
         )
@@ -74,7 +68,7 @@ class TestPreRunChecks(TestCase):
 
         # returns true if bad creds, but we don't want to check credentials
         self.assertTrue(return_val)
-    
+
     def test_pre_run_classifiers(self) -> None:
         return_val = pre_run_checks(
             self.classifier_yaml,

@@ -4,9 +4,9 @@ from grape import GraphVisualizer  # type: ignore
 
 
 def make_tsne(
-        graph: Graph,
-        tsne_outfile: str,
-        embedding_file: str,
+    graph: Graph,
+    tsne_outfile: str,
+    embedding_file: str,
 ) -> None:
     """
     Generate a simple node tSNE plot.
@@ -24,11 +24,12 @@ def make_tsne(
     print(figure[1])
     figure[0].savefig(tsne_outfile)
 
+
 def make_all_plots(
-        graph: Graph,
-        tsne_outfile: str,
-        embedding_file: str,
-        ) -> None:
+    graph: Graph,
+    tsne_outfile: str,
+    embedding_file: str,
+) -> None:
     """
     Generate the full set of Ensmallen plots.
     :param graph: Ensmallen graph object

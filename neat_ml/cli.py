@@ -1,20 +1,19 @@
 import json
 import os
+
 import click
-from grape import Graph # type: ignore
 import numpy as np  # type: ignore
-
-from neat_ml.link_prediction.sklearn_model import SklearnModel
-from neat_ml.link_prediction.mlp_model import MLPModel
-
+from grape import Graph  # type: ignore
 from tqdm import tqdm  # type: ignore
 
 from neat_ml.graph_embedding.graph_embedding import make_node_embeddings
+from neat_ml.link_prediction.mlp_model import MLPModel
+from neat_ml.link_prediction.sklearn_model import SklearnModel
 from neat_ml.pre_run_checks.pre_run_checks import pre_run_checks
+from neat_ml.run_classifier.run_classifier import predict_links
 from neat_ml.update_yaml.update_yaml import do_update_yaml
 from neat_ml.upload.upload import upload_dir_to_s3
 from neat_ml.visualization.visualization import make_tsne
-from neat_ml.run_classifier.run_classifier import predict_links
 from neat_ml.yaml_helper.yaml_helper import YamlHelper
 
 

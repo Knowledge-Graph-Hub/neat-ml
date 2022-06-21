@@ -1,6 +1,8 @@
 import os
 import pickle
+
 import tensorflow as tf  # type: ignore
+
 from .model import Model
 
 
@@ -75,25 +77,18 @@ class MLPModel(Model):
         if "callbacks_list" in classifier_params:
             for callback in classifier_params["callbacks_list"]["callbacks"]:
                 c_class = self.dynamically_import_class(callback["type"])
-                c_params = (
-                    callback["parameters"] if "parameters" in callback else {}
-                )
+                c_params = callback["parameters"] if "parameters" in callback else {}
                 c_instance = c_class(**c_params)
                 callback_list.append(c_instance)
             del classifier_params["callbacks"]
 
         history = self.model.fit(
-            train_data,
-            train_labels,
-            **classifier_params,
-            callbacks=callback_list
+            train_data, train_labels, **classifier_params, callbacks=callback_list
         )
         return history
 
     def save(self) -> None:
-        self.model.save(
-            os.path.join(self.outdir, self.config["outfile"])
-        )
+        self.model.save(os.path.join(self.outdir, self.config["outfile"]))
 
         fn, ext = os.path.splitext(self.config["outfile"])
         model_outfile = fn + "_custom" + ext
@@ -101,7 +96,7 @@ class MLPModel(Model):
         with open(os.path.join(self.outdir, model_outfile), "wb") as f:
             pickle.dump(self, f)
 
-    def load(self, path: str) -> tuple(): # type: ignore
+    def load(self, path: str) -> tuple():  # type: ignore
         fn, ext = os.path.splitext(path)
         custom_model_filename = fn + "_custom" + ext
         generic_model_object = tf.keras.models.load_model(path)

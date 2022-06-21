@@ -3,7 +3,9 @@ import warnings
 
 import boto3  # type: ignore
 from botocore.exceptions import ClientError  # type: ignore
+
 from neat_ml.yaml_helper.yaml_helper import YamlHelper
+
 
 def pre_run_checks(
     yhelp: YamlHelper,
@@ -38,18 +40,14 @@ def pre_run_checks(
             else:
                 warnings.warn("YAML contains no upload block - continuing")
 
-    if (
-        check_s3_bucket and yhelp.do_upload()
-    ):  # make sure we are going to upload
+    if check_s3_bucket and yhelp.do_upload():  # make sure we are going to upload
         upload_args = yhelp.make_upload_args()
         try:
             client = boto3.client("s3")
             buckets = []
             bucket_info = client.list_buckets()
             if "Buckets" in bucket_info:
-                buckets = [
-                    this_dict["Name"] for this_dict in bucket_info["Buckets"]
-                ]
+                buckets = [this_dict["Name"] for this_dict in bucket_info["Buckets"]]
             else:
                 warnings.warn(
                     "Can't find 'Buckets' key in output of client.list_buckets()"
@@ -67,11 +65,9 @@ def pre_run_checks(
             warnings.warn(f"Client error when trying S3 credentials: {ce}")
             return_val = False
 
-    if (
-        check_s3_bucket_dir and yhelp.do_upload()
-    ):  # make sure we are going to upload
+    if check_s3_bucket_dir and yhelp.do_upload():  # make sure we are going to upload
         upload_args = yhelp.make_upload_args()
-        
+
         if not pre_bucket_check(upload_args):
             return_val = False
 
@@ -85,7 +81,7 @@ def pre_run_checks(
         all_classifier_ids = yhelp.get_all_classifier_ids()
         if len(all_classifier_ids) != len(set(all_classifier_ids)):
             dup_ids = [
-                item # type: ignore
+                item  # type: ignore
                 for item, count in collections.Counter(  # type: ignore
                     all_classifier_ids
                 ).items()
@@ -110,6 +106,7 @@ def pre_run_checks(
                 )
 
     return return_val
+
 
 def pre_bucket_check(upload_args: dict) -> bool:
     """
@@ -141,6 +138,7 @@ def pre_bucket_check(upload_args: dict) -> bool:
         success = False
 
     return success
+
 
 if __name__ == "__main__":
     pre_run_checks(yhelp=YamlHelper())  # type: ignore
