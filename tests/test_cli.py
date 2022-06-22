@@ -161,7 +161,7 @@ class TestRun(TestCase):
     @mock.patch("neat_ml.cli.pre_run_checks")
     @mock.patch("boto3.client")
     @mock.patch(
-        "neat_ml.yaml_helper.yaml_helper.YamlHelper.deal_with_url_node_edge_paths"
+        "neat_ml.yaml_helper.yaml_helper.YamlHelper.deal_with_url_node_edge_paths"  # noqa E501
     )
     def test_run_pre_run_checks(
         self,

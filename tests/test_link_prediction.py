@@ -17,7 +17,7 @@ class TestLinkPrediction(TestCase):
     def setUpClass(cls) -> None:
         cls.yaml_file_sklearn = "tests/resources/test.yaml"
         cls.yaml_file_tf = "tests/resources/test.yaml"
-        cls.embed_file = "tests/resources/test_link_prediction/test_embeddings_test_yaml.csv"
+        cls.embed_file = "tests/resources/test_link_prediction/test_embeddings_test_yaml.csv" # noqa E501
         cls.yhelp_sklearn = YamlHelper(cls.yaml_file_sklearn)
         cls.yhelp_tf = YamlHelper(cls.yaml_file_tf)
         cls.test_model_path = "tests/resources/test_output_data_dir/"
@@ -47,7 +47,7 @@ class TestLinkPrediction(TestCase):
     def setUp(self) -> None:
         pass
 
-    def assertIsFile(self, path):
+    def assert_is_file(self, path):
         if not pathlib.Path(path).resolve().is_file():
             raise AssertionError("File does not exist: %s" % str(path))
 
@@ -65,7 +65,7 @@ class TestLinkPrediction(TestCase):
 
         model_object.save()
 
-        self.assertIsFile(
+        self.assert_is_file(
             os.path.join(self.test_model_path, self.sklearn_outfile)
         )
 
@@ -74,10 +74,10 @@ class TestLinkPrediction(TestCase):
 
         model_object.save()
 
-        self.assertIsFile(
+        self.assert_is_file(
             os.path.join(self.test_model_path, self.generic_tf_outfile)
         )
-        self.assertIsFile(
+        self.assert_is_file(
             os.path.join(self.test_model_path, self.custom_tf_outfile)
         )
 

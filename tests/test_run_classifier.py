@@ -45,7 +45,8 @@ class TestRunClassifier(TestCase):
         self.assertEqual(1, 1)
 
     def test_run_classifier(self):
-        # temp = tempfile.NamedTemporaryFile().name  # once we have test firmed up
+        # temp = tempfile.NamedTemporaryFile().name
+        # once we have test firmed up
         # outfile = "/dev/null"
         outdir = "tests/resources/tmp/"
         if not os.path.isdir(outdir):

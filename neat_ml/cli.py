@@ -32,7 +32,8 @@ def cli():
 def run(config: str) -> None:
     """Run a NEAT pipeline using the given YAML file [neat.yaml].
 
-    :param config: Specify the YAML file containing instructions of what ML tasks to perform.
+    :param config: Specify the YAML file containing \
+    instructions of what ML tasks to perform.
     :raises RuntimeError: If failed pre-check run.
     :raises NotImplementedError: If non-implemented model provided.
     :return: None
@@ -98,7 +99,7 @@ def run(config: str) -> None:
             print(f"Correct label match in validation: {correct_label_match}")
 
             if yhelp.classifier_history_file_name(classifier):
-                with open(yhelp.classifier_history_file_name(classifier), "w") as f:  # type: ignore
+                with open(yhelp.classifier_history_file_name(classifier), "w") as f:   # noqa E501
                     json.dump(history_obj.history, f)
 
             model.save()

@@ -90,8 +90,8 @@ class TestYamlHelper(TestCase):
                     "default_node_type": "biolink:NamedThing",
                     "destinations_column": "object",
                     "directed": False,
-                    "edge_path": "tests/resources/test_graphs/pos_train_edges.tsv",
-                    "node_path": "tests/resources/test_graphs/pos_train_nodes.tsv",
+                    "edge_path": "tests/resources/test_graphs/pos_train_edges.tsv",  # noqa E501
+                    "node_path": "tests/resources/test_graphs/pos_train_nodes.tsv",  # noqa E501
                     "node_list_node_types_column": "category",
                     "nodes_column": "id",
                     "sources_column": "subject",
@@ -112,7 +112,7 @@ class TestYamlHelper(TestCase):
             ),
             (
                 "embedding_outfile",
-                "tests/resources/test_output_data_dir/test_embeddings_test_yaml.csv",
+                "tests/resources/test_output_data_dir/test_embeddings_test_yaml.csv",  # noqa E501
             ),
             (
                 "embedding_history_outfile",
