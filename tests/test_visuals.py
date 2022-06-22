@@ -13,7 +13,9 @@ class TestVisuals(TestCase):
 
     def setUp(self) -> None:
         self.runner = CliRunner()
-        self.expected_tsne_file = "tests/resources/test_output_data_dir/test_tsne.png"
+        self.expected_tsne_file = (
+            "tests/resources/test_output_data_dir/test_tsne.png"
+        )
         self.expected_fullplot_file = (
             "tests/resources/test_output_data_dir/test_plots.png"
         )

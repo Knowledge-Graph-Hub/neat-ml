@@ -17,9 +17,7 @@ class TestLinkPrediction(TestCase):
     def setUpClass(cls) -> None:
         cls.yaml_file_sklearn = "tests/resources/test.yaml"
         cls.yaml_file_tf = "tests/resources/test.yaml"
-        cls.embed_file = (
-            "tests/resources/test_link_prediction/test_embeddings_test_yaml.csv"
-        )
+        cls.embed_file = "tests/resources/test_link_prediction/test_embeddings_test_yaml.csv"
         cls.yhelp_sklearn = YamlHelper(cls.yaml_file_sklearn)
         cls.yhelp_tf = YamlHelper(cls.yaml_file_tf)
         cls.test_model_path = "tests/resources/test_output_data_dir/"
@@ -27,7 +25,9 @@ class TestLinkPrediction(TestCase):
         cls.sklearn_model = SklearnModel(
             (cls.yhelp_sklearn.classifiers())[0], cls.test_model_path
         )
-        cls.tf_model = MLPModel((cls.yhelp_tf.classifiers())[1], cls.test_model_path)
+        cls.tf_model = MLPModel(
+            (cls.yhelp_tf.classifiers())[1], cls.test_model_path
+        )
         cls.sklearn_outfile = ((cls.yhelp_sklearn.classifiers())[0])["outfile"]
         cls.generic_tf_outfile = ((cls.yhelp_tf.classifiers())[1])["outfile"]
         cls.custom_tf_outfile = get_custom_model_path(cls.generic_tf_outfile)
@@ -65,15 +65,21 @@ class TestLinkPrediction(TestCase):
 
         model_object.save()
 
-        self.assertIsFile(os.path.join(self.test_model_path, self.sklearn_outfile))
+        self.assertIsFile(
+            os.path.join(self.test_model_path, self.sklearn_outfile)
+        )
 
     def test_tf_save(self) -> None:
         model_object = self.tf_model
 
         model_object.save()
 
-        self.assertIsFile(os.path.join(self.test_model_path, self.generic_tf_outfile))
-        self.assertIsFile(os.path.join(self.test_model_path, self.custom_tf_outfile))
+        self.assertIsFile(
+            os.path.join(self.test_model_path, self.generic_tf_outfile)
+        )
+        self.assertIsFile(
+            os.path.join(self.test_model_path, self.custom_tf_outfile)
+        )
 
     # Note that the load tests *do not* use the files created by
     # the save tests above, so they may remain independent.

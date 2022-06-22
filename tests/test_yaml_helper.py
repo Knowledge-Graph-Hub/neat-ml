@@ -31,11 +31,15 @@ class TestYamlHelper(TestCase):
         self.assertFalse(validate_config(bad_config))
 
     def test_outdir(self) -> None:
-        self.assertEqual("tests/resources/test_output_data_dir/", self.yh.outdir())
+        self.assertEqual(
+            "tests/resources/test_output_data_dir/", self.yh.outdir()
+        )
 
     def test_add_indir_to_graph_data(self):
         # emits error message to log, but continues:
-        self.yh.add_indir_to_graph_data(graph_data={}, keys_to_add_indir=["not_a_key"])
+        self.yh.add_indir_to_graph_data(
+            graph_data={}, keys_to_add_indir=["not_a_key"]
+        )
 
     def test_do_tsne(self):
         self.assertTrue(hasattr(YamlHelper, "do_tsne"))
@@ -68,7 +72,9 @@ class TestYamlHelper(TestCase):
     def test_classifier_history_file_name(self):
         class_list = self.yh.yaml["ClassifierContainer"]["classifiers"]
         expect_filename = [
-            x["history_filename"] for x in class_list if x["classifier_id"] == "mlp_1"
+            x["history_filename"]
+            for x in class_list
+            if x["classifier_id"] == "mlp_1"
         ][0]
         self.assertEqual(
             expect_filename,
@@ -158,7 +164,9 @@ class TestYamlHelper(TestCase):
 
     @mock.patch("neat_ml.yaml_helper.yaml_helper.download_file")
     @mock.patch("tarfile.open")
-    def test_graph_contains_node_types(self, mock_tarfile_open, mock_download_file):
+    def test_graph_contains_node_types(
+        self, mock_tarfile_open, mock_download_file
+    ):
         g = self.yh.load_graph()
         self.assertTrue(mock_download_file.called)
         self.assertEqual(g.get_node_types_number(), 2)
@@ -183,6 +191,11 @@ class TestYamlHelper(TestCase):
         self, mock_tarfile_open, mock_open, mock_urlopen, mock_Request
     ):
         download_file("https://someurl.com/file.tar.gz", outfile="file.tar.gz")
-        for this_mock in [mock_tarfile_open, mock_open, mock_urlopen, mock_Request]:
+        for this_mock in [
+            mock_tarfile_open,
+            mock_open,
+            mock_urlopen,
+            mock_Request,
+        ]:
             self.assertTrue(this_mock.called)
             self.assertEqual(1, this_mock.call_count)

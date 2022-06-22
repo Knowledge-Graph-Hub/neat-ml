@@ -34,7 +34,9 @@ def gen_src_dst_pair(
             if ignore_existing_edges:
                 if not graph.has_edge_from_node_ids(
                     *combo
-                ) and not graph.has_edge_from_node_ids(*tuple(reversed(combo))):
+                ) and not graph.has_edge_from_node_ids(
+                    *tuple(reversed(combo))
+                ):
                     yield combo
             # INCLUDE Existing edges: yield every combo
             else:
@@ -128,7 +130,9 @@ def predict_links(
     # to a class (binary).
 
     if type(model) == SklearnModel:
-        pred_probas = [y for x, y in model.predict_proba(edge_embedding_for_predict)]
+        pred_probas = [
+            y for x, y in model.predict_proba(edge_embedding_for_predict)
+        ]
         pred_proba_df = pd.DataFrame(pred_probas, columns=["score"])
         full_embed_df = pd.concat([embed_df, pred_proba_df], axis=1)
     else:

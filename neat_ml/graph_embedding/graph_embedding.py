@@ -53,13 +53,17 @@ def make_node_embeddings(
             bert_pretrained_model
         )
         bert_model.eval()
-        all_bert_embeddings = bert_model.embeddings.word_embeddings.weight.data.numpy()
+        all_bert_embeddings = (
+            bert_model.embeddings.word_embeddings.weight.data.numpy()
+        )
 
         node_data = get_node_data(main_graph_args["node_path"])
 
         node_text = [
             " ".join([str(row[col]) for col in bert_columns])
-            for index, row in tqdm(node_data.iterrows(), "extracting text from nodes")
+            for index, row in tqdm(
+                node_data.iterrows(), "extracting text from nodes"
+            )
         ]
         node_text_tokenized = [
             bert_tokenizer.encode(
@@ -71,10 +75,14 @@ def make_node_embeddings(
         ]
         node_text_tensors = [
             np.mean(all_bert_embeddings[ids.flatten()], axis=0)
-            for ids in tqdm(node_text_tokenized, "extracting embeddings for tokens")
+            for ids in tqdm(
+                node_text_tokenized, "extracting embeddings for tokens"
+            )
         ]
 
-        bert_embeddings = pd.DataFrame(node_text_tensors, index=graph.get_node_names())
+        bert_embeddings = pd.DataFrame(
+            node_text_tensors, index=graph.get_node_names()
+        )
 
     if not bert_embeddings.empty:
         node_embedding = pd.concat(

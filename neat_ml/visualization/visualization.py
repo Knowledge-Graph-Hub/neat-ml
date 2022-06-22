@@ -8,8 +8,8 @@ def make_tsne(
     tsne_outfile: str,
     embedding_file: str,
 ) -> None:
-    """
-    Generate a simple node tSNE plot.
+    """Generate a simple node tSNE plot.
+
     :param graph: Ensmallen graph object
     :param tsne_outfile: where to output tSNE file
     :param embedding_file: file containing embeddings (in numpy format) to use to
@@ -29,8 +29,8 @@ def make_all_plots(
     tsne_outfile: str,
     embedding_file: str,
 ) -> None:
-    """
-    Generate the full set of Ensmallen plots.
+    """Generate the full set of Ensmallen plots.
+
     :param graph: Ensmallen graph object
     :param tsne_outfile: where to output plot image file
     :param embedding_file: file containing embeddings (in numpy format) to use to

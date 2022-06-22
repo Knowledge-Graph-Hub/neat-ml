@@ -25,4 +25,6 @@ def upload_dir_to_s3(
                 logging.warning("Path found on S3! Skipping {s3_path}")
             except ClientError:  # Exception abuse
                 logging.info(f"Uploading {s3_path}")
-                client.upload_file(local_path, s3_bucket, s3_path, ExtraArgs=extra_args)
+                client.upload_file(
+                    local_path, s3_bucket, s3_path, ExtraArgs=extra_args
+                )

@@ -56,7 +56,9 @@ class TestPreRunChecks(TestCase):
         self.assertTrue(mock_boto_client.called)
 
     @mock.patch("boto3.client")
-    def test_pre_run_check_bad_credentials_but_no_check(self, mock_boto_client) -> None:
+    def test_pre_run_check_bad_credentials_but_no_check(
+        self, mock_boto_client
+    ) -> None:
         mock_boto_client.side_effect = ClientError(
             error_response=mock_boto_client, operation_name=mock_boto_client
         )

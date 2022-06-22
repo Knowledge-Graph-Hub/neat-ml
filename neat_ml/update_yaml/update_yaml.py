@@ -23,7 +23,9 @@ def do_update_yaml(input_path: str, keys: list, values: list) -> None:
         print("Done.")
 
     with open(input_path, "w") as yaml_file:
-        yaml_file.write(yaml.dump(contents, default_flow_style=False, sort_keys=False))
+        yaml_file.write(
+            yaml.dump(contents, default_flow_style=False, sort_keys=False)
+        )
 
 
 def update_keyvalue(input_dict, keys, newvalue):

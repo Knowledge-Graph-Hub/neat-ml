@@ -27,7 +27,9 @@ class Model:
         pass
 
     def save(self):
-        with open(os.path.join(self.outdir, self.config["outfile"]), "wb") as f:
+        with open(
+            os.path.join(self.outdir, self.config["outfile"]), "wb"
+        ) as f:
             pickle.dump(self, f)
 
     def predict(self, predict_data) -> np.ndarray:
@@ -78,13 +80,17 @@ class Model:
                     if not is_directed:
                         neg_edge_number = neg_edge_number * 2
 
-                    graphs[name] = (graphs["pos_training"]).sample_negative_graph(
+                    graphs[name] = (
+                        graphs["pos_training"]
+                    ).sample_negative_graph(
                         number_of_negative_samples=neg_edge_number
                     )
                 else:
                     these_params = copy.deepcopy(training_graph_args)
                     if "directed" not in these_params.keys():
-                        these_params["directed"] = training_graph_args["directed"]
+                        these_params["directed"] = training_graph_args[
+                            "directed"
+                        ]
                     graphs[name] = Graph.from_csv(**these_params)
             else:
                 these_params = copy.deepcopy(training_graph_args)
@@ -94,7 +100,9 @@ class Model:
         # create transformer object to convert graphs into edge embeddings
         lpt = EdgePredictionTransformer(method=edge_method)
 
-        lpt.fit(embedding)  # pass node embeddings to be used to create edge embeddings
+        lpt.fit(
+            embedding
+        )  # pass node embeddings to be used to create edge embeddings
 
         train_edges, train_labels = lpt.transform(
             positive_graph=graphs["pos_training"],
@@ -127,7 +135,9 @@ class Model:
 
         gt.fit(embedding)
 
-        edge_embedding_for_predict = gt.transform(graph=source_destination_list)
+        edge_embedding_for_predict = gt.transform(
+            graph=source_destination_list
+        )
 
         return edge_embedding_for_predict
 

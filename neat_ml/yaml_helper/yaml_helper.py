@@ -85,7 +85,9 @@ def is_valid_path(string_to_check: Union[str, Path]) -> bool:
                 f"{string_to_check} is not a valid file path or url."
             )
     elif not os.path.exists(string_to_check):
-        raise FileNotFoundError(f"{string_to_check} is not a valid file path or url.")
+        raise FileNotFoundError(
+            f"{string_to_check} is not a valid file path or url."
+        )
     else:
         return True
 
@@ -191,9 +193,9 @@ class YamlHelper:
         """
         if "GraphDataConfiguration" in self.yaml:
             if "source_data" in self.yaml["GraphDataConfiguration"]:
-                for entry in self.yaml["GraphDataConfiguration"]["source_data"][
-                    "files"
-                ]:
+                for entry in self.yaml["GraphDataConfiguration"][
+                    "source_data"
+                ]["files"]:
                     filepath = entry["path"]
                     if "desc" in entry:
                         desc = entry["desc"]
@@ -216,7 +218,9 @@ class YamlHelper:
                         else:
                             decomp_outfile = tarfile.open(filepath)
                         for filename in decomp_outfile.getnames():
-                            outlist.append(os.path.join(self.indir(), filename))
+                            outlist.append(
+                                os.path.join(self.indir(), filename)
+                            )
                         decomp_outfile.extractall(self.indir())
                         decomp_outfile.close()
 
@@ -281,13 +285,17 @@ class YamlHelper:
     @catch_keyerror
     def val_graph_args(self) -> dict:
         return self.add_indir_to_graph_data(
-            self.yaml["GraphDataConfiguration"]["evaluation_data"]["valid_data"]
+            self.yaml["GraphDataConfiguration"]["evaluation_data"][
+                "valid_data"
+            ]
         )
 
     @catch_keyerror
     def train_graph_args(self) -> dict:
         return self.add_indir_to_graph_data(
-            self.yaml["GraphDataConfiguration"]["evaluation_data"]["train_data"]
+            self.yaml["GraphDataConfiguration"]["evaluation_data"][
+                "train_data"
+            ]
         )
 
     #
@@ -300,7 +308,9 @@ class YamlHelper:
     def embedding_outfile(self) -> str:
         filepath = self.yaml["EmbeddingsConfig"]["filename"]
         if is_url(filepath):
-            url_as_filename = "".join(c if c in VALID_CHARS else "_" for c in filepath)
+            url_as_filename = "".join(
+                c if c in VALID_CHARS else "_" for c in filepath
+            )
             outfile = os.path.join(self.outdir(), url_as_filename)
             download_file(filepath, outfile)
             return outfile
@@ -341,7 +351,9 @@ class YamlHelper:
             "node_embedding_params": self.yaml["EmbeddingsConfig"][
                 "node_embeddings_params"
             ],
-            "bert_columns": self.yaml["EmbeddingsConfig"]["bert_params"]["node_columns"]
+            "bert_columns": self.yaml["EmbeddingsConfig"]["bert_params"][
+                "node_columns"
+            ]
             if "bert_params" in self.yaml["EmbeddingsConfig"]
             else None,
         }
@@ -375,7 +387,9 @@ class YamlHelper:
         return "ClassifierContainer" in self.yaml
 
     def classifier_type(self) -> str:
-        return self.yaml["ClassifierContainer"]["classifiers"]["classifier_name"]
+        return self.yaml["ClassifierContainer"]["classifiers"][
+            "classifier_name"
+        ]
 
     @catch_keyerror
     def classifiers(self) -> list:
@@ -387,7 +401,8 @@ class YamlHelper:
 
     def get_all_classifier_ids(self):
         return [
-            c["classifier_id"] for c in self.yaml["ClassifierContainer"]["classifiers"]
+            c["classifier_id"]
+            for c in self.yaml["ClassifierContainer"]["classifiers"]
         ]
 
     def get_edge_embedding_method(self, classifier: dict) -> str:
@@ -395,7 +410,9 @@ class YamlHelper:
 
     def classifier_history_file_name(self, classifier: dict) -> Optional[str]:
         return (
-            classifier["history_filename"] if "history_filename" in classifier else None
+            classifier["history_filename"]
+            if "history_filename" in classifier
+            else None
         )
 
     def classifier_outfile(self, classifier: dict) -> str:
@@ -426,13 +443,19 @@ class YamlHelper:
         return "ApplyTrainedModelsContainer" in self.yaml
 
     def get_classifier_id_for_prediction(self):
-        classifier_applications = self.yaml["ApplyTrainedModelsContainer"]["models"]
+        classifier_applications = self.yaml["ApplyTrainedModelsContainer"][
+            "models"
+        ]
         list_of_ids = [cl["model_id"] for cl in classifier_applications]
         return list_of_ids
 
     def get_classifier_from_id(self, classifier_id: str):
 
-        return [x for x in self.classifiers() if x["classifier_id"] == classifier_id][0]
+        return [
+            x
+            for x in self.classifiers()
+            if x["classifier_id"] == classifier_id
+        ][0]
 
     def make_classifier_args(self, cl_id: str):
         classifier_args = [
@@ -443,9 +466,14 @@ class YamlHelper:
         model = self.get_classifier_from_id(cl_id)
 
         classifier_args_dict = {}
-        classifier_args_dict["graph"] = Graph.from_csv(**self.main_graph_args())
+        classifier_args_dict["graph"] = Graph.from_csv(
+            **self.main_graph_args()
+        )
 
-        if self.get_classifier_from_id(cl_id)["classifier_name"] == "neural network":
+        if (
+            self.get_classifier_from_id(cl_id)["classifier_name"]
+            == "neural network"
+        ):
             classifier_args_dict["model"] = pickle.load(
                 open(
                     os.path.join(

@@ -30,15 +30,12 @@ def cli():
     type=click.Path(exists=True),
 )
 def run(config: str) -> None:
-    """Run a NEAT pipeline using the given YAML file [neat.yaml]
-    \f
+    """Run a NEAT pipeline using the given YAML file [neat.yaml].
 
-    Args:
-        config: Specify the YAML file containing instructions of what ML tasks to perform
-
-    Returns:
-        None.
-
+    :param config: Specify the YAML file containing instructions of what ML tasks to perform.
+    :raises RuntimeError: If failed pre-check run.
+    :raises NotImplementedError: If non-implemented model provided.
+    :return: None
     """
     yhelp = YamlHelper(config)
 
@@ -133,12 +130,19 @@ def run(config: str) -> None:
     callback=lambda _, __, x: x.split(",") if x else [],
     help="One or more values, in the same order as keys, comma-delimited.",
 )
-def updateyaml(input_path, keys, values):
-    """Update a YAML file with specified key/value pairs
-    \f
+def updateyaml(input_path, keys, values) -> None:
+    """Update a YAML file with specified key/value pairs.
+
     Updates one or more values for a one or more keys,
     with a provided path to a YAML file.
     Will not replace keys found multiple times in the YAML.
     Ignores keys in lists, even if they're dicts in lists.
+
+    #TODO: Add param descriptions.
+    :param input_path: _description_
+    :param keys: _description_
+    :param values: _description_
+    :return: None
+
     """
     do_update_yaml(input_path, keys, values)

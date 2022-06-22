@@ -22,7 +22,9 @@ class MLPModel(Model):
         model_type = config["classifier_type"]
         model_class = self.dynamically_import_class(model_type)
         model_layers = []
-        for layer in config["parameters"]["tf_keras_params"]["layers_config"]["layers"]:
+        for layer in config["parameters"]["tf_keras_params"]["layers_config"][
+            "layers"
+        ]:
             layer_type = layer["type"]
             layer_class = self.dynamically_import_class(layer_type)
             parameters = layer["parameters"]
@@ -77,13 +79,18 @@ class MLPModel(Model):
         if "callbacks_list" in classifier_params:
             for callback in classifier_params["callbacks_list"]["callbacks"]:
                 c_class = self.dynamically_import_class(callback["type"])
-                c_params = callback["parameters"] if "parameters" in callback else {}
+                c_params = (
+                    callback["parameters"] if "parameters" in callback else {}
+                )
                 c_instance = c_class(**c_params)
                 callback_list.append(c_instance)
             del classifier_params["callbacks"]
 
         history = self.model.fit(
-            train_data, train_labels, **classifier_params, callbacks=callback_list
+            train_data,
+            train_labels,
+            **classifier_params,
+            callbacks=callback_list
         )
         return history
 
