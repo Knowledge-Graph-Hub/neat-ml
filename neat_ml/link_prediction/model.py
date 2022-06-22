@@ -57,7 +57,6 @@ class Model:
             A tuple of tuples
 
         """
-
         embedding = pd.read_csv(embedding_file, index_col=0, header=None)
 
         # load graphs
@@ -121,7 +120,6 @@ class Model:
             A NumPy Array embeddings that represent prediction edges.
 
         """
-
         embedding = pd.read_csv(embedding_file, index_col=0, header=None)
 
         # Create graphtransformer object for edge embeddings

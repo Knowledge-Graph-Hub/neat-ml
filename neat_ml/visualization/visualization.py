@@ -16,7 +16,6 @@ def make_tsne(
         generate the tSNE plot
     :return:
     """
-
     node_embeddings = pd.read_csv(embedding_file, index_col=0, header=None)
 
     visualizer = GraphVisualizer(graph)
@@ -38,7 +37,6 @@ def make_all_plots(
         generate the tSNE plot
     :return:
     """
-
     node_embeddings = pd.read_csv(embedding_file, index_col=0, header=None)
 
     visualizer = GraphVisualizer(graph)

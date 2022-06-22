@@ -69,7 +69,6 @@ def is_url(string_to_check: Union[str, Path]) -> bool:
     :param string_to_check: string to check
     :return: bool, True if string is URL
     """
-
     return bool(validators.url(string_to_check))
 
 
@@ -80,7 +79,6 @@ def is_valid_path(string_to_check: Union[str, Path]) -> bool:
     :param string_to_check: string to check
     :return: bool, True if string is valid filepath
     """
-
     if isinstance(string_to_check, Path):
         if not string_to_check.is_file():
             raise FileNotFoundError(
@@ -102,7 +100,6 @@ def download_file(url: str, outfile: str) -> list:
     If it's tar.gz, decompress.
     Return the names of all files as a list.
     """
-
     outlist = []
 
     req = Request(url, headers={"User-Agent": "Mozilla/5.0"})
@@ -192,7 +189,6 @@ class YamlHelper:
         will still need to refer to the
         node/edge filenames.
         """
-
         if "GraphDataConfiguration" in self.yaml:
             if "source_data" in self.yaml["GraphDataConfiguration"]:
                 for entry in self.yaml["GraphDataConfiguration"]["source_data"][
@@ -236,7 +232,6 @@ class YamlHelper:
         :param keys_to_add_indir: what keys to add indir to
         :return:
         """
-
         for k in keys_to_add_indir:
             if k in graph_data:
                 graph_data[k] = os.path.join(self.indir(), graph_data[k])
@@ -256,7 +251,6 @@ class YamlHelper:
         requires this to parse node types.
         :return: ensmallen Graph
         """
-
         # Load sources if necessary
         self.retrieve_from_sources()
 

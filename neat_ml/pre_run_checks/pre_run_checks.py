@@ -114,7 +114,6 @@ def pre_bucket_check(upload_args: dict) -> bool:
     target bucket and directory are
     accessible and empty, respectively.
     """
-
     success = True
 
     try:

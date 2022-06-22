@@ -40,7 +40,6 @@ def run(config: str) -> None:
         None.
 
     """
-
     yhelp = YamlHelper(config)
 
     # pre run checks for failing early

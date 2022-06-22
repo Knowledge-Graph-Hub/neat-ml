@@ -160,7 +160,6 @@ def get_custom_model_path(model_file_path: str) -> str:
     :param model_file_path: str, path to generic model
     :return: str, path to custom model
     """
-
     custom_model_path = (
         os.path.splitext(model_file_path)[0]
         + "_custom"
