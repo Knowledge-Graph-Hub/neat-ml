@@ -5,6 +5,7 @@ from unittest import TestCase
 import numpy as np
 import pandas as pd
 from keras.engine.sequential import Sequential
+
 from neat_ml.link_prediction.mlp_model import MLPModel
 from neat_ml.link_prediction.sklearn_model import SklearnModel
 from neat_ml.run_classifier.run_classifier import get_custom_model_path
