@@ -2,7 +2,7 @@ import copy
 import importlib
 import os
 import pickle
-from typing import Optional, Tuple, Union
+from typing import Optional, Tuple
 
 import numpy as np  # type: ignore
 import pandas as pd  # type: ignore

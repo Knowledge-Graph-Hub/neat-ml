@@ -1,12 +1,12 @@
-import json
-import os
-from unittest import TestCase
+# import json
+# import os
+# from unittest import TestCase
 
-import pandas as pd
+# import pandas as pd
 
-from neat_ml.graph_embedding.graph_embedding import (get_node_data,
-                                                     make_node_embeddings)
-from neat_ml.yaml_helper.yaml_helper import YamlHelper
+# from neat_ml.graph_embedding.graph_embedding import (get_node_data,
+#                                                      make_node_embeddings)
+# from neat_ml.yaml_helper.yaml_helper import YamlHelper
 
 # class TestGraphEmbedding(TestCase):
 
@@ -15,13 +15,16 @@ from neat_ml.yaml_helper.yaml_helper import YamlHelper
 #         pass
 
 #     def setUp(self) -> None:
-#         self.test_node_file = 'tests/resources/test_graphs/test_small_nodes.tsv'
+#         self.test_node_file = (
+#           'tests/resources/test_graphs/test_small_nodes.tsv'
+#         )
 #         self.expected_embedding_file = 'output_data/test_embeddings.tsv'
 #         self.expected_history_file = 'output_data/embedding_history.json'
 
 #         if os.path.exists(self.expected_embedding_file):
 #             print(
-#                 f"removing existing test embedding file {self.expected_embedding_file}")
+#                 f"removing existing test embedding \
+#                   file {self.expected_embedding_file}")
 #             os.unlink(self.expected_embedding_file)
 
 #     def test_get_node_data(self):

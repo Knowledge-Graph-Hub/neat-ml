@@ -1,9 +1,9 @@
-from unittest import TestCase, mock, skip
+from unittest import TestCase, mock
 
-from grape import Graph  # type: ignore
+from grape import Graph  # noqa F401
 from parameterized import parameterized
 
-from neat_ml.yaml_helper.yaml_helper import (YamlHelper, catch_keyerror,
+from neat_ml.yaml_helper.yaml_helper import (YamlHelper,
                                              download_file, is_url,
                                              is_valid_path, validate_config)
 

@@ -9,15 +9,12 @@ from pathlib import Path
 from typing import Optional, Union
 from urllib.request import Request, urlopen
 
-import neat_ml_schema  # type: ignore
 import pkg_resources  # type: ignore
 import validators  # type: ignore
 import yaml  # type: ignore
 from grape import Graph  # type: ignore
 from linkml_validator.validator import Validator  # type: ignore
 
-from neat_ml.link_prediction.mlp_model import MLPModel  # type: ignore
-from neat_ml.link_prediction.model import Model
 from neat_ml.run_classifier.run_classifier import get_custom_model_path
 
 VALID_CHARS = "-_.() %s%s" % (string.ascii_letters, string.digits)

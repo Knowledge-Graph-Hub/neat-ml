@@ -4,7 +4,6 @@ from unittest import TestCase
 from click.testing import CliRunner
 
 from neat_ml.cli import run
-from neat_ml.visualization.visualization import make_all_plots, make_tsne
 
 
 class TestVisuals(TestCase):
@@ -14,7 +13,9 @@ class TestVisuals(TestCase):
 
     def setUp(self) -> None:
         self.runner = CliRunner()
-        self.expected_tsne_file = "tests/resources/test_output_data_dir/test_tsne.png"
+        self.expected_tsne_file = (
+            "tests/resources/test_output_data_dir/test_tsne.png"
+        )
         self.expected_fullplot_file = (
             "tests/resources/test_output_data_dir/test_plots.png"
         )
@@ -25,7 +26,7 @@ class TestVisuals(TestCase):
 
     def test_make_tsne(self):
 
-        result = self.runner.invoke(
+        self.runner.invoke(
             catch_exceptions=False,
             cli=run,
             args=["--config", "tests/resources/test_for_tsne.yaml"],

@@ -1,10 +1,9 @@
 import os
 import tempfile
 from shutil import copyfile
-from unittest import TestCase, skip
+from unittest import TestCase
 
 import yaml
-from parameterized import parameterized
 
 from neat_ml.update_yaml.update_yaml import do_update_yaml
 

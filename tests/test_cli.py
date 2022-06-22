@@ -4,7 +4,6 @@ from unittest import TestCase, mock
 from click.testing import CliRunner
 
 from neat_ml.cli import run, updateyaml
-from neat_ml.link_prediction.model import Model
 
 
 class TestRun(TestCase):

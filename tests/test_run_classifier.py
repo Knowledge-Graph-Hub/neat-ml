@@ -1,11 +1,9 @@
 import os
 import pickle
 from posixpath import dirname
-from unittest import TestCase, skip
+from unittest import TestCase
 
-import pandas as pd
 from grape import Graph
-
 from neat_ml.run_classifier.run_classifier import predict_links
 from neat_ml.yaml_helper.yaml_helper import YamlHelper
 
