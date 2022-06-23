@@ -1,5 +1,6 @@
+"""Test run classifier."""
 import os
-import pickle
+import pickle  # noqa S403
 from posixpath import dirname
 from unittest import TestCase
 
@@ -10,8 +11,11 @@ from neat_ml.yaml_helper.yaml_helper import YamlHelper
 
 
 class TestRunClassifier(TestCase):
+    """Test run classifier."""
+
     @classmethod
     def setUpClass(cls) -> None:
+        """Set up."""
         cls.yaml_file = "tests/resources/test.yaml"
         cls.yhelp = YamlHelper(cls.yaml_file)
         cls.graph = Graph.from_csv(**cls.yhelp.main_graph_args())
@@ -39,12 +43,15 @@ class TestRunClassifier(TestCase):
         }
 
     def setUp(self) -> None:
+        """Set up."""
         pass
 
     def test_reality(self):
+        """Test reality."""
         self.assertEqual(1, 1)
 
     def test_run_classifier(self):
+        """Test run classifier."""
         # temp = tempfile.NamedTemporaryFile().name
         # once we have test firmed up
         # outfile = "/dev/null"
@@ -53,7 +60,7 @@ class TestRunClassifier(TestCase):
             os.mkdir(outdir)
 
         with open(self.test_model_path, "rb") as f:
-            m = pickle.load(f)
+            m = pickle.load(f)  # noqa S301
 
         outfile = os.path.join(dirname(__file__), "resources/tmp/test.tsv")
         predict_links(
@@ -89,13 +96,13 @@ class TestRunClassifier(TestCase):
             self.assertEqual(1, len(f.readlines()))
 
     def test_run_classifier_with_node_filters(self):
-
+        """Test run classifier with node filters."""
         outdir = "tests/resources/tmp/"
         if not os.path.isdir(outdir):
             os.mkdir(outdir)
 
         with open(self.test_model_path, "rb") as f:
-            m = pickle.load(f)
+            m = pickle.load(f)  # noqa S301
 
         outfile = os.path.join(
             dirname(__file__), "resources/tmp/test_node_filt.tsv"

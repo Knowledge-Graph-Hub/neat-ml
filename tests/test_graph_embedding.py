@@ -1,3 +1,4 @@
+"""Test graph embedding."""
 # import json
 # import os
 # from unittest import TestCase

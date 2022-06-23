@@ -26,7 +26,7 @@ def validate_config(
     """
     Validate the provided config against the neat_schema.
     :param config: dict of the parsed config file
-    :param neat_schema_file: name of the neat schema 
+    :param neat_schema_file: name of the neat schema
     file in neat-schema package
     :return: bool, false if validation failed
     """
@@ -101,7 +101,7 @@ def is_valid_path(string_to_check: Union[str, Path]) -> bool:
 def download_file(url: str, outfile: str) -> list:
     """
     Downloads file at input url to outfile path.
-    
+
     URL must point to a TSV or a tar.gz compressed file.
     (This is checked during pre_run_checks though.)
     If it's tar.gz, decompress.

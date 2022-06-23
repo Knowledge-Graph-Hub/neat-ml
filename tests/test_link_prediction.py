@@ -17,7 +17,7 @@ class TestLinkPrediction(TestCase):
     def setUpClass(cls) -> None:
         cls.yaml_file_sklearn = "tests/resources/test.yaml"
         cls.yaml_file_tf = "tests/resources/test.yaml"
-        cls.embed_file = "tests/resources/test_link_prediction/test_embeddings_test_yaml.csv" # noqa E501
+        cls.embed_file = "tests/resources/test_link_prediction/test_embeddings_test_yaml.csv"  # noqa E501
         cls.yhelp_sklearn = YamlHelper(cls.yaml_file_sklearn)
         cls.yhelp_tf = YamlHelper(cls.yaml_file_tf)
         cls.test_model_path = "tests/resources/test_output_data_dir/"

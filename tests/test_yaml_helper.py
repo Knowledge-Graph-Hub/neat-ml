@@ -1,3 +1,4 @@
+"""Test YAML helper."""
 from unittest import TestCase, mock
 
 from grape import Graph  # noqa F401
@@ -8,16 +9,20 @@ from neat_ml.yaml_helper.yaml_helper import (YamlHelper, download_file, is_url,
 
 
 class TestYamlHelper(TestCase):
+    """Test YAML helper."""
     @classmethod
     def setUpClass(cls) -> None:
+        """Set up."""
         cls.test_yaml = "tests/resources/test.yaml"
         cls.yh = YamlHelper(cls.test_yaml)
         cls.embedding_args = cls.yh.make_node_embeddings_args()
 
     def setUp(self) -> None:
+        """Set up."""
         self.test_yaml_upload_bad = "tests/resources/test_bad_upload_info.yaml"
 
     def test_validate_config(self):
+        """Test validate config."""
         good_config = {
             "Target": {"target_path": "tests/resources/test_output_data_dir/"},
             "GraphDataConfiguration": {"graph": {"directed": False}},
@@ -31,11 +36,13 @@ class TestYamlHelper(TestCase):
         self.assertFalse(validate_config(bad_config))
 
     def test_outdir(self) -> None:
+        """Test out directory."""
         self.assertEqual(
             "tests/resources/test_output_data_dir/", self.yh.outdir()
         )
 
     def test_add_indir_to_graph_data(self):
+        """Test add input directory to graph data."""
         # emits error message to log, but continues:
         self.yh.add_indir_to_graph_data(
             graph_data={}, keys_to_add_indir=["not_a_key"]

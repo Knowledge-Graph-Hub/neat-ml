@@ -1,3 +1,4 @@
+"""Test visuals."""
 import os
 from unittest import TestCase
 
@@ -7,11 +8,15 @@ from neat_ml.cli import run
 
 
 class TestVisuals(TestCase):
+    """Test visuals Class."""
+
     @classmethod
     def setUpClass(cls) -> None:
+        """Set up."""
         pass
 
     def setUp(self) -> None:
+        """Set up."""
         self.runner = CliRunner()
         self.expected_tsne_file = (
             "tests/resources/test_output_data_dir/test_tsne.png"
@@ -25,7 +30,7 @@ class TestVisuals(TestCase):
                 os.unlink(filepath)
 
     def test_make_tsne(self):
-
+        """Test for making a tSNE using grape."""
         self.runner.invoke(
             catch_exceptions=False,
             cli=run,

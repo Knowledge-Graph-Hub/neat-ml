@@ -131,10 +131,8 @@ class TestRun(TestCase):
     @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_tsne")
     @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_embeddings")
     @mock.patch("neat_ml.cli.pre_run_checks")
-    @mock.patch("boto3.client")
     def test_run_pre_run_checks(
         self,
-        mock_boto,
         mock_pre_run_checks,
         mock_do_embeddings,
         mock_do_tsne,
@@ -159,20 +157,27 @@ class TestRun(TestCase):
     @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_tsne")
     @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_embeddings")
     @mock.patch("neat_ml.cli.pre_run_checks")
-    @mock.patch("boto3.client")
     @mock.patch(
         "neat_ml.yaml_helper.yaml_helper.YamlHelper.deal_with_url_node_edge_paths"  # noqa E501
     )
     def test_run_pre_run_checks(
         self,
         mock_deal_with_url_node_edge_paths,
-        mock_boto,
         mock_pre_run_checks,
         mock_do_embeddings,
         mock_do_tsne,
         mock_do_classifier,
         mock_do_upload,
     ):
+        """Test pre-run checks.
+
+        :param mock_deal_with_url_node_edge_paths: Mock param.
+        :param mock_pre_run_checks: Mock param.
+        :param mock_do_embeddings: Mock param.
+        :param mock_do_tsne: Mock param.
+        :param mock_do_classifier: Mock param.
+        :param mock_do_upload: Mock param.
+        """
         mock_do_embeddings.return_value = False
         mock_do_tsne.return_value = False
         mock_do_classifier.return_value = False
@@ -187,7 +192,11 @@ class TestRun(TestCase):
         self.assertEqual(result.exit_code, 0)
 
     @mock.patch("neat_ml.cli.do_update_yaml")
-    def test_run_pre_run_checks(self, mock_do_update_yaml):
+    def test_run_update_yaml(self, mock_do_update_yaml):
+        """Test CLI 'updateyaml' command.
+
+        :param mock_do_update_yaml: A mock param.
+        """
         result = self.runner.invoke(
             catch_exceptions=False,
             cli=updateyaml,

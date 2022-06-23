@@ -99,7 +99,9 @@ def run(config: str) -> None:
             print(f"Correct label match in validation: {correct_label_match}")
 
             if yhelp.classifier_history_file_name(classifier):
-                with open(yhelp.classifier_history_file_name(classifier), "w") as f:   # noqa E501
+                with open(
+                    yhelp.classifier_history_file_name(classifier), "w"
+                ) as f:  # noqa E501
                     json.dump(history_obj.history, f)
 
             model.save()
