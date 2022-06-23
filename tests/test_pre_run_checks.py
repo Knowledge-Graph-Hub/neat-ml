@@ -17,7 +17,7 @@ class TestPreRunChecks(TestCase):
 
     @mock.patch("boto3.client")
     def test_pre_run_check_confirm_boto_called(self, mock_boto_client) -> None:
-        return_val = pre_run_checks(
+        pre_run_checks(
             self.upload_yaml,
             check_s3_credentials=True,
             check_classifiers=False,

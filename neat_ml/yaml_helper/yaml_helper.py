@@ -63,9 +63,10 @@ def parse_yaml(file: str) -> dict:
 
 
 def is_url(string_to_check: Union[str, Path]) -> bool:
-    """Helper function to decide if a string is a
-    URL (used for example for deciding
-    whether we need to download a file for a given node_path or edge_path).
+    """Decide if a string is a URL.
+    (Used for example for deciding
+    whether we need to download a file for a 
+    given node_path or edge_path).
     Raise exception if file path is invalid.
 
     :param string_to_check: string to check
@@ -99,9 +100,7 @@ def is_valid_path(string_to_check: Union[str, Path]) -> bool:
 
 
 def download_file(url: str, outfile: str) -> list:
-    """
-    Downloads file at input url to outfile path.
-
+    """Download file at input url to outfile path.
     URL must point to a TSV or a tar.gz compressed file.
     (This is checked during pre_run_checks though.)
     If it's tar.gz, decompress.
@@ -234,9 +233,7 @@ class YamlHelper:
         graph_data: dict,
         keys_to_add_indir: list = ["node_path", "edge_path"],
     ) -> dict:
-        """
-        Updates the graph file paths
-        with their input directory.
+        """Update the graph file paths with input directory.
         :param graph_data - parsed yaml
         :param keys_to_add_indir: what keys to add indir to
         :return:
@@ -254,9 +251,8 @@ class YamlHelper:
     # graph stuff
     #
     def load_graph(self) -> Graph:
-        """
-        Loads graph nodes and edges into Ensmallen.
-        Creates a node type list, as Ensmallen
+        """Load graph nodes and edges into Ensmallen.
+        Create a node type list, as Ensmallen
         requires this to parse node types.
         :return: ensmallen Graph
         """

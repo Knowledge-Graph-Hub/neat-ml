@@ -10,6 +10,7 @@ from neat_ml.yaml_helper.yaml_helper import (YamlHelper, download_file, is_url,
 
 class TestYamlHelper(TestCase):
     """Test YAML helper."""
+    
     @classmethod
     def setUpClass(cls) -> None:
         """Set up."""

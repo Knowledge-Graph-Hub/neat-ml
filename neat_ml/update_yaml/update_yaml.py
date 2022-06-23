@@ -29,11 +29,10 @@ def do_update_yaml(input_path: str, keys: list, values: list) -> None:
 
 
 def update_keyvalue(input_dict, keys, newvalue):
-    """
-    Function to update a provided key with a value.
+    """Update a provided key with a value.
     :param input_dict: YAML dict representation to be updated
     :param keys: list containing one or more keys.
-                    Multiple keys are nested, e.g. input_dict[key1][key2[key3].
+    Multiple keys are nested, e.g. input_dict[key1][key2[key3].
     :param newvalue: value to set key to.
     :return: dict
     """

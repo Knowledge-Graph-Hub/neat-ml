@@ -8,7 +8,7 @@ from .model import Model
 
 class MLPModel(Model):
     def __init__(self, config, outdir: str = None) -> None:
-        """make an MLP model
+        """Make an MLP model.
 
         Args:
             config: the classifier config
@@ -31,8 +31,8 @@ class MLPModel(Model):
             layer_instance = layer_class(**parameters)  # type: ignore
             model_layers.append(layer_instance)
         model_instance = model_class()  # type: ignore
-        for l in model_layers:
-            model_instance.add(l)
+        for one_layer in model_layers:
+            model_instance.add(one_layer)
         self.model = model_instance
 
     def compile(self):

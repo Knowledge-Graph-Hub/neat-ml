@@ -139,32 +139,6 @@ class TestRun(TestCase):
         mock_do_classifier,
         mock_do_upload,
     ):
-        mock_do_embeddings.return_value = False
-        mock_do_tsne.return_value = False
-        mock_do_classifier.return_value = False
-        mock_do_upload.return_value = False
-        mock_pre_run_checks.return_value = True
-        result = self.runner.invoke(
-            catch_exceptions=False,
-            cli=run,
-            args=["--config", "tests/resources/test.yaml"],
-        )
-        self.assertTrue(mock_pre_run_checks.called)
-        self.assertEqual(result.exit_code, 0)
-
-    @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_upload")
-    @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_classifier")
-    @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_tsne")
-    @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_embeddings")
-    @mock.patch("neat_ml.cli.pre_run_checks")
-    def test_run_pre_run_checks(
-        self,
-        mock_pre_run_checks,
-        mock_do_embeddings,
-        mock_do_tsne,
-        mock_do_classifier,
-        mock_do_upload,
-    ):
         """Test pre-run checks.
 
         :param mock_pre_run_checks: Mock param.
@@ -183,6 +157,7 @@ class TestRun(TestCase):
             cli=run,
             args=["--config", "tests/resources/test.yaml"],
         )
+        self.assertTrue(mock_pre_run_checks.called)
         self.assertEqual(result.exit_code, 0)
 
     @mock.patch("neat_ml.cli.do_update_yaml")

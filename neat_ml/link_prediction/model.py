@@ -35,7 +35,7 @@ class Model:
     def predict(self, predict_data) -> np.ndarray:
         return self.model.predict(predict_data)  # type: ignore
 
-    def predict_proba(self, X) -> np.ndarray:
+    def predict_proba(self, x) -> np.ndarray:
         pass
 
     @classmethod
