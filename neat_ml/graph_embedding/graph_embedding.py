@@ -32,7 +32,8 @@ def make_node_embeddings(
     :param node_embedding_params: Arguments passed to Embiggen.
     :param bert_columns: Columns containing text info to
         use to make embeddings from Bert pretrained embeddings
-    :param bert_pretrained_model: _description_, defaults to "allenai/scibert_scivocab_uncased"
+    :param bert_pretrained_model: _description_, defaults to 
+    "allenai/scibert_scivocab_uncased"
     :return: None
     """
     # load main graph

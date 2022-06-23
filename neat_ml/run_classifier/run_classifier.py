@@ -71,13 +71,15 @@ def predict_links(
     Args:
         graph (Graph): Ensmallen graph.
         model (Any): Trained model.
-        node_types (list): List of lists of target 'source' and 'destination' nodes.
-                            Only these types will be in output.
+        node_types (list): List of lists of target 
+        'source' and 'destination' nodes.
+        Only these types will be in output.
         cutoff (float): Cutoff point for filtering.
         output_file (str or Path): Results destination.
         embeddings_file (str or Path): Path to embeddings.
         edge_method (str): Method to use for calculating edge embeddings.
-        ignore_existing_edges (bool): default True; do not output predictions for edges already in graph.
+        ignore_existing_edges (bool): default True; do not output 
+        predictions for edges already in graph.
     """
     embeddings = pd.read_csv(embeddings_file, sep=",", header=None)
 
