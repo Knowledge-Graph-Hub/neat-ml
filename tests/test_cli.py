@@ -162,7 +162,6 @@ class TestRun(TestCase):
     )
     def test_run_pre_run_checks(
         self,
-        mock_deal_with_url_node_edge_paths,
         mock_pre_run_checks,
         mock_do_embeddings,
         mock_do_tsne,
@@ -171,7 +170,6 @@ class TestRun(TestCase):
     ):
         """Test pre-run checks.
 
-        :param mock_deal_with_url_node_edge_paths: Mock param.
         :param mock_pre_run_checks: Mock param.
         :param mock_do_embeddings: Mock param.
         :param mock_do_tsne: Mock param.
@@ -188,7 +186,6 @@ class TestRun(TestCase):
             cli=run,
             args=["--config", "tests/resources/test.yaml"],
         )
-        self.assertTrue(mock_deal_with_url_node_edge_paths.called)
         self.assertEqual(result.exit_code, 0)
 
     @mock.patch("neat_ml.cli.do_update_yaml")
