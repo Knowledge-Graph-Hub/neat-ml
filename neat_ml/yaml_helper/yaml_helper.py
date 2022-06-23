@@ -409,7 +409,7 @@ class YamlHelper:
     def get_edge_embedding_method(self, classifier: dict) -> str:
         return classifier["edge_method"]
 
-    def classifier_history_file_name(self, classifier: dict) -> Optional[str]:
+    def classifier_history_file_name(self, classifier: dict) -> Union[Union[str, bytes, os.PathLike[str], os.PathLike[bytes]], int]:
         return (
             classifier["history_filename"]
             if "history_filename" in classifier
