@@ -157,9 +157,6 @@ class TestRun(TestCase):
     @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_tsne")
     @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_embeddings")
     @mock.patch("neat_ml.cli.pre_run_checks")
-    @mock.patch(
-        "neat_ml.yaml_helper.yaml_helper.YamlHelper.deal_with_url_node_edge_paths"  # noqa E501
-    )
     def test_run_pre_run_checks(
         self,
         mock_pre_run_checks,
