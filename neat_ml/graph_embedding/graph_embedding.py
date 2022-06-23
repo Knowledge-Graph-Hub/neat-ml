@@ -7,7 +7,7 @@ from tqdm.auto import tqdm  # type: ignore
 
 
 def get_node_data(file: str, sep="\t") -> pd.DataFrame:
-    """Read node TSV file and return pandas dataframe
+    """Read node TSV file and return pandas dataframe.
 
     :param file: node TSV file
     :param sep: separator

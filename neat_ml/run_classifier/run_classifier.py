@@ -66,19 +66,19 @@ def predict_links(
     ignore_existing_edges: bool = True,
     verbose: bool = True,
 ) -> None:
-    """Performs link prediction over provided graph nodes.
+    """Perform link prediction over provided graph nodes.
 
     Args:
         graph (Graph): Ensmallen graph.
         model (Any): Trained model.
-        node_types (list): List of lists of target 
+        node_types (list): List of lists of target
         'source' and 'destination' nodes.
         Only these types will be in output.
         cutoff (float): Cutoff point for filtering.
         output_file (str or Path): Results destination.
         embeddings_file (str or Path): Path to embeddings.
         edge_method (str): Method to use for calculating edge embeddings.
-        ignore_existing_edges (bool): default True; do not output 
+        ignore_existing_edges (bool): default True; do not output
         predictions for edges already in graph.
     """
     embeddings = pd.read_csv(embeddings_file, sep=",", header=None)
@@ -117,7 +117,8 @@ def predict_links(
 
     if len(src_dst_list) == 0:
         warn(
-            "Filter has excluded all edges or no edges found - cannot apply classifier."
+            "Filter has excluded all edges or no edges found. "
+            "Cannot apply classifier."
         )
 
     edge_embedding_for_predict = model.make_edge_embedding_for_predict(  # type: ignore
@@ -160,7 +161,7 @@ def predict_links(
 def get_custom_model_path(model_file_path: str) -> str:
     """
     Given the path to a sklearn or TF model,
-    returns the name of the corresponding custom
+    return the name of the corresponding custom
     model. This allows a NEAT Model object to be
     created so we may access its methods.
     :param model_file_path: str, path to generic model

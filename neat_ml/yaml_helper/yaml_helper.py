@@ -6,7 +6,7 @@ import string
 import sys
 import tarfile
 from pathlib import Path
-from typing import Optional, Union
+from typing import Union
 from urllib.request import Request, urlopen
 
 import pkg_resources  # type: ignore
@@ -65,7 +65,7 @@ def parse_yaml(file: str) -> dict:
 def is_url(string_to_check: Union[str, Path]) -> bool:
     """Decide if a string is a URL.
     (Used for example for deciding
-    whether we need to download a file for a 
+    whether we need to download a file for a
     given node_path or edge_path).
     Raise exception if file path is invalid.
 
@@ -141,9 +141,7 @@ def catch_keyerror(f):
 
 
 class YamlHelper:
-    """
-    Class to parse yaml and extract args for methods
-    """
+    """Class to parse yaml and extract args for methods."""
 
     def __init__(self, config: str):
         self.default_outdir = "output_data"
@@ -187,13 +185,12 @@ class YamlHelper:
 
     def retrieve_from_sources(self) -> None:
         """
-        Checks for existence of a
-        source_data key. If this exists,
+        Check for existence of a source_data key. 
+        If this exists,
         download and decompress as needed.
         The node_path and edge_path values
-        in graph_data
-        will still need to refer to the
-        node/edge filenames.
+        in graph_data will still need to 
+        refer to the node/edge filenames.
         """
         if "GraphDataConfiguration" in self.yaml:
             if "source_data" in self.yaml["GraphDataConfiguration"]:

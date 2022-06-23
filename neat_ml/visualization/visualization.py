@@ -33,8 +33,8 @@ def make_all_plots(
 
     :param graph: Ensmallen graph object
     :param tsne_outfile: where to output plot image file
-    :param embedding_file: file containing embeddings (in numpy format) to use to
-        generate the tSNE plot
+    :param embedding_file: file containing embeddings 
+    (in numpy format) to use to generate the tSNE plot
     :return:
     """
     node_embeddings = pd.read_csv(embedding_file, index_col=0, header=None)

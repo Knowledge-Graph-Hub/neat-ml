@@ -17,7 +17,7 @@ class Model:
             os.makedirs(outdir, exist_ok=True)
         self.outdir = outdir
 
-    def fit(self, X, y):
+    def fit(self, x, y):
         pass
 
     def compile(self):
@@ -47,14 +47,20 @@ class Model:
         training_args: Optional[dict] = None,
         edge_method: str = "Average",
     ) -> Tuple[Tuple, Tuple]:
-        """Prepare training and validation data for training link prediction classifers
+        """Prepare training and validation data 
+        for training link prediction classifers.
 
         Args:
-            embedding_file: path to embedding file for nodes in graph
-            training_graph_args: Ensmallen arguments to load training graph
-            validation_args: Ensmallen arguments to load positive and negative validation graphs
-            training_args: Ensmallen arguments to load negative training graph
-            edge_method: edge embedding method to use (average, L1, L2, etc)
+            embedding_file: path to embedding file 
+            for nodes in graph
+            training_graph_args: Ensmallen arguments 
+            to load training graph
+            validation_args: Ensmallen arguments to 
+            load positive and negative validation graphs
+            training_args: Ensmallen arguments to load 
+            negative training graph
+            edge_method: edge embedding method to use 
+            (average, L1, L2, etc)
         Returns:
             A tuple of tuples
 

@@ -14,15 +14,15 @@ def pre_run_checks(
     check_s3_bucket_dir: bool = True,
     check_classifiers: bool = True,
 ) -> bool:
-    """Some checks before run, 
-    to prevent frustrating failure at the end of long runs
+    """Prevent frustrating failure at the end of long runs.
 
     Args:
         yhelp: YamlHelper object
         check_s3_credentials: should we check S3 credentials (true). 
         Note that if no upload dir exists, this will pass
         check_s3_bucket: check that s3 bucket exists on s3
-        check_s3_bucket_dir: check that s3 bucket directory doesn't already exist
+        check_s3_bucket_dir: check that s3 bucket directory 
+        doesn't already exist
         check_classifiers: verify that classifier ids don't conflict
 
     Returns:
