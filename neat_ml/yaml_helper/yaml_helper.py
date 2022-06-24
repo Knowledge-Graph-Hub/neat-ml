@@ -32,18 +32,15 @@ def validate_config(
     """
     validated = True
     # Get schema path first
-    try:
-        schema_path = pkg_resources.resource_filename(
+    schema_path = pkg_resources.resource_filename(
             "neat_ml_schema", os.path.join("schema/", neat_schema_file)
-        )
-    except TypeError as e:
-        sys.exit(
-            f"Cannot find {neat_schema_file}! \n"
-            "Please verify that neat-ml-schema is installed and try again.\n"
-            f"Error: {e}"
         )
 
     if not os.path.exists(schema_path):
+        print(
+            f"Cannot find {neat_schema_file}! \n"
+            "Please verify that neat-ml-schema is installed and try again."
+        )
         raise RuntimeError
 
     validator = Validator(schema=schema_path)
