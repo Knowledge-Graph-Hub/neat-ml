@@ -14,13 +14,14 @@ class TestYamlHelper(TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         """Set up."""
-        cls.test_yaml = "tests/resources/test.yaml"
-        cls.yh = YamlHelper(cls.test_yaml)
-        cls.embedding_args = cls.yh.make_node_embeddings_args()
+        pass
 
     def setUp(self) -> None:
         """Set up."""
         self.test_yaml_upload_bad = "tests/resources/test_bad_upload_info.yaml"
+        self.test_yaml = "tests/resources/test.yaml"
+        self.yh = YamlHelper(self.test_yaml)
+        self.embedding_args = self.yh.make_node_embeddings_args()
 
     def test_validate_config(self):
         """Test validate config."""

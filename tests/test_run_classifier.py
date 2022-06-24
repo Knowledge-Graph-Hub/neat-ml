@@ -14,18 +14,22 @@ class TestRunClassifier(TestCase):
     """Test run classifier."""
 
     @classmethod
-    def setUpClass(cls) -> None:
+    def setUpClass(self) -> None:
         """Set up."""
-        cls.yaml_file = "tests/resources/test.yaml"
-        cls.yhelp = YamlHelper(cls.yaml_file)
-        cls.graph = Graph.from_csv(**cls.yhelp.main_graph_args())
-        cls.test_embeddings = (
+        pass
+    
+    def setUp(self) -> None:
+        """Set up."""
+        self.yaml_file = "tests/resources/test.yaml"
+        self.yhelp = YamlHelper(self.yaml_file)
+        self.graph = Graph.from_csv(**self.yhelp.main_graph_args())
+        self.test_embeddings = (
             "tests/resources/test_run_classifier/test_embeddings_test_yaml.csv"
         )
-        cls.test_model_path = (
+        self.test_model_path = (
             "tests/resources/test_run_classifier/model_lr_test_yaml.h5"
         )
-        cls.training_graph_args = {
+        self.training_graph_args = {
             "directed": False,
             "node_path": "tests/resources/test_graphs/pos_train_nodes.tsv",
             "edge_path": "tests/resources/test_graphs/pos_train_edges.tsv",
@@ -37,14 +41,10 @@ class TestRunClassifier(TestCase):
             "destinations_column": "object",
             "default_edge_type": "biolink:related_to",
         }
-        cls.negative_graph_args = {
+        self.negative_graph_args = {
             "directed": False,
             "edge_path": "tests/resources/test_graphs/neg_train_edges.tsv",
         }
-
-    def setUp(self) -> None:
-        """Set up."""
-        pass
 
     def test_reality(self):
         """Test reality."""
