@@ -121,7 +121,7 @@ def predict_links(
             "Cannot apply classifier."
         )
 
-    edge_embedding_for_predict = model.make_edge_embedding_for_predict(
+    edge_embedding_for_predict = model.make_edge_embedding_for_predict( # type: ignore
         embedding_file=embeddings_file,  # this should be the new embeddings
         edge_method=edge_method,
         source_destination_list=src_dst_list,
@@ -160,7 +160,8 @@ def predict_links(
 # This may be moved if needed
 def get_custom_model_path(model_file_path: str) -> str:
     """
-    Given the path to a sklearn or TF model,return the name of the corresponding custom model.
+    Given the path to a sklearn or TF model,return the name of\
+        the corresponding custom model.
 
     This allows a NEAT Model object to be
     created so we may access its methods.

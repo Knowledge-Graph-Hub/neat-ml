@@ -7,7 +7,7 @@ from typing import Optional, Tuple
 import numpy as np  # type: ignore
 import pandas as pd  # type: ignore
 from grape import Graph  # type: ignore
-from grape.embedding_transformers import (  # type: ignore
+from grape.embedding_transformers import (  # noqa BLK100
     EdgePredictionTransformer, GraphTransformer)
 
 
@@ -156,7 +156,7 @@ class Model:
         return edge_embedding_for_predict
 
     @classmethod
-    def dynamically_import_class(self, reference) -> object:
+    def dynamically_import_class(cls, reference) -> object:
         """Dynamically import a class based on its reference.
 
         Args:
@@ -166,11 +166,11 @@ class Model:
             The imported class
 
         """
-        klass = self.my_import(reference)
+        klass = cls.my_import(reference)
         return klass
 
     @classmethod
-    def dynamically_import_function(self, reference) -> object:
+    def dynamically_import_function(cls, reference) -> object:
         """Dynamically import a function based on its reference.
 
         Args:
@@ -186,7 +186,7 @@ class Model:
         return f
 
     @classmethod
-    def my_import(self, name):
+    def my_import(cls, name):
         components = name.split(".")
         mod = __import__(components[0])
         for comp in components[1:]:
