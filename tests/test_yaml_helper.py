@@ -180,6 +180,11 @@ class TestYamlHelper(TestCase):
     @mock.patch("neat_ml.yaml_helper.yaml_helper.download_file")
     @mock.patch("tarfile.open")
     def test_load_graph(self, mock_tarfile_open, mock_download_file):
+        """Test loading graph.
+
+        :param mock_tarfile_open: _description_
+        :param mock_download_file: _description_
+        """
         self.yh.load_graph()
         self.assertTrue(mock_download_file.called)
 
@@ -188,6 +193,11 @@ class TestYamlHelper(TestCase):
     def test_graph_contains_node_types(
         self, mock_tarfile_open, mock_download_file
     ):
+        """Test if graph contains node types.
+
+        :param mock_tarfile_open: Mock param.
+        :param mock_download_file: Mock param.
+        """
         g = self.yh.load_graph()
         self.assertTrue(mock_download_file.called)
         self.assertEqual(g.get_node_types_number(), 2)
@@ -211,6 +221,13 @@ class TestYamlHelper(TestCase):
     def test_download_compressed_file(
         self, mock_tarfile_open, mock_open, mock_urlopen, mock_request
     ):
+        """Test compressed file download.
+
+        :param mock_tarfile_open: Mock param.
+        :param mock_open: Mock param.
+        :param mock_urlopen: Mock param.
+        :param mock_request: Mock param.
+        """
         download_file("https://someurl.com/file.tar.gz", outfile="file.tar.gz")
         for this_mock in [
             mock_tarfile_open,

@@ -4,8 +4,6 @@ from unittest import TestCase, mock
 
 from click.testing import CliRunner
 
-from grape import Graph
-
 from neat_ml.cli import run, updateyaml
 
 
@@ -28,7 +26,9 @@ class TestRun(TestCase):
     @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_classifier")
     @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_tsne")
     @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_embeddings")
-    @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_apply_classifier")
+    @mock.patch(
+        "neat_ml.yaml_helper.yaml_helper.YamlHelper.do_apply_classifier"
+    )
     @mock.patch("boto3.client")
     @mock.patch("neat_ml.cli.pre_run_checks")
     def test_run_do_upload(
@@ -62,7 +62,9 @@ class TestRun(TestCase):
     @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_tsne")
     @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_embeddings")
     @mock.patch("neat_ml.graph_embedding.graph_embedding.make_node_embeddings")
-    @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_apply_classifier")
+    @mock.patch(
+        "neat_ml.yaml_helper.yaml_helper.YamlHelper.do_apply_classifier"
+    )
     @mock.patch("boto3.client")
     def test_run_do_embeddings(
         self,
@@ -143,7 +145,9 @@ class TestRun(TestCase):
     @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_classifier")
     @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_tsne")
     @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_embeddings")
-    @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_apply_classifier")
+    @mock.patch(
+        "neat_ml.yaml_helper.yaml_helper.YamlHelper.do_apply_classifier"
+    )
     @mock.patch("neat_ml.cli.pre_run_checks")
     def test_run_pre_run_checks(
         self,

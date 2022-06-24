@@ -9,11 +9,15 @@ from neat_ml.graph_embedding.graph_embedding import (get_node_data,
 
 
 class TestGraphEmbedding(TestCase):
+    """Test graph embedding functions."""
+
     @classmethod
     def setUpClass(cls) -> None:
+        """Set up."""
         pass
 
     def setUp(self) -> None:
+        """Set up."""
         self.test_node_file = (
             "tests/resources/test_graphs/test_small_nodes_with_text.tsv"
         )
@@ -56,11 +60,12 @@ class TestGraphEmbedding(TestCase):
             os.unlink(self.expected_embedding_file)
 
     def test_get_node_data(self):
+        """Test getting node data."""
         node_data = get_node_data(self.test_node_file)
         self.assertTrue(isinstance(node_data, pd.DataFrame))
 
     def test_make_graph_embeddings(self):
-
+        """Test making graph embeddings."""
         node_embedding_args = self.node_embed_args
         make_node_embeddings(**node_embedding_args)
         self.assertTrue(os.path.exists(self.expected_embedding_file))
