@@ -58,7 +58,7 @@ def validate_config(
 
 def parse_yaml(file: str) -> dict:
     with open(file, "r") as stream:
-        return yaml.safe_load(stream, Loader=yaml.FullLoader)
+        return yaml.load(stream, Loader=yaml.FullLoader)
 
 
 def is_url(string_to_check: Union[str, Path]) -> bool:
