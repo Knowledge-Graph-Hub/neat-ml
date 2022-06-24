@@ -72,7 +72,8 @@ class TestPreRunChecks(TestCase):
         self.assertTrue(return_val)
 
     def test_pre_run_classifiers(self) -> None:
-        return_val = pre_run_checks(
+        """Test pre_run_checks with classifiers."""
+        pre_run_checks(
             self.classifier_yaml,
             check_s3_credentials=False,
             check_s3_bucket=False,

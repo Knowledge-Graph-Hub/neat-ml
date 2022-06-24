@@ -184,12 +184,11 @@ class YamlHelper:
         return outdir
 
     def retrieve_from_sources(self) -> None:
-        """
-        Check for existence of a source_data key. 
+        """Check for existence of a source_data key. 
         If this exists,
         download and decompress as needed.
         The node_path and edge_path values
-        in graph_data will still need to 
+        in graph_data will still need to
         refer to the node/edge filenames.
         """
         if "GraphDataConfiguration" in self.yaml:
@@ -211,7 +210,8 @@ class YamlHelper:
                         download_file(filepath, outfile)
                     # If this was a URL, it already got decompressed.
                     # but if it's local and still compressed, decompress now
-                    # (this can happen if we already downloaded it but didn't decomp)
+                    # (this can happen if we already downloaded it 
+                    # but didn't decomp)
                     if filepath.endswith(".tar.gz"):
                         outlist = []
                         if is_url(filepath):
@@ -391,7 +391,7 @@ class YamlHelper:
 
     @catch_keyerror
     def classifiers(self) -> list:
-        """From the YAML, extract a list of classifiers to be trained
+        """From the YAML, extract a list of classifiers to be trained.
 
         :return: list of classifiers to be trained
         """

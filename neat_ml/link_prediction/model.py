@@ -18,24 +18,34 @@ class Model:
         self.outdir = outdir
 
     def fit(self, x, y):
+        """Fit a model, as a generic class method."""
         pass
 
     def compile(self):
+        """Compile a model, as a generic class method."""
         pass
 
     def load(self, path: str) -> object:
+        """Load a model, as a generic class method."""
         pass
 
     def save(self):
+        """Save a pickled model, 
+        as a generic class method."""
         with open(
             os.path.join(self.outdir, self.config["outfile"]), "wb"
         ) as f:
             pickle.dump(self, f)
 
     def predict(self, predict_data) -> np.ndarray:
+        """Return predictions from a fitted model, 
+        as a generic class method."""
         return self.model.predict(predict_data)  # type: ignore
 
     def predict_proba(self, x) -> np.ndarray:
+        """Return a set of predictions (node vs. node) 
+        and probability values from a fitted model, 
+        as a generic class method."""
         pass
 
     @classmethod
@@ -122,7 +132,7 @@ class Model:
 
     @classmethod
     def make_edge_embedding_for_predict(
-        self, embedding_file: str, edge_method: str, source_destination_list
+        cls, embedding_file: str, edge_method: str, source_destination_list
     ) -> np.ndarray:
         """Prepare training and validation data for training link prediction classifers
 
