@@ -1,3 +1,4 @@
+"""YAML helper."""
 import functools
 import logging
 import os
@@ -57,6 +58,11 @@ def validate_config(
 
 
 def parse_yaml(file: str) -> dict:
+    """Parse YAML.
+
+    :param file: YAML file path.
+    :return: YAML file as a dict.
+    """
     with open(file, "r") as stream:
         return yaml.load(stream, Loader=yaml.FullLoader)
 
@@ -144,6 +150,7 @@ class YamlHelper:
     """Class to parse yaml and extract args for methods."""
 
     def __init__(self, config: str):
+        """Initialize using configuration."""
         self.default_outdir = "output_data"
         self.default_indir = ""
         self.yaml: dict = parse_yaml(config)
@@ -281,6 +288,7 @@ class YamlHelper:
         return loaded_graph
 
     def main_graph_args(self) -> dict:
+        """Graph arguments."""
         return self.add_indir_to_graph_data(
             self.yaml["GraphDataConfiguration"]["graph"]
         )

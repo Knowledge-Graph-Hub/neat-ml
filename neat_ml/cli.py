@@ -1,3 +1,4 @@
+"""CLI for neat-ml."""
 import json
 import os
 
@@ -19,6 +20,7 @@ from neat_ml.yaml_helper.yaml_helper import YamlHelper
 
 @click.group()
 def cli():
+    """Click."""
     pass
 
 

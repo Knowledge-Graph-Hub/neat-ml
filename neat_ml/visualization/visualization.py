@@ -1,3 +1,4 @@
+"""Visualization using tSNE."""
 import pandas as pd  # type: ignore
 from grape import Graph  # type: ignore
 from grape import GraphVisualizer  # type: ignore
