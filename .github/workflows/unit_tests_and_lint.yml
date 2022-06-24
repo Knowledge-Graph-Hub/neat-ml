@@ -1,6 +1,8 @@
 
 name: run tests
-on: [push]
+on:
+  workflow_dispatch:
+
 jobs:
   run-make:
     runs-on: ubuntu-latest
