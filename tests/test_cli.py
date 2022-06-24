@@ -25,12 +25,14 @@ class TestRun(TestCase):
     @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_classifier")
     @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_tsne")
     @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_embeddings")
+    @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_apply_classifier")
     @mock.patch("boto3.client")
     @mock.patch("neat_ml.cli.pre_run_checks")
     def test_run_do_upload(
         self,
         mock_pre_run_checks,
         mock_boto3_client,
+        mock_do_apply_classifier,
         mock_do_embeddings,
         mock_do_tsne,
         mock_do_classifier,
@@ -41,6 +43,7 @@ class TestRun(TestCase):
         mock_do_classifier.return_value = False
         mock_do_upload.return_value = True
         mock_pre_run_checks.return_value = True
+        mock_do_apply_classifier.return_value = False
         result = self.runner.invoke(
             catch_exceptions=False,
             cli=run,
@@ -55,10 +58,12 @@ class TestRun(TestCase):
     @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_tsne")
     @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_embeddings")
     @mock.patch("neat_ml.graph_embedding.graph_embedding.make_node_embeddings")
+    @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_apply_classifier")
     @mock.patch("boto3.client")
     def test_run_do_embeddings(
         self,
         mock_boto,
+        mock_do_apply_classifier,
         mock_make_node_embeddings,
         mock_do_embeddings,
         mock_do_tsne,
@@ -69,6 +74,7 @@ class TestRun(TestCase):
         mock_do_tsne.return_value = False
         mock_do_classifier.return_value = False
         mock_do_upload.return_value = False
+        mock_do_apply_classifier.return_value = False
         result = self.runner.invoke(
             catch_exceptions=False,
             cli=run,
@@ -132,10 +138,12 @@ class TestRun(TestCase):
     @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_classifier")
     @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_tsne")
     @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_embeddings")
+    @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_apply_classifier")
     @mock.patch("neat_ml.cli.pre_run_checks")
     def test_run_pre_run_checks(
         self,
         mock_pre_run_checks,
+        mock_do_apply_classifier,
         mock_do_embeddings,
         mock_do_tsne,
         mock_do_classifier,
@@ -144,6 +152,7 @@ class TestRun(TestCase):
         """Test pre-run checks.
 
         :param mock_pre_run_checks: Mock param.
+        :param mock_do_apply_classifier: Mock param.
         :param mock_do_embeddings: Mock param.
         :param mock_do_tsne: Mock param.
         :param mock_do_classifier: Mock param.
@@ -154,6 +163,7 @@ class TestRun(TestCase):
         mock_do_classifier.return_value = False
         mock_do_upload.return_value = False
         mock_pre_run_checks.return_value = True
+        mock_do_apply_classifier.return_value = False
         result = self.runner.invoke(
             catch_exceptions=False,
             cli=run,
