@@ -63,22 +63,27 @@ class TestYamlHelper(TestCase):
         )
 
     def test_do_tsne(self):
+        """Test if 'do_tsne' attribute exists."""
         self.assertTrue(hasattr(YamlHelper, "do_tsne"))
         self.assertTrue(self.yh.do_tsne())
 
     def test_do_embeddings(self):
+        """Test if 'do_embeddings' attribute exists."""
         self.assertTrue(hasattr(YamlHelper, "do_embeddings"))
         self.assertTrue(self.yh.do_embeddings())
 
     def test_do_classifier(self):
+        """Test if 'do_classifier' attribute exists."""
         self.assertTrue(hasattr(YamlHelper, "do_classifier"))
         self.assertTrue(self.yh.do_classifier())
 
     def test_do_upload(self):
+        """Test upload."""
         self.assertTrue(hasattr(YamlHelper, "do_upload"))
         self.assertTrue(self.yh.do_upload())
 
     def test_make_upload_args(self):
+        """Test making upload arguments."""
         self.assertTrue(hasattr(YamlHelper, "make_upload_args"))
         self.assertDictEqual(
             self.yh.make_upload_args(),
@@ -91,6 +96,7 @@ class TestYamlHelper(TestCase):
         )
 
     def test_classifier_history_file_name(self):
+        """Test classifier history file name."""
         class_list = self.yh.yaml["ClassifierContainer"]["classifiers"]
         expect_filename = [
             x["history_filename"]
@@ -143,6 +149,11 @@ class TestYamlHelper(TestCase):
         ]
     )
     def test_make_embedding_args(self, key, value):
+        """Test making embedding arguments.
+
+        :param key: Key.
+        :param value: Value.
+        """
         self.assertTrue(
             key in self.embedding_args,
             msg=f"can't find key {key} in output of make_embedding_args()",
@@ -159,6 +170,11 @@ class TestYamlHelper(TestCase):
         ]
     )
     def test_is_url(self, string, expected_is_url_value):
+        """Test if string is URL.
+
+        :param string: URL value
+        :param expected_is_url_value: Expected URL value
+        """
         self.assertEqual(expected_is_url_value, is_url(string))
 
     @parameterized.expand(
@@ -171,6 +187,11 @@ class TestYamlHelper(TestCase):
         ]
     )
     def test_is_valid_path(self, string, expected_value):
+        """Test file path validity.
+
+        :param string: File path
+        :param expected_value: Expected value.
+        """
         if not expected_value:
             with self.assertRaises(FileNotFoundError):
                 is_valid_path(string)
@@ -182,8 +203,8 @@ class TestYamlHelper(TestCase):
     def test_load_graph(self, mock_tarfile_open, mock_download_file):
         """Test loading graph.
 
-        :param mock_tarfile_open: _description_
-        :param mock_download_file: _description_
+        :param mock_tarfile_open: Mock param.
+        :param mock_download_file: Mock param.
         """
         self.yh.load_graph()
         self.assertTrue(mock_download_file.called)
@@ -209,6 +230,12 @@ class TestYamlHelper(TestCase):
     @mock.patch("neat_ml.yaml_helper.yaml_helper.urlopen")
     @mock.patch("neat_ml.yaml_helper.yaml_helper.open")
     def test_download_file(self, mock_open, mock_urlopen, mock_request):
+        """Test download file.
+
+        :param mock_open: Mock param.
+        :param mock_urlopen: Mock param.
+        :param mock_request: Mock param.
+        """
         download_file("https://someurl.com/file.txt", outfile="someoutfile")
         for this_mock in [mock_open, mock_urlopen, mock_request]:
             self.assertTrue(this_mock.called)
