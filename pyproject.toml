@@ -1,8 +1,12 @@
 [tool.poetry]
 name = "neat-ml"
 version = "0.1.0"
-description = ""
-authors = ["Harshad Hegde <hegdehb@gmail.com>"]
+description = "Network Embeeding of All Things."
+authors = [
+    "Justin Reese <JustinReese@lbl.gov>",
+    "Harry Caufield <jhc@lbl.gov>",
+    "Harshad Hegde <hhegde@lbl.com>",
+    ]
 
 [tool.poetry.dependencies]
 python = "^3.8"
@@ -28,6 +32,9 @@ parameterized = "^0.8.1"
 
 [tool.black]
 line-length = 79
+
+[tool.poetry.extras]
+test = ["pytest"]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
