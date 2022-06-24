@@ -17,7 +17,7 @@ class TestRunClassifier(TestCase):
     def setUpClass(self) -> None:
         """Set up."""
         pass
-    
+
     def setUp(self) -> None:
         """Set up."""
         self.yaml_file = "tests/resources/test.yaml"

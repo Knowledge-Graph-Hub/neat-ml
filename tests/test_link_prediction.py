@@ -33,7 +33,9 @@ class TestLinkPrediction(TestCase):
         self.tf_model = MLPModel(
             (self.yhelp_tf.classifiers())[1], self.test_model_path
         )
-        self.sklearn_outfile = ((self.yhelp_sklearn.classifiers())[0])["outfile"]
+        self.sklearn_outfile = ((self.yhelp_sklearn.classifiers())[0])[
+            "outfile"
+        ]
         self.generic_tf_outfile = ((self.yhelp_tf.classifiers())[1])["outfile"]
         self.custom_tf_outfile = get_custom_model_path(self.generic_tf_outfile)
         self.training_graph_args = {
