@@ -1,3 +1,4 @@
+"""Test CLI."""
 import re
 from unittest import TestCase, mock
 
@@ -10,9 +11,11 @@ class TestRun(TestCase):
     """Tests the neat.py script."""
 
     def setUp(self) -> None:
+        """Set up."""
         self.runner = CliRunner()
 
     def test_run_no_yaml_file(self):
+        """Test YAML file that doesn't exit."""
         result = self.runner.invoke(
             catch_exceptions=False, cli=run, args=["--config", "doesntexist"]
         )
@@ -34,6 +37,7 @@ class TestRun(TestCase):
         mock_do_classifier,
         mock_do_upload,
     ):
+        """Test upload."""
         mock_do_embeddings.return_value = False
         mock_do_tsne.return_value = False
         mock_do_classifier.return_value = False
@@ -63,6 +67,7 @@ class TestRun(TestCase):
         mock_do_classifier,
         mock_do_upload,
     ):
+        """Test embedding generation."""
         mock_do_embeddings.return_value = True
         mock_do_tsne.return_value = False
         mock_do_classifier.return_value = False
