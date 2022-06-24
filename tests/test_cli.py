@@ -3,6 +3,8 @@ from unittest import TestCase, mock
 
 from click.testing import CliRunner
 
+from grape import Graph
+
 from neat_ml.cli import run, updateyaml
 
 
