@@ -14,7 +14,7 @@ class TestRunClassifier(TestCase):
     """Test run classifier."""
 
     @classmethod
-    def setUpClass(self) -> None:
+    def setUpClass(cls) -> None:
         """Set up."""
         pass
 

@@ -10,7 +10,7 @@ def upload_dir_to_s3(
 ) -> None:
 
     client = boto3.client("s3")
-    for root, dirs, files in os.walk(local_directory):
+    for root, _, files in os.walk(local_directory):
 
         for filename in files:
             local_path = os.path.join(root, filename)

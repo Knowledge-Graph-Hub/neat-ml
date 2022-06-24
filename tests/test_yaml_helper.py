@@ -4,7 +4,8 @@ from unittest import TestCase, mock
 from grape import Graph  # noqa F401
 from parameterized import parameterized
 
-from neat_ml.yaml_helper.yaml_helper import (YamlHelper, download_file, is_url,
+from neat_ml.yaml_helper.yaml_helper import is_url  # noqa BLK100
+from neat_ml.yaml_helper.yaml_helper import (YamlHelper, download_file,
                                              is_valid_path, validate_config)
 
 

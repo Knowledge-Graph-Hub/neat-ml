@@ -25,6 +25,7 @@ def validate_config(
 ) -> bool:
     """
     Validate the provided config against the neat_schema.
+
     :param config: dict of the parsed config file
     :param neat_schema_file: name of the neat schema
     file in neat-schema package
@@ -150,11 +151,12 @@ class YamlHelper:
 
     def indir(self):
         """Get input directory.
-            This is not currently specified in the
-            config and will be the current
-            working directory unless changed
-            directly through a call to the
-            YamlHelper object.
+
+        This is not currently specified in the
+        config and will be the current
+        working directory unless changed
+        directly through a call to the
+        YamlHelper object.
 
         Returns:
             The input directory
@@ -182,6 +184,7 @@ class YamlHelper:
 
     def retrieve_from_sources(self) -> None:
         """Check for existence of a source_data key.
+
         If this exists,
         download and decompress as needed.
         The node_path and edge_path values
@@ -228,6 +231,7 @@ class YamlHelper:
         keys_to_add_indir: list = ["node_path", "edge_path"],
     ) -> dict:
         """Update the graph file paths with input directory.
+
         :param graph_data - parsed yaml
         :param keys_to_add_indir: what keys to add indir to
         :return:
@@ -246,6 +250,7 @@ class YamlHelper:
     #
     def load_graph(self) -> Graph:
         """Load graph nodes and edges into Ensmallen.
+
         Create a node type list, as Ensmallen
         requires this to parse node types.
         :return: ensmallen Graph

@@ -14,7 +14,7 @@ from neat_ml.yaml_helper.yaml_helper import YamlHelper
 
 class TestLinkPrediction(TestCase):
     @classmethod
-    def setUpClass(self) -> None:
+    def setUpClass(cls) -> None:
         """Set up."""
         pass
 

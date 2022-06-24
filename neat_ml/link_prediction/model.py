@@ -30,21 +30,20 @@ class Model:
         pass
 
     def save(self):
-        """Save a pickled model,
-        as a generic class method."""
+        """Save a pickled model, as a generic class method."""
         with open(
             os.path.join(self.outdir, self.config["outfile"]), "wb"
         ) as f:
             pickle.dump(self, f)
 
     def predict(self, predict_data) -> np.ndarray:
-        """Return predictions from a fitted model,
+        """Return predictions from a fitted model,\
         as a generic class method."""
         return self.model.predict(predict_data)  # type: ignore
 
     def predict_proba(self, x) -> np.ndarray:
-        """Return a set of predictions (node vs. node)
-        and probability values from a fitted model,
+        """Return a set of predictions (node vs. node)\
+        and probability values from a fitted model,\
         as a generic class method."""
         pass
 
@@ -57,8 +56,7 @@ class Model:
         training_args: Optional[dict] = None,
         edge_method: str = "Average",
     ) -> Tuple[Tuple, Tuple]:
-        """Prepare training and validation data
-        for training link prediction classifers.
+        """Prepare training and validation data for training link prediction classifers.
 
         Args:
             embedding_file: path to embedding file

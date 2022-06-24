@@ -3,7 +3,7 @@ import yaml
 
 def do_update_yaml(input_path: str, keys: list, values: list) -> None:
     with open(input_path, "r") as yaml_file:
-        contents = yaml.load(yaml_file, Loader=yaml.FullLoader)
+        contents = yaml.load(yaml_file, Loader=yaml.FullLoader)  # noqa S506
 
     newkeyvalues = tuple(zip(keys, values))
     for key, newvalue in newkeyvalues:
@@ -30,6 +30,7 @@ def do_update_yaml(input_path: str, keys: list, values: list) -> None:
 
 def update_keyvalue(input_dict, keys, newvalue):
     """Update a provided key with a value.
+
     :param input_dict: YAML dict representation to be updated
     :param keys: list containing one or more keys.
     Multiple keys are nested, e.g. input_dict[key1][key2[key3].

@@ -118,9 +118,8 @@ def pre_run_checks(
 
 def pre_bucket_check(upload_args: dict) -> bool:
     """
-    Given upload args, checks if the
-    target bucket and directory are
-    accessible and empty, respectively.
+    Given upload args, checks if the target bucket and directory are\
+        accessible and empty, respectively.
     """
     success = True
 
