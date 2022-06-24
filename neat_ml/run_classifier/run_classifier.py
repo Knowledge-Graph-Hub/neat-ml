@@ -121,7 +121,7 @@ def predict_links(
             "Cannot apply classifier."
         )
 
-    edge_embedding_for_predict = model.make_edge_embedding_for_predict( # type: ignore
+    edge_embedding_for_predict = model.make_edge_embedding_for_predict(  # type: ignore noqa E501
         embedding_file=embeddings_file,  # this should be the new embeddings
         edge_method=edge_method,
         source_destination_list=src_dst_list,

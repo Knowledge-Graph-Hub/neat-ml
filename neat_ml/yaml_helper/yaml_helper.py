@@ -18,6 +18,7 @@ from linkml_validator.validator import Validator  # type: ignore
 from neat_ml.run_classifier.run_classifier import get_custom_model_path
 
 VALID_CHARS = "-_.() %s%s" % (string.ascii_letters, string.digits)
+INDIR_KEYS = ["node_path", "edge_path"]
 
 
 def validate_config(
@@ -57,11 +58,12 @@ def validate_config(
 
 def parse_yaml(file: str) -> dict:
     with open(file, "r") as stream:
-        return yaml.load(stream, Loader=yaml.FullLoader)
+        return yaml.safe_load(stream, Loader=yaml.FullLoader)
 
 
 def is_url(string_to_check: Union[str, Path]) -> bool:
     """Decide if a string is a URL.
+
     (Used for example for deciding
     whether we need to download a file for a
     given node_path or edge_path).
@@ -74,8 +76,7 @@ def is_url(string_to_check: Union[str, Path]) -> bool:
 
 
 def is_valid_path(string_to_check: Union[str, Path]) -> bool:
-    """Helper function to decide if a string is a
-    invalid filepath.
+    """Validate file path.
 
     Raise exception if file path is invalid.
 
@@ -99,6 +100,7 @@ def is_valid_path(string_to_check: Union[str, Path]) -> bool:
 
 def download_file(url: str, outfile: str) -> list:
     """Download file at input url to outfile path.
+
     URL must point to a TSV or a tar.gz compressed file.
     (This is checked during pre_run_checks though.)
     If it's tar.gz, decompress.
@@ -228,7 +230,7 @@ class YamlHelper:
     def add_indir_to_graph_data(
         self,
         graph_data: dict,
-        keys_to_add_indir: list = ["node_path", "edge_path"],
+        keys_to_add_indir: list = INDIR_KEYS,
     ) -> dict:
         """Update the graph file paths with input directory.
 

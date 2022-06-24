@@ -7,8 +7,8 @@ from typing import Optional, Tuple
 import numpy as np  # type: ignore
 import pandas as pd  # type: ignore
 from grape import Graph  # type: ignore
-from grape.embedding_transformers import (  # noqa BLK100
-    EdgePredictionTransformer, GraphTransformer)
+from grape.embedding_transformers import (EdgePredictionTransformer,
+                                          GraphTransformer)
 
 
 class Model:
@@ -49,7 +49,7 @@ class Model:
 
     @classmethod
     def make_train_valid_data(
-        self,
+        cls,
         embedding_file: str,
         training_graph_args: dict,
         validation_args: Optional[dict] = None,
@@ -132,7 +132,7 @@ class Model:
     def make_edge_embedding_for_predict(
         cls, embedding_file: str, edge_method: str, source_destination_list
     ) -> np.ndarray:
-        """Prepare training and validation data for training link prediction classifers
+        """Prepare training and validation data for training link prediction classifers.
 
         Args:
             embedding_file: path to embedding file for nodes in graph

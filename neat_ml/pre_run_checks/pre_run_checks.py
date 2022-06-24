@@ -55,7 +55,8 @@ def pre_run_checks(
                 ]
             else:
                 warnings.warn(
-                    "Can't find 'Buckets' key in output of client.list_buckets()"
+                    "Can't find 'Buckets' key in\
+                        output of client.list_buckets()"
                 )
             if "s3_bucket" not in upload_args:
                 warnings.warn("No 's3_bucket' in upload block")
@@ -117,10 +118,8 @@ def pre_run_checks(
 
 
 def pre_bucket_check(upload_args: dict) -> bool:
-    """
-    Given upload args, checks if the target bucket and directory are\
-        accessible and empty, respectively.
-    """
+    """Given upload args, checks if the target bucket and directory are\
+        accessible and empty, respectively."""
     success = True
 
     try:

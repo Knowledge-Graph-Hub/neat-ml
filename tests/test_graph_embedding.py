@@ -4,9 +4,8 @@ from unittest import TestCase
 
 import pandas as pd
 
-from neat_ml.graph_embedding.graph_embedding import \
-    get_node_data  # noqa BLK100
-from neat_ml.graph_embedding.graph_embedding import make_node_embeddings
+from neat_ml.graph_embedding.graph_embedding import (get_node_data,
+                                                     make_node_embeddings)
 
 
 class TestGraphEmbedding(TestCase):
