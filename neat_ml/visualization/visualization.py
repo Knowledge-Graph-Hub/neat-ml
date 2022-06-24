@@ -33,7 +33,7 @@ def make_all_plots(
 
     :param graph: Ensmallen graph object
     :param tsne_outfile: where to output plot image file
-    :param embedding_file: file containing embeddings 
+    :param embedding_file: file containing embeddings
     (in numpy format) to use to generate the tSNE plot
     :return:
     """

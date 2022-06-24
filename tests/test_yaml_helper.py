@@ -35,7 +35,7 @@ class TestYamlHelper(TestCase):
 
         self.assertTrue(validate_config(good_config))
         self.assertFalse(validate_config(bad_config))
-    
+
     def test_cannot_find_validate_config(self):
         """Test for case of missing schema definitions."""
         good_config = {
@@ -44,7 +44,9 @@ class TestYamlHelper(TestCase):
         }
         wrong_neat_schema_file = "not-this-one.yaml"
 
-        self.assertRaises(RuntimeError, validate_config, good_config, wrong_neat_schema_file)
+        self.assertRaises(
+            RuntimeError, validate_config, good_config, wrong_neat_schema_file
+        )
 
     def test_outdir(self) -> None:
         """Test out directory."""
@@ -58,8 +60,6 @@ class TestYamlHelper(TestCase):
         self.yh.add_indir_to_graph_data(
             graph_data={}, keys_to_add_indir=["not_a_key"]
         )
-
-    
 
     def test_do_tsne(self):
         self.assertTrue(hasattr(YamlHelper, "do_tsne"))

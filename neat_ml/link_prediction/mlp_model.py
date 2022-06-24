@@ -58,7 +58,7 @@ class MLPModel(Model):
         )
 
     def fit(self, train_data, train_labels):
-        """Take a model, generated from make_model(), 
+        """Take a model, generated from make_model(),
         and call .fit().
 
         Args:

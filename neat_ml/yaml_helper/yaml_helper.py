@@ -33,8 +33,8 @@ def validate_config(
     validated = True
     # Get schema path first
     schema_path = pkg_resources.resource_filename(
-            "neat_ml_schema", os.path.join("schema/", neat_schema_file)
-        )
+        "neat_ml_schema", os.path.join("schema/", neat_schema_file)
+    )
 
     if not os.path.exists(schema_path):
         print(
@@ -181,7 +181,7 @@ class YamlHelper:
         return outdir
 
     def retrieve_from_sources(self) -> None:
-        """Check for existence of a source_data key. 
+        """Check for existence of a source_data key.
         If this exists,
         download and decompress as needed.
         The node_path and edge_path values
@@ -207,7 +207,7 @@ class YamlHelper:
                         download_file(filepath, outfile)
                     # If this was a URL, it already got decompressed.
                     # but if it's local and still compressed, decompress now
-                    # (this can happen if we already downloaded it 
+                    # (this can happen if we already downloaded it
                     # but didn't decomp)
                     if filepath.endswith(".tar.gz"):
                         outlist = []

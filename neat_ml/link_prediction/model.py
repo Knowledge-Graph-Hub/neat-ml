@@ -30,7 +30,7 @@ class Model:
         pass
 
     def save(self):
-        """Save a pickled model, 
+        """Save a pickled model,
         as a generic class method."""
         with open(
             os.path.join(self.outdir, self.config["outfile"]), "wb"
@@ -38,13 +38,13 @@ class Model:
             pickle.dump(self, f)
 
     def predict(self, predict_data) -> np.ndarray:
-        """Return predictions from a fitted model, 
+        """Return predictions from a fitted model,
         as a generic class method."""
         return self.model.predict(predict_data)  # type: ignore
 
     def predict_proba(self, x) -> np.ndarray:
-        """Return a set of predictions (node vs. node) 
-        and probability values from a fitted model, 
+        """Return a set of predictions (node vs. node)
+        and probability values from a fitted model,
         as a generic class method."""
         pass
 
@@ -57,19 +57,19 @@ class Model:
         training_args: Optional[dict] = None,
         edge_method: str = "Average",
     ) -> Tuple[Tuple, Tuple]:
-        """Prepare training and validation data 
+        """Prepare training and validation data
         for training link prediction classifers.
 
         Args:
-            embedding_file: path to embedding file 
+            embedding_file: path to embedding file
             for nodes in graph
-            training_graph_args: Ensmallen arguments 
+            training_graph_args: Ensmallen arguments
             to load training graph
-            validation_args: Ensmallen arguments to 
+            validation_args: Ensmallen arguments to
             load positive and negative validation graphs
-            training_args: Ensmallen arguments to load 
+            training_args: Ensmallen arguments to load
             negative training graph
-            edge_method: edge embedding method to use 
+            edge_method: edge embedding method to use
             (average, L1, L2, etc)
         Returns:
             A tuple of tuples
