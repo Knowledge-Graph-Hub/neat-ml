@@ -12,3 +12,4 @@ tests/resources/tmp/*
 .vscode/*
 mlp_classifier_history.json
 .tox/*
+tests/resources/test_output_data_dir/*.*
