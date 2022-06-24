@@ -56,7 +56,8 @@ class Model:
         training_args: Optional[dict] = None,
         edge_method: str = "Average",
     ) -> Tuple[Tuple, Tuple]:
-        """Prepare training and validation data for training link prediction classifers.
+        """Prepare training and validation data for\
+            training link prediction classifers.
 
         Args:
             embedding_file: path to embedding file
@@ -132,7 +133,8 @@ class Model:
     def make_edge_embedding_for_predict(
         cls, embedding_file: str, edge_method: str, source_destination_list
     ) -> np.ndarray:
-        """Prepare training and validation data for training link prediction classifers.
+        """Prepare training and validation data\
+            for training link prediction classifers.
 
         Args:
             embedding_file: path to embedding file for nodes in graph
