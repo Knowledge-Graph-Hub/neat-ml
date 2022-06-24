@@ -1,7 +1,14 @@
+"""YAML Update."""
 import yaml
 
 
 def do_update_yaml(input_path: str, keys: list, values: list) -> None:
+    """Update YAML file.
+
+    :param input_path: Input file path.
+    :param keys: Keys to update.
+    :param values: Values to update.
+    """
     with open(input_path, "r") as yaml_file:
         contents = yaml.load(yaml_file, Loader=yaml.FullLoader)  # noqa S506
 

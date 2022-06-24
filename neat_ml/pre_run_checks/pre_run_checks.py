@@ -1,3 +1,4 @@
+"""Pre-run checks."""
 import collections
 import warnings
 

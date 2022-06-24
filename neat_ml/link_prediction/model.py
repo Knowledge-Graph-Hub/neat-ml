@@ -1,3 +1,4 @@
+"""Model."""
 import copy
 import importlib
 import os
@@ -12,7 +13,10 @@ from grape.embedding_transformers import (EdgePredictionTransformer,
 
 
 class Model:
+    """Model class."""
+
     def __init__(self, outdir=None):
+        """Model initialize."""
         if outdir:
             os.makedirs(outdir, exist_ok=True)
         self.outdir = outdir
@@ -136,13 +140,12 @@ class Model:
         """Prepare training and validation data\
             for training link prediction classifers.
 
-        Args:
-            embedding_file: path to embedding file for nodes in graph
-            trained_graph_args: EnsmallenGraph arguments to load training graph
-            edge_method: edge embedding method to use (average, L1, L2, etc)
-        Returns:
-            A NumPy Array embeddings that represent prediction edges.
-
+        :param embedding_file: Path to embedding file for nodes in graph.
+        :param edge_method: Edge embedding method to use
+        (average, L1, L2, etc).
+        :param source_destination_list: A list containing
+        source and destination nodes.
+        :return: A NumPy Array embeddings that represent prediction edges.
         """
         embedding = pd.read_csv(embedding_file, index_col=0, header=None)
 
@@ -161,12 +164,8 @@ class Model:
     def dynamically_import_class(cls, reference) -> object:
         """Dynamically import a class based on its reference.
 
-        Args:
-            reference: The reference or path for the class to be imported.
-
-        Returns:
-            The imported class
-
+        :param reference: The reference or path for the class to be imported.
+        :return: The imported class
         """
         klass = cls.my_import(reference)
         return klass
@@ -175,12 +174,9 @@ class Model:
     def dynamically_import_function(cls, reference) -> object:
         """Dynamically import a function based on its reference.
 
-        Args:
-            reference: The reference or path for the function to be imported.
-
-        Returns:
-            The imported function
-
+        :param reference: The reference or path for the
+        function to be imported.
+        :return: The imported function
         """
         module_name = ".".join(reference.split(".")[0:-1])
         function_name = reference.split(".")[-1]
@@ -189,6 +185,7 @@ class Model:
 
     @classmethod
     def my_import(cls, name):
+        """My import."""
         components = name.split(".")
         mod = __import__(components[0])
         for comp in components[1:]:

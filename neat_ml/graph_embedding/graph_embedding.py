@@ -1,3 +1,4 @@
+"""Graph Embedding."""
 import numpy as np  # type: ignore
 import pandas as pd  # type: ignore
 import transformers  # type: ignore
@@ -96,6 +97,12 @@ def make_node_embeddings(
 def merge_and_write_complete_node_data(
     original_nodes_file: str, node_data: pd.DataFrame, outfile: str
 ):
+    """Merge and write complete node data.
+
+    :param original_nodes_file: Original nodes file.
+    :param node_data: Nodes data.
+    :param outfile: Output file name.
+    """
     complete_node_data = get_node_data(original_nodes_file)
     node_data = node_data.merge(
         complete_node_data, how="left", on="id", suffixes=("", "_y")

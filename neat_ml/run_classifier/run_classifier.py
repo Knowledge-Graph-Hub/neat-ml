@@ -1,3 +1,4 @@
+"""Run classifier."""
 import os
 from itertools import combinations  # [READ DOCS]
 from pathlib import Path
@@ -16,7 +17,12 @@ def gen_src_dst_pair(
     graph: Graph,
     ignore_existing_edges: bool = True,
 ):
+    """Generate source-destination pair.
 
+    :param graph: Graph.
+    :param ignore_existing_edges: Ignore edges or not., defaults to True
+    :yield: Source-destination pair generation.
+    """
     # Get all node ids
     node_ids = graph.get_node_ids().tolist()[:100]
     # Yield only the (src, dst) combo

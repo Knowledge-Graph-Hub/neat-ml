@@ -1,3 +1,4 @@
+"""MLP model."""
 import os
 import pickle
 
@@ -7,15 +8,14 @@ from .model import Model
 
 
 class MLPModel(Model):
+    """MLP model class."""
+
     def __init__(self, config, outdir: str = None) -> None:
         """Make an MLP model.
 
-        Args:
-            config: the classifier config
-
-        Returns:
-            The model
-
+        :param config: The classifier config
+        :param outdir: Output path., defaults to None
+        :return: The model
         """
         super().__init__(outdir=outdir)
         self.config = config
@@ -36,6 +36,7 @@ class MLPModel(Model):
         self.model = model_instance
 
     def compile(self):
+        """Compile model."""
         model_compile_parameters = self.config["parameters"]["tf_keras_params"]
         metrics = (
             model_compile_parameters["metrics_config"]["metrics"]
@@ -60,13 +61,9 @@ class MLPModel(Model):
     def fit(self, train_data, train_labels):
         """Take a model, generated from 'make_model' and call 'fit'.
 
-        Args:
-            train_data: training data for fitting
-            validation_data: validation data for fitting
-
-        Returns:
-            The model object
-
+        :param train_data: Training data for fitting.
+        :param train_labels: Validation data for fitting.
+        :return: The model object
         """
         try:
             classifier_params = self.config["parameters"]["tf_keras_params"][
@@ -95,6 +92,7 @@ class MLPModel(Model):
         return history
 
     def save(self) -> None:
+        """Save model."""
         self.model.save(os.path.join(self.outdir, self.config["outfile"]))
 
         fn, ext = os.path.splitext(self.config["outfile"])
@@ -104,6 +102,7 @@ class MLPModel(Model):
             pickle.dump(self, f)
 
     def load(self, path: str) -> tuple():  # type: ignore
+        """Load model."""
         fn, ext = os.path.splitext(path)
         custom_model_filename = fn + "_custom" + ext
         generic_model_object = tf.keras.models.load_model(path)

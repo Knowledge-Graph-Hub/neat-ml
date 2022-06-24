@@ -434,9 +434,14 @@ class YamlHelper:
     #
 
     def do_upload(self) -> bool:
+        """Upload."""
         return "Upload" in self.yaml
 
     def make_upload_args(self) -> dict:
+        """Get upload arguments.
+
+        :return: Dictionary of upload arguments.
+        """
         make_upload_args = {
             "local_directory": self.outdir(),
             "s3_bucket": self.yaml["Upload"]["s3_bucket"],
@@ -450,10 +455,18 @@ class YamlHelper:
     #
     # applying trained model to fresh data for predictions
     #
-    def do_apply_classifier(self):
+    def do_apply_classifier(self) -> list:
+        """Apply classifier.
+
+        :return: List of classifiers to be applied.
+        """
         return "ApplyTrainedModelsContainer" in self.yaml
 
     def get_classifier_id_for_prediction(self):
+        """Get classifier ID for prediction.
+
+        :return: List of classifier IDs.
+        """
         classifier_applications = self.yaml["ApplyTrainedModelsContainer"][
             "models"
         ]
@@ -461,6 +474,11 @@ class YamlHelper:
         return list_of_ids
 
     def get_classifier_from_id(self, classifier_id: str):
+        """Get classifier from ID.
+
+        :param classifier_id: Classifier ID.
+        :return: Classifier information.
+        """
 
         return [
             x
@@ -468,7 +486,12 @@ class YamlHelper:
             if x["classifier_id"] == classifier_id
         ][0]
 
-    def make_classifier_args(self, cl_id: str):
+    def make_classifier_args(self, cl_id: str) -> dict:
+        """Make classifier arguments.
+
+        :param cl_id: Classifier ID.
+        :return: Classifier argument dictionary.
+        """
         classifier_args = [
             arg
             for arg in self.yaml["ApplyTrainedModelsContainer"]["models"]

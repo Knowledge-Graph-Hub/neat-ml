@@ -1,3 +1,4 @@
+"""Test pre-run checks."""
 from unittest import TestCase, mock
 
 from botocore.exceptions import ClientError
@@ -7,16 +8,24 @@ from neat_ml.yaml_helper.yaml_helper import YamlHelper
 
 
 class TestPreRunChecks(TestCase):
+    """Test pre-run checks."""
+
     @classmethod
     def setUpClass(cls) -> None:
+        """Set up."""
         pass
 
     def setUp(self) -> None:
+        """Set up."""
         self.upload_yaml = YamlHelper("tests/resources/test.yaml")
         self.classifier_yaml = YamlHelper("tests/resources/test.yaml")
 
     @mock.patch("boto3.client")
     def test_pre_run_check_confirm_boto_called(self, mock_boto_client) -> None:
+        """Test if boto was called.
+
+        :param mock_boto_client: Mock param.
+        """
         pre_run_checks(
             self.upload_yaml,
             check_s3_credentials=True,
@@ -26,6 +35,10 @@ class TestPreRunChecks(TestCase):
 
     @mock.patch("boto3.client")
     def test_pre_run_check_bad_credentials(self, mock_boto_client) -> None:
+        """Test bad credentials check.
+
+        :param mock_boto_client: Mock param.
+        """
         mock_boto_client.side_effect = ClientError(
             error_response=mock_boto_client, operation_name=mock_boto_client
         )
@@ -42,6 +55,10 @@ class TestPreRunChecks(TestCase):
     def test_pre_run_check_bad_credentials_but_no_upload(
         self, mock_boto_client
     ) -> None:
+        """Test bad credentials and no upload.
+
+        :param mock_boto_client: Mock param.
+        """
         mock_boto_client.side_effect = ClientError(
             error_response=mock_boto_client, operation_name=mock_boto_client
         )
@@ -59,6 +76,10 @@ class TestPreRunChecks(TestCase):
     def test_pre_run_check_bad_credentials_but_no_check(
         self, mock_boto_client
     ) -> None:
+        """Test bad credentials.
+
+        :param mock_boto_client: Mock param.
+        """
         mock_boto_client.side_effect = ClientError(
             error_response=mock_boto_client, operation_name=mock_boto_client
         )

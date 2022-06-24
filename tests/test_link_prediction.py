@@ -1,3 +1,4 @@
+"""Test link prediction."""
 import os
 import pathlib
 from unittest import TestCase
@@ -13,6 +14,8 @@ from neat_ml.yaml_helper.yaml_helper import YamlHelper
 
 
 class TestLinkPrediction(TestCase):
+    """Test link prediction."""
+
     @classmethod
     def setUpClass(cls) -> None:
         """Set up."""
@@ -52,10 +55,12 @@ class TestLinkPrediction(TestCase):
         }
 
     def assert_is_file(self, path):
+        """Assert if path is a file."""
         if not pathlib.Path(path).resolve().is_file():
             raise AssertionError("File does not exist: %s" % str(path))
 
     def test_sklearn_save(self) -> None:
+        """Test saving model using sklearn."""
         model_object = self.sklearn_model
 
         # Need to have a fitted model here
@@ -74,6 +79,7 @@ class TestLinkPrediction(TestCase):
         )
 
     def test_tf_save(self) -> None:
+        """Test saving model in tensorflow."""
         model_object = self.tf_model
 
         model_object.save()
@@ -89,11 +95,13 @@ class TestLinkPrediction(TestCase):
     # the save tests above, so they may remain independent.
 
     def test_sklearn_load(self) -> None:
+        """Test sklearn loading."""
         out_fn = os.path.join(self.test_load_path, self.sklearn_outfile)
         model_object = self.sklearn_model.load(out_fn)
         self.assertEqual(type(model_object), SklearnModel)
 
     def test_sklearn_fit(self) -> None:
+        """Test sklearn fitting."""
         model_object = self.sklearn_model
         result, _ = model_object.make_train_valid_data(
             embedding_file=self.embed_file,
@@ -105,6 +113,7 @@ class TestLinkPrediction(TestCase):
         self.assertEqual(str(fit_out), "LogisticRegression()")
 
     def test_tf_load(self) -> None:
+        """Test tensorflow load."""
         out_fn = os.path.join(self.test_load_path, self.generic_tf_outfile)
         (
             generic_model_object,
@@ -114,6 +123,7 @@ class TestLinkPrediction(TestCase):
         self.assertEqual(type(customized_model_object), MLPModel)
 
     def test_sklearn_make_link_prediction_data(self) -> None:
+        """Test sklearn link predication data generation."""
         model_object = self.sklearn_model
         result = model_object.make_train_valid_data(
             embedding_file=self.embed_file,
