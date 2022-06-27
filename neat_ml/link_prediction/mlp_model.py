@@ -42,7 +42,11 @@ class MLPModel(Model):
         for m in metrics:
             if m["type"].startswith("tensorflow.keras"):
                 m_class = self.dynamically_import_class(m["type"])
-                m_parameters = m["parameters"]
+                m_parameters = {}
+                if "name" in m:
+                    m_parameters["name"] = m["name"]
+                if "curve" in m:
+                    m_parameters["curve"] = m["curve"]
                 m_instance = m_class(**m_parameters)
                 metrics_class_list.append(m_instance)
             else:
