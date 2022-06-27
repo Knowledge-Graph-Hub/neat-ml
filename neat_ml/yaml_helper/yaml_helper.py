@@ -295,6 +295,7 @@ class YamlHelper:
 
     @catch_keyerror
     def val_graph_args(self) -> dict:
+        """Assemble dictionary of validation graph parameters."""
         return self.add_indir_to_graph_data(
             self.yaml["GraphDataConfiguration"]["evaluation_data"][
                 "valid_data"
@@ -303,6 +304,7 @@ class YamlHelper:
 
     @catch_keyerror
     def train_graph_args(self) -> dict:
+        """Assemble dictionary of training graph parameters."""
         return self.add_indir_to_graph_data(
             self.yaml["GraphDataConfiguration"]["evaluation_data"][
                 "train_data"
@@ -314,9 +316,11 @@ class YamlHelper:
     #
 
     def do_embeddings(self) -> bool:
+        """Check if the config includes embedding generation."""
         return "EmbeddingsConfig" in self.yaml
 
     def embedding_outfile(self) -> str:
+        """Return full path to embedding file."""
         filepath = self.yaml["EmbeddingsConfig"]["filename"]
         if is_url(filepath):
             url_as_filename = "".join(
@@ -330,6 +334,7 @@ class YamlHelper:
 
     @catch_keyerror
     def embedding_history_outfile(self):
+        """Return full path to embedding history file."""
         return os.path.join(
             self.outdir(),
             self.yaml["EmbeddingsConfig"]["history_filename"],
@@ -355,6 +360,7 @@ class YamlHelper:
     #     return metrics_class_list
 
     def make_node_embeddings_args(self) -> dict:
+        """Prepare a dict of parameters for node embeddings."""
         node_embedding_args = {
             "embedding_outfile": self.embedding_outfile(),
             "embedding_history_outfile": self.embedding_history_outfile(),
@@ -375,9 +381,11 @@ class YamlHelper:
     #
 
     def do_tsne(self) -> bool:
+        """Check if the config includes tSNE plotting."""
         return "tsne_filename" in self.yaml["EmbeddingsConfig"]
 
     def make_tsne_args(self, graph: Graph) -> dict:
+        """Assemble provided parametes for tSNE plotting."""
         make_tsne_args = {
             "graph": graph,
             "tsne_outfile": self.tsne_outfile(),
@@ -386,6 +394,7 @@ class YamlHelper:
         return make_tsne_args
 
     def tsne_outfile(self) -> str:
+        """Return full path to tSNE plot."""
         return os.path.join(
             self.outdir(), self.yaml["EmbeddingsConfig"]["tsne_filename"]
         )
@@ -395,9 +404,11 @@ class YamlHelper:
     #
 
     def do_classifier(self) -> bool:
+        """Check if the config includes classifiers."""
         return "ClassifierContainer" in self.yaml
 
     def classifier_type(self) -> str:
+        """Return the type (i.e., name) of classifier."""
         return self.yaml["ClassifierContainer"]["classifiers"][
             "classifier_name"
         ]
@@ -410,16 +421,19 @@ class YamlHelper:
         """
         return self.yaml["ClassifierContainer"]["classifiers"]
 
-    def get_all_classifier_ids(self):
+    def get_all_classifier_ids(self) -> list:
+        """Return list of classifier ids."""
         return [
             c["classifier_id"]
             for c in self.yaml["ClassifierContainer"]["classifiers"]
         ]
 
     def get_edge_embedding_method(self, classifier: dict) -> str:
+        """Return value for edge method for classifier."""
         return classifier["edge_method"]
 
     def classifier_history_file_name(self, classifier: dict) -> str:
+        """Return full path to classifier history file."""
         return (
             classifier["history_filename"]
             if "history_filename" in classifier
@@ -427,6 +441,7 @@ class YamlHelper:
         )
 
     def classifier_outfile(self, classifier: dict) -> str:
+        """Return full path to classifier file."""
         return os.path.join(self.outdir(), classifier["outfile"])
 
     #
@@ -479,7 +494,6 @@ class YamlHelper:
         :param classifier_id: Classifier ID.
         :return: Classifier information.
         """
-
         return [
             x
             for x in self.classifiers()
