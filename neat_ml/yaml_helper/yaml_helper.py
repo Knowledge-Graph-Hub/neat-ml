@@ -135,8 +135,11 @@ def download_file(url: str, outfile: str) -> list:
 
 
 def catch_keyerror(f):
+    """Neatly catch errors in missing YAML values."""
     @functools.wraps(f)
     def func(*args, **kwargs):
+        """Check errors in missing YAML values,
+        and warn if missing."""
         try:
             return f(*args, **kwargs)
         except KeyError as e:
