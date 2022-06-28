@@ -5,7 +5,13 @@ from unittest import TestCase
 
 import numpy as np
 import pandas as pd
-from keras.engine.sequential import Sequential
+
+try:
+    from keras.engine.sequential import Sequential
+    HAVE_KERAS = True
+except ModuleNotFoundError:
+    print("Keras not found - will not test related functions.")
+    HAVE_KERAS = False
 
 from neat_ml.link_prediction.mlp_model import MLPModel
 from neat_ml.link_prediction.sklearn_model import SklearnModel
@@ -119,7 +125,9 @@ class TestLinkPrediction(TestCase):
             generic_model_object,
             customized_model_object,
         ) = self.tf_model.load(out_fn)
-        self.assertEqual(type(generic_model_object), Sequential)
+
+        if HAVE_KERAS:
+            self.assertEqual(type(generic_model_object), Sequential)
         self.assertEqual(type(customized_model_object), MLPModel)
 
     def test_sklearn_make_link_prediction_data(self) -> None:
