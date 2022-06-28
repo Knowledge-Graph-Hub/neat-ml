@@ -34,7 +34,10 @@ parameterized = "^0.8.1"
 line-length = 79
 
 [tool.poetry.extras]
-test = ["pytest"]
+test = [
+    "pytest",
+    "parameterized",
+    ]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
