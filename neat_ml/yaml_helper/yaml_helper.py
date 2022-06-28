@@ -478,7 +478,7 @@ class YamlHelper:
 
         :return: List of classifiers to be applied.
         """
-        return self.yaml["ApplyTrainedModelsContainer"]
+        return "ApplyTrainedModelsContainer" in self.yaml
 
     def get_classifier_id_for_prediction(self):
         """Get classifier ID for prediction.
