@@ -1,8 +1,14 @@
 """MLP model."""
 import os
 import pickle
+from warnings import warn
 
-import tensorflow as tf  # type: ignore
+try:
+    import tensorflow as tf  # type: ignore
+    HAVE_TF = True
+except ModuleNotFoundError:
+    print("Tensorflow not found. MLP model compilation may fail!")
+    HAVE_TF = False
 
 from .model import Model
 
@@ -20,6 +26,8 @@ class MLPModel(Model):
         super().__init__(outdir=outdir)
         self.config = config
         model_type = config["classifier_type"]
+        if not HAVE_TF:
+            warn("Tensorflow not available - specified method may not be accessible!")
         model_class = self.dynamically_import_class(model_type)
         model_layers = []
         for layer in config["parameters"]["tf_keras_params"]["layers_config"][
@@ -103,6 +111,9 @@ class MLPModel(Model):
 
     def load(self, path: str) -> tuple():  # type: ignore
         """Load model."""
+        if not HAVE_TF:
+            warn("Tensorflow not available - cannot load model.")
+            return ()
         fn, ext = os.path.splitext(path)
         custom_model_filename = fn + "_custom" + ext
         generic_model_object = tf.keras.models.load_model(path)
