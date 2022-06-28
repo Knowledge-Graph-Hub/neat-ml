@@ -5,6 +5,7 @@ from warnings import warn
 
 try:
     import tensorflow as tf  # type: ignore
+
     HAVE_TF = True
 except ModuleNotFoundError:
     print("Tensorflow not found. MLP model compilation may fail!")
@@ -27,7 +28,9 @@ class MLPModel(Model):
         self.config = config
         model_type = config["classifier_type"]
         if not HAVE_TF:
-            warn("Tensorflow not available - specified method may not be accessible!")
+            warn(
+                "Tensorflow not available - specified method may not be accessible!"
+            )
         model_class = self.dynamically_import_class(model_type)
         model_layers = []
         for layer in config["parameters"]["tf_keras_params"]["layers_config"][

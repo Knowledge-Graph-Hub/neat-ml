@@ -8,6 +8,7 @@ import pandas as pd
 
 try:
     from keras.engine.sequential import Sequential
+
     HAVE_KERAS = True
 except ModuleNotFoundError:
     print("Keras not found - will not test related functions.")
