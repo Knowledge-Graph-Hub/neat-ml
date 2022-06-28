@@ -473,10 +473,10 @@ class YamlHelper:
     #
     # applying trained model to fresh data for predictions
     #
-    def do_apply_classifier(self) -> list:
-        """Apply classifier.
+    def do_apply_classifier(self) -> bool:
+        """Check on whether to apply classifier.
 
-        :return: List of classifiers to be applied.
+        :return: bool, True if should apply
         """
         return "ApplyTrainedModelsContainer" in self.yaml
 
