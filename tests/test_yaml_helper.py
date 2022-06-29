@@ -221,6 +221,7 @@ class TestYamlHelper(TestCase):
         """
         g = self.yh.load_graph()
         self.assertTrue(mock_download_file.called)
+
         self.assertEqual(g.get_node_types_number(), 2)
         self.assertCountEqual(
             g.get_unique_node_type_names(), ["biolink:Gene", "biolink:Protein"]
