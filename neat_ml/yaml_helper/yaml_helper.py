@@ -35,9 +35,9 @@ def validate_config(config: dict, neat_schema_file: str = 'neat_ml_schema.yaml')
     validated = True
 
     # Get schema path first
-    schema_path = pkg_resources.resource_filename('neat_ml_schema',
-                                                  os.path.join('src/schema/',
-                                                               neat_schema_file))
+    schema_path = pkg_resources.resource_filename(
+        "neat_ml_schema", os.path.join("schema/", neat_schema_file)
+    )
 
     if not os.path.exists(schema_path):
         raise RuntimeError
