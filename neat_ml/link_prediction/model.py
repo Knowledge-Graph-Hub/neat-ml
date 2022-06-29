@@ -95,7 +95,9 @@ class Model:
         ]:
             if not graph_args:
                 if name in ["neg_training", "neg_validation"]:
-                    neg_edge_number = graphs["pos_training"].get_number_of_edges()
+                    neg_edge_number = graphs[
+                        "pos_training"
+                    ].get_number_of_edges()
                     if not is_directed:
                         neg_edge_number = neg_edge_number * 2
 
