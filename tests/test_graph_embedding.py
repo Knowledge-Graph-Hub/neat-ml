@@ -41,13 +41,13 @@ class TestGraphEmbedding(TestCase):
                 "default_edge_type": "biolink:related_to",
             },
             "node_embedding_params": {
-                "method_name": "SkipGram",
-                "walk_length": 4,
-                "batch_size": 8,
+                "method_name": "CBOW",
+                "walk_length": 1,
+                "batch_size": 2,
                 "window_size": 2,
                 "return_weight": 1.0,
                 "explore_weight": 1.0,
-                "iterations": 2,
+                "iterations": 1,
             },
             "bert_columns": {"description": ""},
         }
