@@ -38,12 +38,12 @@ EmbeddingsConfig:
   history_filename: embedding_history.json
   node_embeddings_params:
     method_name: Node2Vec SkipGram
-    walk_length: 4 # typically 100 or so
-    batch_size: 32 # typically 512? or more
-    window_size: 4
+    walk_length: 2 # typically 100 or so
+    batch_size: 4 # typically 512? or more
+    window_size: 2
     return_weight: 1.0  # 1/p
     explore_weight: 1.0  # 1/q
-    iterations: 2 # typically 20
+    iterations: 1 # typically 20
   tsne_filename: tsne.png
   #bert_params:
   #  node_columns:

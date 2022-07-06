@@ -128,13 +128,13 @@ class TestYamlHelper(TestCase):
             (
                 "node_embedding_params",
                 {
-                    "method_name": "SkipGram",
-                    "batch_size": 32,
+                    "method_name": "Node2Vec SkipGram",
+                    "batch_size": 4,
                     "explore_weight": 1.0,
-                    "iterations": 2,
+                    "iterations": 1,
                     "return_weight": 1.0,
-                    "walk_length": 4,
-                    "window_size": 4,
+                    "walk_length": 2,
+                    "window_size": 2,
                 },
             ),
             (
