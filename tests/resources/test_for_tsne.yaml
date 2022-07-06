@@ -21,7 +21,7 @@ GraphDataConfiguration:
 EmbeddingsConfig:
   filename: test_embeddings.csv
   node_embeddings_params:
-    method_name: SkipGram
+    method_name: Node2Vec SkipGram
     walk_length: 10 # typically 100 or so
     batch_size: 128 # typically 512? or more
     window_size: 4

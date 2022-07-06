@@ -41,7 +41,7 @@ class TestGraphEmbedding(TestCase):
                 "default_edge_type": "biolink:related_to",
             },
             "node_embedding_params": {
-                "method_name": "CBOW",
+                "method_name": "Node2Vec CBOW",
                 "walk_length": 1,
                 "batch_size": 2,
                 "window_size": 2,

@@ -37,7 +37,7 @@ EmbeddingsConfig:
   filename: test_embeddings_test_yaml.csv
   history_filename: embedding_history.json
   node_embeddings_params:
-    method_name: SkipGram
+    method_name: Node2Vec SkipGram
     walk_length: 4 # typically 100 or so
     batch_size: 32 # typically 512? or more
     window_size: 4
