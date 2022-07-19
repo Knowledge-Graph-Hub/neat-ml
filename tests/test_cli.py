@@ -61,7 +61,7 @@ class TestRun(TestCase):
     @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_classifier")
     @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_tsne")
     @mock.patch("neat_ml.yaml_helper.yaml_helper.YamlHelper.do_embeddings")
-    @mock.patch("neat_ml.graph_embedding.graph_embedding.make_node_embeddings")
+    @mock.patch("neat_ml.cli.make_node_embeddings")
     @mock.patch(
         "neat_ml.yaml_helper.yaml_helper.YamlHelper.do_apply_classifier"
     )
