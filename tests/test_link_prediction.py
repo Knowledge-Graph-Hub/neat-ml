@@ -33,6 +33,7 @@ class TestLinkPrediction(TestCase):
         self.yaml_file_sklearn = "tests/resources/test.yaml"
         self.yaml_file_tf = "tests/resources/test.yaml"
         self.embed_file = "tests/resources/test_link_prediction/test_embeddings_test_yaml.csv"  # noqa E501
+        self.embed_snippet_file = "tests/resources/test_link_prediction/test_embeddings_test_yaml_SNIPPET.csv"
         self.yhelp_sklearn = YamlHelper(self.yaml_file_sklearn)
         self.yhelp_tf = YamlHelper(self.yaml_file_tf)
         self.test_model_path = "tests/resources/test_output_data_dir/"
@@ -71,7 +72,7 @@ class TestLinkPrediction(TestCase):
         model_object = self.sklearn_model
 
         # Need to have a fitted model here
-        embed_contents = pd.read_csv(self.embed_file, index_col=0, header=None)
+        embed_contents = pd.read_csv(self.embed_snippet_file, index_col=0, header=None)
 
         dummy_labels = np.random.randint(
             0, high=2, size=(embed_contents.shape[0],), dtype=np.bool
