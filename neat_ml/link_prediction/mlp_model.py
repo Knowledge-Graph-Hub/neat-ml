@@ -1,37 +1,54 @@
+"""MLP model."""
 import os
 import pickle
-import tensorflow as tf  # type: ignore
+from warnings import warn
+
+try:
+    import tensorflow as tf  # type: ignore
+
+    HAVE_TF = True
+except ModuleNotFoundError:
+    print("Tensorflow not found. MLP model compilation may fail!")
+    HAVE_TF = False
+
 from .model import Model
 
 
 class MLPModel(Model):
+    """MLP model class."""
+
     def __init__(self, config, outdir: str = None) -> None:
-        """make an MLP model
+        """Make an MLP model.
 
-        Args:
-            config: the classifier config
-
-        Returns:
-            The model
-
+        :param config: The classifier config
+        :param outdir: Output path., defaults to None
+        :return: The model
         """
         super().__init__(outdir=outdir)
         self.config = config
         model_type = config["classifier_type"]
+        if not HAVE_TF:
+            warn(
+                "Tensorflow not available - specified method \
+                may not be accessible!"
+            )
         model_class = self.dynamically_import_class(model_type)
         model_layers = []
-        for layer in config["parameters"]["tf_keras_params"]["layers_config"]["layers"]:
+        for layer in config["parameters"]["tf_keras_params"]["layers_config"][
+            "layers"
+        ]:
             layer_type = layer["type"]
             layer_class = self.dynamically_import_class(layer_type)
             parameters = layer["parameters"]
             layer_instance = layer_class(**parameters)  # type: ignore
             model_layers.append(layer_instance)
         model_instance = model_class()  # type: ignore
-        for l in model_layers:
-            model_instance.add(l)
+        for one_layer in model_layers:
+            model_instance.add(one_layer)
         self.model = model_instance
 
     def compile(self):
+        """Compile model."""
         model_compile_parameters = self.config["parameters"]["tf_keras_params"]
         metrics = (
             model_compile_parameters["metrics_config"]["metrics"]
@@ -58,15 +75,11 @@ class MLPModel(Model):
         )
 
     def fit(self, train_data, train_labels):
-        """Takes a model, generated from make_model(), and calls .fit()
+        """Take a model, generated from 'make_model' and call 'fit'.
 
-        Args:
-            train_data: training data for fitting
-            validation_data: validation data for fitting
-
-        Returns:
-            The model object
-
+        :param train_data: Training data for fitting.
+        :param train_labels: Validation data for fitting.
+        :return: The model object
         """
         try:
             classifier_params = self.config["parameters"]["tf_keras_params"][
@@ -95,9 +108,8 @@ class MLPModel(Model):
         return history
 
     def save(self) -> None:
-        self.model.save(
-            os.path.join(self.outdir, self.config["outfile"])
-        )
+        """Save model."""
+        self.model.save(os.path.join(self.outdir, self.config["outfile"]))
 
         fn, ext = os.path.splitext(self.config["outfile"])
         model_outfile = fn + "_custom" + ext
@@ -105,7 +117,11 @@ class MLPModel(Model):
         with open(os.path.join(self.outdir, model_outfile), "wb") as f:
             pickle.dump(self, f)
 
-    def load(self, path: str) -> tuple(): # type: ignore
+    def load(self, path: str) -> tuple():  # type: ignore
+        """Load model."""
+        if not HAVE_TF:
+            warn("Tensorflow not available - cannot load model.")
+            return ()
         fn, ext = os.path.splitext(path)
         custom_model_filename = fn + "_custom" + ext
         generic_model_object = tf.keras.models.load_model(path)

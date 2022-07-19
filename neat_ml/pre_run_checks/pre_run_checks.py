@@ -1,9 +1,12 @@
+"""Pre-run checks."""
 import collections
 import warnings
 
 import boto3  # type: ignore
 from botocore.exceptions import ClientError  # type: ignore
+
 from neat_ml.yaml_helper.yaml_helper import YamlHelper
+
 
 def pre_run_checks(
     yhelp: YamlHelper,
@@ -12,14 +15,15 @@ def pre_run_checks(
     check_s3_bucket_dir: bool = True,
     check_classifiers: bool = True,
 ) -> bool:
-    """Some checks before run, to prevent frustrating failure at the end of long runs
+    """Prevent frustrating failure at the end of long runs.
 
     Args:
         yhelp: YamlHelper object
-        check_s3_credentials: should we check S3 credentials (true). Note that if no
-            upload dir exists, this will pass
+        check_s3_credentials: should we check S3 credentials (true).
+        Note that if no upload dir exists, this will pass
         check_s3_bucket: check that s3 bucket exists on s3
-        check_s3_bucket_dir: check that s3 bucket directory doesn't already exist
+        check_s3_bucket_dir: check that s3 bucket directory
+        doesn't already exist
         check_classifiers: verify that classifier ids don't conflict
 
     Returns:
@@ -52,7 +56,8 @@ def pre_run_checks(
                 ]
             else:
                 warnings.warn(
-                    "Can't find 'Buckets' key in output of client.list_buckets()"
+                    "Can't find 'Buckets' key in\
+                        output of client.list_buckets()"
                 )
             if "s3_bucket" not in upload_args:
                 warnings.warn("No 's3_bucket' in upload block")
@@ -71,7 +76,7 @@ def pre_run_checks(
         check_s3_bucket_dir and yhelp.do_upload()
     ):  # make sure we are going to upload
         upload_args = yhelp.make_upload_args()
-        
+
         if not pre_bucket_check(upload_args):
             return_val = False
 
@@ -85,7 +90,7 @@ def pre_run_checks(
         all_classifier_ids = yhelp.get_all_classifier_ids()
         if len(all_classifier_ids) != len(set(all_classifier_ids)):
             dup_ids = [
-                item # type: ignore
+                item  # type: ignore
                 for item, count in collections.Counter(  # type: ignore
                     all_classifier_ids
                 ).items()
@@ -93,7 +98,8 @@ def pre_run_checks(
             ]
 
             raise ValueError(
-                f"Same 'classifier_id' represents multiple classes in the yaml provided: {dup_ids}"
+                "Same 'classifier_id' represents multiple classes "
+                f"in the yaml provided: {dup_ids}"
             )
 
         if yhelp.do_apply_classifier():
@@ -104,20 +110,17 @@ def pre_run_checks(
             if not check:
                 return_val = False
                 raise ValueError(
-                    f"The 'classifier_id' used for prediction does "
+                    "The 'classifier_id' used for prediction does "
                     "not map to any classifier in the yaml provided:"
-                    "{yhelp.get_classifier_id_for_prediction()}"
+                    f"{yhelp.get_classifier_id_for_prediction()}"
                 )
 
     return return_val
 
-def pre_bucket_check(upload_args: dict) -> bool:
-    """
-    Given upload args, checks if the
-    target bucket and directory are
-    accessible and empty, respectively.
-    """
 
+def pre_bucket_check(upload_args: dict) -> bool:
+    """Given upload args, checks if the target bucket and directory are\
+        accessible and empty, respectively."""
     success = True
 
     try:
@@ -141,6 +144,7 @@ def pre_bucket_check(upload_args: dict) -> bool:
         success = False
 
     return success
+
 
 if __name__ == "__main__":
     pre_run_checks(yhelp=YamlHelper())  # type: ignore

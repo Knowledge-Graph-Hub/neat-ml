@@ -1,45 +1,49 @@
+"""YAML helper."""
 import functools
 import logging
-
 import os
 import pickle
 import string
-from typing import Optional, Union
-from urllib.request import Request, urlopen
-import tarfile
 import sys
-import pkg_resources # type: ignore
-
-import yaml  # type: ignore
-from grape import Graph # type: ignore
-from neat_ml.link_prediction.mlp_model import MLPModel  # type: ignore
-from neat_ml.link_prediction.model import Model
-import validators  # type: ignore
+import tarfile
 from pathlib import Path
+from typing import Union
+from urllib.request import Request, urlopen
 
-import neat_ml_schema # type: ignore
-from linkml_validator.validator import Validator # type: ignore
+import pkg_resources  # type: ignore
+import validators  # type: ignore
+import yaml  # type: ignore
+from grape import Graph  # type: ignore
+from linkml_validator.validator import Validator  # type: ignore
 
 from neat_ml.run_classifier.run_classifier import get_custom_model_path
 
 VALID_CHARS = "-_.() %s%s" % (string.ascii_letters, string.digits)
+INDIR_KEYS = ["node_path", "edge_path"]
 
 
-def validate_config(config: dict, neat_schema_file: str = 'neat_ml_schema.yaml') -> bool:
+def validate_config(
+    config: dict, neat_schema_file: str = "neat_ml_schema.yaml"
+) -> bool:
     """
     Validate the provided config against the neat_schema.
+
     :param config: dict of the parsed config file
-    :param neat_schema_file: name of the neat schema file in neat-schema package
+    :param neat_schema_file: name of the neat schema
+    file in neat-schema package
     :return: bool, false if validation failed
     """
     validated = True
-
     # Get schema path first
     schema_path = pkg_resources.resource_filename(
         "neat_ml_schema", os.path.join("schema/", neat_schema_file)
     )
 
     if not os.path.exists(schema_path):
+        print(
+            f"Cannot find {neat_schema_file}! \n"
+            "Please verify that neat-ml-schema is installed and try again."
+        )
         raise RuntimeError
 
     validator = Validator(schema=schema_path)
@@ -54,29 +58,37 @@ def validate_config(config: dict, neat_schema_file: str = 'neat_ml_schema.yaml')
 
 
 def parse_yaml(file: str) -> dict:
+    """Parse YAML.
+
+    :param file: YAML file path.
+    :return: YAML file as a dict.
+    """
     with open(file, "r") as stream:
         return yaml.load(stream, Loader=yaml.FullLoader)
 
+
 def is_url(string_to_check: Union[str, Path]) -> bool:
-    """Helper function to decide if a string is a
-    URL (used for example for deciding
-    whether we need to download a file for a given node_path or edge_path).
+    """Decide if a string is a URL.
+
+    (Used for example for deciding
+    whether we need to download a file for a
+    given node_path or edge_path).
     Raise exception if file path is invalid.
+
     :param string_to_check: string to check
     :return: bool, True if string is URL
     """
-
     return bool(validators.url(string_to_check))
 
 
 def is_valid_path(string_to_check: Union[str, Path]) -> bool:
-    """Helper function to decide if a string is a
-    invalid filepath.
+    """Validate file path.
+
     Raise exception if file path is invalid.
+
     :param string_to_check: string to check
     :return: bool, True if string is valid filepath
     """
-
     if isinstance(string_to_check, Path):
         if not string_to_check.is_file():
             raise FileNotFoundError(
@@ -91,26 +103,26 @@ def is_valid_path(string_to_check: Union[str, Path]) -> bool:
 
     return False
 
+
 def download_file(url: str, outfile: str) -> list:
-    """
-    Downloads file at input url to outfile path.
+    """Download file at input url to outfile path.
+
     URL must point to a TSV or a tar.gz compressed file.
     (This is checked during pre_run_checks though.)
     If it's tar.gz, decompress.
     Return the names of all files as a list.
     """
-
     outlist = []
 
-    req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-    with urlopen(req) as response, open(outfile, 'wb') as fh:  # type: ignore
+    req = Request(url, headers={"User-Agent": "Mozilla/5.0"})
+    with urlopen(req) as response, open(outfile, "wb") as fh:  # type: ignore
         data = response.read()  # a `bytes` object
         fh.write(data)
-    if outfile.lower().endswith(".tar.gz"): # Need to decompress
+    if outfile.lower().endswith(".tar.gz"):  # Need to decompress
         decomp_outfile = tarfile.open(outfile)
         outdir = os.path.dirname(outfile)
         for filename in decomp_outfile.getnames():
-            outlist.append(os.path.join(outdir,filename))
+            outlist.append(os.path.join(outdir, filename))
         filecount = len(outlist)
         if filecount > 2:
             logging.warning(f"{outfile} contains {filecount} files.")
@@ -123,8 +135,11 @@ def download_file(url: str, outfile: str) -> list:
 
 
 def catch_keyerror(f):
+    """Neatly catch errors in missing YAML values."""
+
     @functools.wraps(f)
     def func(*args, **kwargs):
+        """Check errors in missing YAML values and warn if missing."""
         try:
             return f(*args, **kwargs)
         except KeyError as e:
@@ -135,11 +150,10 @@ def catch_keyerror(f):
 
 
 class YamlHelper:
-    """
-    Class to parse yaml and extract args for methods
-    """
+    """Class to parse yaml and extract args for methods."""
 
     def __init__(self, config: str):
+        """Initialize using configuration."""
         self.default_outdir = "output_data"
         self.default_indir = ""
         self.yaml: dict = parse_yaml(config)
@@ -149,11 +163,12 @@ class YamlHelper:
 
     def indir(self):
         """Get input directory.
-            This is not currently specified in the
-            config and will be the current
-            working directory unless changed
-            directly through a call to the
-            YamlHelper object.
+
+        This is not currently specified in the
+        config and will be the current
+        working directory unless changed
+        directly through a call to the
+        YamlHelper object.
 
         Returns:
             The input directory
@@ -180,19 +195,19 @@ class YamlHelper:
         return outdir
 
     def retrieve_from_sources(self) -> None:
-        """
-        Checks for existence of a
-        source_data key. If this exists,
+        """Check for existence of a source_data key.
+
+        If this exists,
         download and decompress as needed.
         The node_path and edge_path values
-        in graph_data
-        will still need to refer to the
-        node/edge filenames.
+        in graph_data will still need to
+        refer to the node/edge filenames.
         """
-
         if "GraphDataConfiguration" in self.yaml:
             if "source_data" in self.yaml["GraphDataConfiguration"]:
-                for entry in self.yaml["GraphDataConfiguration"]["source_data"]["files"]:
+                for entry in self.yaml["GraphDataConfiguration"][
+                    "source_data"
+                ]["files"]:
                     filepath = entry["path"]
                     if "desc" in entry:
                         desc = entry["desc"]
@@ -200,13 +215,15 @@ class YamlHelper:
                     else:
                         print(f"Retrieving {filepath}")
                     if is_url(filepath):
-                        url_as_filename = \
-                            ''.join(c if c in VALID_CHARS else "_" for c in filepath)
+                        url_as_filename = "".join(
+                            c if c in VALID_CHARS else "_" for c in filepath
+                        )
                         outfile = os.path.join(self.indir(), url_as_filename)
                         download_file(filepath, outfile)
                     # If this was a URL, it already got decompressed.
                     # but if it's local and still compressed, decompress now
-                    # (this can happen if we already downloaded it but didn't decomp)
+                    # (this can happen if we already downloaded it
+                    # but didn't decomp)
                     if filepath.endswith(".tar.gz"):
                         outlist = []
                         if is_url(filepath):
@@ -214,29 +231,30 @@ class YamlHelper:
                         else:
                             decomp_outfile = tarfile.open(filepath)
                         for filename in decomp_outfile.getnames():
-                            outlist.append(os.path.join(self.indir(),filename))
+                            outlist.append(
+                                os.path.join(self.indir(), filename)
+                            )
                         decomp_outfile.extractall(self.indir())
                         decomp_outfile.close()
 
     def add_indir_to_graph_data(
         self,
         graph_data: dict,
-        keys_to_add_indir: list = ["node_path", "edge_path"],
+        keys_to_add_indir: list = INDIR_KEYS,
     ) -> dict:
-        """
-        Updates the graph file paths
-        with their input directory.
+        """Update the graph file paths with input directory.
+
         :param graph_data - parsed yaml
         :param keys_to_add_indir: what keys to add indir to
         :return:
         """
-
         for k in keys_to_add_indir:
             if k in graph_data:
                 graph_data[k] = os.path.join(self.indir(), graph_data[k])
             else:
                 logging.warning(
-                    f"Can't find key {k} in graph_data - skipping (possibly harmless)"
+                    f"Can't find key {k} in graph_data - skipping\
+                        (possibly harmless)"
                 )
         return graph_data
 
@@ -244,14 +262,13 @@ class YamlHelper:
     # graph stuff
     #
     def load_graph(self) -> Graph:
-        """
-        Loads graph nodes and edges into Ensmallen.
-        Creates a node type list, as Ensmallen
+        """Load graph nodes and edges into Ensmallen.
+
+        Create a node type list, as Ensmallen
         requires this to parse node types.
         :return: ensmallen Graph
         """
-
-        #Load sources if necessary
+        # Load sources if necessary
         self.retrieve_from_sources()
 
         graph_args_with_indir = self.main_graph_args()
@@ -274,18 +291,27 @@ class YamlHelper:
         return loaded_graph
 
     def main_graph_args(self) -> dict:
-        return self.add_indir_to_graph_data(self.yaml["GraphDataConfiguration"]["graph"])
+        """Graph arguments."""
+        return self.add_indir_to_graph_data(
+            self.yaml["GraphDataConfiguration"]["graph"]
+        )
 
     @catch_keyerror
     def val_graph_args(self) -> dict:
+        """Assemble dictionary of validation graph parameters."""
         return self.add_indir_to_graph_data(
-            self.yaml["GraphDataConfiguration"]["evaluation_data"]["valid_data"]
+            self.yaml["GraphDataConfiguration"]["evaluation_data"][
+                "valid_data"
+            ]
         )
 
     @catch_keyerror
     def train_graph_args(self) -> dict:
+        """Assemble dictionary of training graph parameters."""
         return self.add_indir_to_graph_data(
-            self.yaml["GraphDataConfiguration"]["evaluation_data"]["train_data"]
+            self.yaml["GraphDataConfiguration"]["evaluation_data"][
+                "train_data"
+            ]
         )
 
     #
@@ -293,22 +319,25 @@ class YamlHelper:
     #
 
     def do_embeddings(self) -> bool:
+        """Check if the config includes embedding generation."""
         return "EmbeddingsConfig" in self.yaml
 
     def embedding_outfile(self) -> str:
-        filepath = self.yaml['EmbeddingsConfig']['filename']
+        """Return full path to embedding file."""
+        filepath = self.yaml["EmbeddingsConfig"]["filename"]
         if is_url(filepath):
-            url_as_filename = \
-                ''.join(c if c in VALID_CHARS else "_" for c in filepath)
+            url_as_filename = "".join(
+                c if c in VALID_CHARS else "_" for c in filepath
+            )
             outfile = os.path.join(self.outdir(), url_as_filename)
             download_file(filepath, outfile)
             return outfile
         else:
-            return os.path.join(self.outdir(),
-                            filepath)
+            return os.path.join(self.outdir(), filepath)
 
     @catch_keyerror
     def embedding_history_outfile(self):
+        """Return full path to embedding history file."""
         return os.path.join(
             self.outdir(),
             self.yaml["EmbeddingsConfig"]["history_filename"],
@@ -334,6 +363,7 @@ class YamlHelper:
     #     return metrics_class_list
 
     def make_node_embeddings_args(self) -> dict:
+        """Prepare a dict of parameters for node embeddings."""
         node_embedding_args = {
             "embedding_outfile": self.embedding_outfile(),
             "embedding_history_outfile": self.embedding_history_outfile(),
@@ -354,9 +384,11 @@ class YamlHelper:
     #
 
     def do_tsne(self) -> bool:
+        """Check if the config includes tSNE plotting."""
         return "tsne_filename" in self.yaml["EmbeddingsConfig"]
 
     def make_tsne_args(self, graph: Graph) -> dict:
+        """Assemble provided parametes for tSNE plotting."""
         make_tsne_args = {
             "graph": graph,
             "tsne_outfile": self.tsne_outfile(),
@@ -365,6 +397,7 @@ class YamlHelper:
         return make_tsne_args
 
     def tsne_outfile(self) -> str:
+        """Return full path to tSNE plot."""
         return os.path.join(
             self.outdir(), self.yaml["EmbeddingsConfig"]["tsne_filename"]
         )
@@ -374,26 +407,36 @@ class YamlHelper:
     #
 
     def do_classifier(self) -> bool:
+        """Check if the config includes classifiers."""
         return "ClassifierContainer" in self.yaml
 
     def classifier_type(self) -> str:
-        return self.yaml["ClassifierContainer"]["classifiers"]["classifier_name"]
+        """Return the type (i.e., name) of classifier."""
+        return self.yaml["ClassifierContainer"]["classifiers"][
+            "classifier_name"
+        ]
 
     @catch_keyerror
     def classifiers(self) -> list:
-        """From the YAML, extract a list of classifiers to be trained
+        """From the YAML, extract a list of classifiers to be trained.
 
         :return: list of classifiers to be trained
         """
         return self.yaml["ClassifierContainer"]["classifiers"]
 
-    def get_all_classifier_ids(self):
-        return [c["classifier_id"] for c in self.yaml["ClassifierContainer"]["classifiers"]]
+    def get_all_classifier_ids(self) -> list:
+        """Return list of classifier ids."""
+        return [
+            c["classifier_id"]
+            for c in self.yaml["ClassifierContainer"]["classifiers"]
+        ]
 
     def get_edge_embedding_method(self, classifier: dict) -> str:
+        """Return value for edge method for classifier."""
         return classifier["edge_method"]
 
-    def classifier_history_file_name(self, classifier: dict) -> Optional[str]:
+    def classifier_history_file_name(self, classifier: dict) -> str:
+        """Return full path to classifier history file."""
         return (
             classifier["history_filename"]
             if "history_filename" in classifier
@@ -401,18 +444,22 @@ class YamlHelper:
         )
 
     def classifier_outfile(self, classifier: dict) -> str:
-        return os.path.join(
-            self.outdir(), classifier["outfile"]
-        )
+        """Return full path to classifier file."""
+        return os.path.join(self.outdir(), classifier["outfile"])
 
     #
     # upload stuff
     #
 
     def do_upload(self) -> bool:
+        """Upload."""
         return "Upload" in self.yaml
 
     def make_upload_args(self) -> dict:
+        """Get upload arguments.
+
+        :return: Dictionary of upload arguments.
+        """
         make_upload_args = {
             "local_directory": self.outdir(),
             "s3_bucket": self.yaml["Upload"]["s3_bucket"],
@@ -426,25 +473,42 @@ class YamlHelper:
     #
     # applying trained model to fresh data for predictions
     #
-    def do_apply_classifier(self):
+    def do_apply_classifier(self) -> bool:
+        """Check on whether to apply classifier.
+
+        :return: bool, True if should apply
+        """
         return "ApplyTrainedModelsContainer" in self.yaml
 
     def get_classifier_id_for_prediction(self):
-        classifier_applications = self.yaml["ApplyTrainedModelsContainer"]["models"]
-        list_of_ids = [
-            cl["model_id"] for cl in classifier_applications
+        """Get classifier ID for prediction.
+
+        :return: List of classifier IDs.
+        """
+        classifier_applications = self.yaml["ApplyTrainedModelsContainer"][
+            "models"
         ]
+        list_of_ids = [cl["model_id"] for cl in classifier_applications]
         return list_of_ids
 
     def get_classifier_from_id(self, classifier_id: str):
+        """Get classifier from ID.
 
+        :param classifier_id: Classifier ID.
+        :return: Classifier information.
+        """
         return [
             x
             for x in self.classifiers()
             if x["classifier_id"] == classifier_id
         ][0]
 
-    def make_classifier_args(self, cl_id: str):
+    def make_classifier_args(self, cl_id: str) -> dict:
+        """Make classifier arguments.
+
+        :param cl_id: Classifier ID.
+        :return: Classifier argument dictionary.
+        """
         classifier_args = [
             arg
             for arg in self.yaml["ApplyTrainedModelsContainer"]["models"]
@@ -457,7 +521,10 @@ class YamlHelper:
             **self.main_graph_args()
         )
 
-        if self.get_classifier_from_id(cl_id)["classifier_name"] == "neural network":
+        if (
+            self.get_classifier_from_id(cl_id)["classifier_name"]
+            == "neural network"
+        ):
             classifier_args_dict["model"] = pickle.load(
                 open(
                     os.path.join(
@@ -478,10 +545,14 @@ class YamlHelper:
 
         # YAML may specify node_types as dict with 'source' and 'destination'
         # or as a list of lists
-        if 'source' in classifier_args["node_types"] \
-            or 'destination' in classifier_args["node_types"]:
-            classifier_args_dict["node_types"] = [classifier_args["node_types"]['source'],
-                                                    classifier_args["node_types"]['destination']]
+        if (
+            "source" in classifier_args["node_types"]
+            or "destination" in classifier_args["node_types"]
+        ):
+            classifier_args_dict["node_types"] = [
+                classifier_args["node_types"]["source"],
+                classifier_args["node_types"]["destination"],
+            ]
         else:
             classifier_args_dict["node_types"] = classifier_args["node_types"]
 

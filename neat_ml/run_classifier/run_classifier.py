@@ -1,11 +1,12 @@
+"""Run classifier."""
 import os
+from itertools import combinations  # [READ DOCS]
 from pathlib import Path
 from typing import List, Union
 from warnings import warn
 
-from grape import Graph  # type: ignore
 import pandas as pd  # type: ignore
-from itertools import combinations  # [READ DOCS]
+from grape import Graph  # type: ignore
 
 from neat_ml.link_prediction.sklearn_model import SklearnModel
 
@@ -16,7 +17,12 @@ def gen_src_dst_pair(
     graph: Graph,
     ignore_existing_edges: bool = True,
 ):
+    """Generate source-destination pair.
 
+    :param graph: Graph.
+    :param ignore_existing_edges: Ignore edges or not., defaults to True
+    :yield: Source-destination pair generation.
+    """
     # Get all node ids
     node_ids = graph.get_node_ids().tolist()[:100]
     # Yield only the (src, dst) combo
@@ -66,18 +72,20 @@ def predict_links(
     ignore_existing_edges: bool = True,
     verbose: bool = True,
 ) -> None:
-    """Performs link prediction over provided graph nodes.
+    """Perform link prediction over provided graph nodes.
 
     Args:
         graph (Graph): Ensmallen graph.
         model (Any): Trained model.
-        node_types (list): List of lists of target 'source' and 'destination' nodes.
-                            Only these types will be in output.
+        node_types (list): List of lists of target
+        'source' and 'destination' nodes.
+        Only these types will be in output.
         cutoff (float): Cutoff point for filtering.
         output_file (str or Path): Results destination.
         embeddings_file (str or Path): Path to embeddings.
         edge_method (str): Method to use for calculating edge embeddings.
-        ignore_existing_edges (bool): default True; do not output predictions for edges already in graph.
+        ignore_existing_edges (bool): default True; do not output
+        predictions for edges already in graph.
     """
     embeddings = pd.read_csv(embeddings_file, sep=",", header=None)
 
@@ -98,8 +106,10 @@ def predict_links(
             dst_types = graph.get_node_type_names_from_node_id(dst)
 
             # Test if any intersection between node_types and src/dst types
-            if len(list(set(src_types) & set(node_types[0]))) == 0 or \
-                len(list(set(dst_types) & set(node_types[1]))) == 0 :
+            if (
+                len(list(set(src_types) & set(node_types[0]))) == 0
+                or len(list(set(dst_types) & set(node_types[1]))) == 0
+            ):
                 continue
 
         # see if src and dst are actually in embedding.tsv
@@ -112,9 +122,12 @@ def predict_links(
                 src_dst_list.append((src_name, dst_name))
 
     if len(src_dst_list) == 0:
-        warn("Filter has excluded all edges or no edges found - cannot apply classifier.")
+        warn(
+            "Filter has excluded all edges or no edges found. "
+            "Cannot apply classifier."
+        )
 
-    edge_embedding_for_predict = model.make_edge_embedding_for_predict(  # type: ignore
+    edge_embedding_for_predict = model.make_edge_embedding_for_predict(  # type: ignore # noqa E501
         embedding_file=embeddings_file,  # this should be the new embeddings
         edge_method=edge_method,
         source_destination_list=src_dst_list,
@@ -153,14 +166,15 @@ def predict_links(
 # This may be moved if needed
 def get_custom_model_path(model_file_path: str) -> str:
     """
-    Given the path to a sklearn or TF model,
-    returns the name of the corresponding custom
-    model. This allows a NEAT Model object to be
+    Given the path to a sklearn or TF model,return the name of\
+        the corresponding custom model.
+
+    This allows a NEAT Model object to be
     created so we may access its methods.
+
     :param model_file_path: str, path to generic model
     :return: str, path to custom model
     """
-
     custom_model_path = (
         os.path.splitext(model_file_path)[0]
         + "_custom"

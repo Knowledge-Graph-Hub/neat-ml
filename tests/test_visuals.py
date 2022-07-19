@@ -1,28 +1,37 @@
+"""Test visuals."""
 import os
 from unittest import TestCase
+
 from click.testing import CliRunner
+
 from neat_ml.cli import run
-from neat_ml.visualization.visualization import make_tsne, make_all_plots
+
 
 class TestVisuals(TestCase):
+    """Test visuals Class."""
 
     @classmethod
     def setUpClass(cls) -> None:
+        """Set up."""
         pass
 
     def setUp(self) -> None:
+        """Set up."""
         self.runner = CliRunner()
-        self.expected_tsne_file = 'tests/resources/test_output_data_dir/test_tsne.png'
-        self.expected_fullplot_file = 'tests/resources/test_output_data_dir/test_plots.png'
+        self.expected_tsne_file = (
+            "tests/resources/test_output_data_dir/test_tsne.png"
+        )
+        self.expected_fullplot_file = (
+            "tests/resources/test_output_data_dir/test_plots.png"
+        )
         for filepath in [self.expected_tsne_file, self.expected_fullplot_file]:
             if os.path.exists(filepath):
-                print(
-                    f"removing existing test tsne file {filepath}")
+                print(f"removing existing test tsne file {filepath}")
                 os.unlink(filepath)
 
     def test_make_tsne(self):
-
-        result = self.runner.invoke(
+        """Test for making a tSNE using grape."""
+        self.runner.invoke(
             catch_exceptions=False,
             cli=run,
             args=["--config", "tests/resources/test_for_tsne.yaml"],
