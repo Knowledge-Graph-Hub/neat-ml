@@ -24,7 +24,7 @@ NEAT will write graph embeddings to a new `quickstart_output` directory.
 
 This pipeline has [grape](https://github.com/AnacletoLAB/grape) as a major dependency.
 
-Methods from [tensorflow](https://github.com/tensorflow/tensorflow) and [scikit-learn](https://scikit-learn.org/stable/install.html) are supported, but are not installed as dependencies to avoid version conflicts.
+Methods from [tensorflow](https://github.com/tensorflow/tensorflow) and are supported, but are not installed as dependencies to avoid version conflicts.
 
 Please install the versions of `tensorflow`, `scikit-learn`, `CUDA`, and `cudnn` compatible with your system and with each other prior to installing NEAT if you wish to use these methods.
 
