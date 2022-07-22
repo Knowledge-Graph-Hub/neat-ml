@@ -15,12 +15,16 @@ class GrapeModel(Model):
         model_class = self.dynamically_import_class(model_type)
         self.model = model_class()  # type: ignore
 
-    def fit(self, train_data, test_data):
-        """Fit model."""
-        return self.model.fit(train_data, test_data)
+    def fit(self, train_data):
+        """Fit model.
+        The source method includes optional
+        parameters not implemented here."""
+        return self.model.fit(train_data)
 
     def predict_proba(self, predict_data):
-        """Predict probability."""
+        """Predict probability.
+        The source method includes optional
+        parameters not implemented here."""
         return self.model.predict_proba(predict_data)
 
     # Grape methods don't currently support loading 

@@ -9,6 +9,13 @@ import pandas as pd  # type: ignore
 from grape import Graph  # type: ignore
 
 from neat_ml.link_prediction.sklearn_model import SklearnModel
+from neat_ml.link_prediction.grape_model import GrapeModel
+try:
+    from neat_ml.link_prediction.mlp_model import MLPModel
+    HAVE_TF = True
+except ModuleNotFoundError:
+    print("Tensorflow not found - cannot run requested classifier.")
+    HAVE_TF = False
 
 OUTPUT_COL_NAMES = ["source_node", "destination_node"]
 
