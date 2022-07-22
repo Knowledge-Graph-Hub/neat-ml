@@ -5,10 +5,10 @@ from grape import edge_prediction, edge_prediction_evaluation
 
 
 class GrapeModel(Model):
-    """Grape (Ensmallen) link prediction model class."""
+    """Grape (Embiggen) link prediction model class."""
 
     def __init__(self, config: dict, outdir: str = None):
-        """Initialize SKLearnModel class."""
+        """Initialize GrapeModel class."""
         super().__init__(outdir=outdir)
         self.config = config
         model_type = config["classifier_type"]
@@ -25,7 +25,9 @@ class GrapeModel(Model):
 
     # Grape methods don't currently support loading 
     # classifiers.
-    
-    # def load(self, path: str) -> tuple():  # type: ignore
-    #     """Load model."""
-    #     return model_object 
+
+    def load(self, path: str) -> tuple():  # type: ignore
+         """Return error regarding load function."""
+         print(f"Looking at {path}...")
+         raise NotImplementedError("Grape methods do not" 
+                                    " currently support loading.")
