@@ -164,6 +164,6 @@ class TestLinkPrediction(TestCase):
         model_object = self.grape_model
         graph_in = Graph.from_csv(**self.training_graph_args)
         model_object.fit(graph_in)
-        self.assertTrue(model_object._fitting_was_executed)
+        self.assertTrue(model_object.is_fit)
         output = model_object.predict_proba(graph_in)
         self.assertGreaterEqual(len(output), 470000)

@@ -14,12 +14,15 @@ class GrapeModel(Model):
         model_type = config["classifier_type"]
         model_class = self.dynamically_import_class(model_type)
         self.model = model_class()  # type: ignore
+        self.is_fit = False
 
     def fit(self, train_data):
         """Fit model.
         The source method includes optional
         parameters not implemented here."""
-        return self.model.fit(train_data)
+        fit_model = self.model.fit(train_data)
+        self.is_fit = True
+        return fit_model
 
     def predict_proba(self, predict_data):
         """Predict probability.
