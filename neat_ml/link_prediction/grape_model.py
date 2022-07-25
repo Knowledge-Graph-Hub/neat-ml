@@ -1,7 +1,7 @@
 """Grape models for link prediction."""
 
 from .model import Model
-from grape import edge_prediction, edge_prediction_evaluation
+from grape import edge_prediction
 
 
 class GrapeModel(Model):

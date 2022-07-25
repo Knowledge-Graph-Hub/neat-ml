@@ -30,24 +30,22 @@ class TestLinkPrediction(TestCase):
 
     def setUp(self) -> None:
         """Set up."""
-        self.yaml_file_sklearn = "tests/resources/test.yaml"
-        self.yaml_file_tf = "tests/resources/test.yaml"
+        self.yaml_file = "tests/resources/test.yaml"
         self.embed_file = "tests/resources/test_link_prediction/test_embeddings_test_yaml.csv"  # noqa E501
         self.embed_snippet_file = "tests/resources/test_link_prediction/test_embeddings_test_yaml_SNIPPET.csv"  # noqa E501
-        self.yhelp_sklearn = YamlHelper(self.yaml_file_sklearn)
-        self.yhelp_tf = YamlHelper(self.yaml_file_tf)
+        self.yhelp = YamlHelper(self.yaml_file)
         self.test_model_path = "tests/resources/test_output_data_dir/"
         self.test_load_path = "tests/resources/test_link_prediction/"
         self.sklearn_model = SklearnModel(
-            (self.yhelp_sklearn.classifiers())[0], self.test_model_path
+            (self.yhelp.classifiers())[0], self.test_model_path
         )
         self.tf_model = MLPModel(
-            (self.yhelp_tf.classifiers())[1], self.test_model_path
+            (self.yhelp.classifiers())[1], self.test_model_path
         )
-        self.sklearn_outfile = ((self.yhelp_sklearn.classifiers())[0])[
+        self.sklearn_outfile = ((self.yhelp.classifiers())[0])[
             "outfile"
         ]
-        self.generic_tf_outfile = ((self.yhelp_tf.classifiers())[1])["outfile"]
+        self.generic_tf_outfile = ((self.yhelp.classifiers())[1])["outfile"]
         self.custom_tf_outfile = get_custom_model_path(self.generic_tf_outfile)
         self.training_graph_args = {
             "directed": False,
