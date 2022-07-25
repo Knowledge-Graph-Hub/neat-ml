@@ -2,7 +2,6 @@
 
 from .model import Model
 
-from grape import edge_prediction
 
 class GrapeModel(Model):
     """Grape (Embiggen) link prediction model class."""
@@ -18,6 +17,7 @@ class GrapeModel(Model):
 
     def fit(self, train_data):
         """Fit model.
+
         The source method includes optional
         parameters not implemented here.
         """
@@ -27,6 +27,7 @@ class GrapeModel(Model):
 
     def predict_proba(self, predict_data):
         """Predict probability.
+
         The source method includes optional
         parameters not implemented here.
         """
@@ -36,7 +37,11 @@ class GrapeModel(Model):
     # classifiers.
 
     def load(self, path: str) -> tuple():  # type: ignore
-        """Return error regarding load function."""
+        """Return error regarding load function.
+
+        This may be supported in the future,
+        but for now we don't load these models.
+        """
         print(f"Looking at {path}...")
         raise NotImplementedError("Grape methods do not"
-                                    " currently support loading.")
+                                  " currently support loading.")

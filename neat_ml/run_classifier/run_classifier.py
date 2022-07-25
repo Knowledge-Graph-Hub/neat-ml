@@ -12,6 +12,7 @@ from neat_ml.link_prediction.sklearn_model import SklearnModel
 
 OUTPUT_COL_NAMES = ["source_node", "destination_node"]
 
+
 def gen_src_dst_pair(
     graph: Graph,
     ignore_existing_edges: bool = True,
