@@ -4,10 +4,13 @@ import os
 
 import click
 import numpy as np  # type: ignore
+import pandas as pd # type: ignore
+import grape  # type: ignore
 from grape import Graph  # type: ignore
 from tqdm import tqdm  # type: ignore
 
 from neat_ml.graph_embedding.graph_embedding import make_node_embeddings
+from neat_ml.link_prediction.grape_model import GrapeModel
 from neat_ml.link_prediction.mlp_model import MLPModel
 from neat_ml.link_prediction.sklearn_model import SklearnModel
 from neat_ml.pre_run_checks.pre_run_checks import pre_run_checks
@@ -66,14 +69,15 @@ def run(config: str) -> None:
                 continue
 
             model: object = None
+            gmodels = (grape.get_available_models_for_edge_prediction()["model_name"]).tolist()
+            gmodels = [mname.lower() for mname in gmodels]
             if classifier["classifier_name"].lower() == "neural network":
                 model = MLPModel(classifier, outdir=yhelp.outdir())
-            elif classifier["classifier_name"].lower() in [
-                "decision tree",
-                "logistic regression",
-                "random forest",
-            ]:
+            elif classifier["classifier_name"].lower() == "logistic regression":
                 model = SklearnModel(classifier, outdir=yhelp.outdir())
+            elif classifier["classifier_name"].lower() in gmodels or \
+                classifier["classifier_name"].lower() + " classifier" in gmodels:
+                model = GrapeModel(classifier, outdir=yhelp.outdir())
             else:
                 raise NotImplementedError(f"{model} isn't implemented yet")
 
@@ -86,7 +90,16 @@ def run(config: str) -> None:
                 training_args=yhelp.train_graph_args(),
                 edge_method=yhelp.get_edge_embedding_method(classifier),
             )
-            history_obj = model.fit(*train_data)
+
+            if type(model) in [SklearnModel, MLPModel]:
+                history_obj = model.fit(*train_data)
+            else:
+                history_obj = model.fit(graph=Graph.from_csv(**(yhelp.main_graph_args())),
+                                        node_features=pd.read_csv((yhelp.embedding_outfile()), 
+                                                                index_col=0,
+                                                                header=None)
+                )
+
             if type(model) == SklearnModel:
                 predicted_labels = model.predict(validation_data[0])
             else:

@@ -2,6 +2,11 @@
 
 from .model import Model
 
+from grape import Graph
+import pandas as pd
+import numpy as np
+from typing import Optional, Union, List
+
 
 class GrapeModel(Model):
     """Grape (Embiggen) link prediction model class."""
@@ -15,13 +20,23 @@ class GrapeModel(Model):
         self.model = model_class()  # type: ignore
         self.is_fit = False
 
-    def fit(self, train_data):
+    def fit(self, 
+            graph: Graph, 
+            support: Optional[Graph] = None,
+            node_features: Optional[Union[pd.DataFrame, np.ndarray, List[Union[pd.DataFrame, np.ndarray]]]] = None,
+            node_type_features: Optional[Union[pd.DataFrame, np.ndarray, List[Union[pd.DataFrame, np.ndarray]]]] = None,
+            edge_features: Optional[Union[pd.DataFrame, np.ndarray, List[Union[pd.DataFrame, np.ndarray]]]] = None):
         """Fit model.
 
-        The source method includes optional
-        parameters not implemented here.
+        Based on the Ensmallen abstract 
+        edge prediction model class.
         """
-        fit_model = self.model.fit(train_data)
+        fit_model = self.model.fit(graph=graph,
+                                    support=support,
+                                    node_features=node_features,
+                                    node_type_features=node_type_features,
+                                    edge_features=None
+        )
         self.is_fit = True
         return fit_model
 
