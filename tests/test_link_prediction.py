@@ -155,8 +155,6 @@ class TestLinkPrediction(TestCase):
         # result contains tuple of tuples of 2-dim arrays
         self.assertEqual(result[0][0].ndim, 2)
 
-    # This test extends into classifier application in order
-    # to do model testing - that should be in test_run_classifier
     def test_grape_fit(self) -> None:
         """Test grape's Ensmallen model fitting."""
         model_object = self.grape_model

@@ -6,6 +6,7 @@ from unittest import TestCase
 
 from grape import Graph
 
+from neat_ml.link_prediction.grape_model import GrapeModel
 from neat_ml.run_classifier.run_classifier import predict_links
 from neat_ml.yaml_helper.yaml_helper import YamlHelper
 
@@ -28,6 +29,9 @@ class TestRunClassifier(TestCase):
         )
         self.test_model_path = (
             "tests/resources/test_run_classifier/model_lr_test_yaml.h5"
+        )
+        self.test_alt_path = (
+            "tests/resources/test_run_classifier/model_pt_test_yaml"
         )
         self.training_graph_args = {
             "directed": False,
@@ -126,3 +130,13 @@ class TestRunClassifier(TestCase):
                 3000,
                 "Link prediction output is too short.",
             )
+
+    def test_grape_link_predict(self) -> None:
+        """Test grape's Ensmallen model edge prediction."""
+        grape_model = GrapeModel(
+            (self.yhelp.classifiers())[2], self.test_alt_path
+        )
+        graph_in = Graph.from_csv(**self.training_graph_args)
+        grape_model.fit(graph_in)
+        output = grape_model.predict_proba(graph_in)
+        self.assertGreaterEqual(len(output), 470000)
