@@ -6,6 +6,9 @@ from unittest import TestCase
 import numpy as np
 import pandas as pd
 
+from grape import Graph
+from grape.edge_prediction import PerceptronEdgePrediction
+
 try:
     from keras.engine.sequential import Sequential
     HAVE_KERAS = True
@@ -36,17 +39,28 @@ class TestLinkPrediction(TestCase):
         self.yhelp = YamlHelper(self.yaml_file)
         self.test_model_path = "tests/resources/test_output_data_dir/"
         self.test_load_path = "tests/resources/test_link_prediction/"
+
         self.sklearn_model = SklearnModel(
             (self.yhelp.classifiers())[0], self.test_model_path
         )
         self.tf_model = MLPModel(
             (self.yhelp.classifiers())[1], self.test_model_path
         )
+        self.grape_model = GrapeModel(
+            (self.yhelp.classifiers())[2], self.test_model_path
+        )
+
         self.sklearn_outfile = ((self.yhelp.classifiers())[0])[
             "outfile"
         ]
+
         self.generic_tf_outfile = ((self.yhelp.classifiers())[1])["outfile"]
         self.custom_tf_outfile = get_custom_model_path(self.generic_tf_outfile)
+
+        self.grape_outfile = ((self.yhelp.classifiers())[2])[
+            "outfile"
+        ]
+
         self.training_graph_args = {
             "directed": False,
             "node_path": "tests/resources/test_graphs/pos_train_nodes.tsv",
@@ -142,3 +156,11 @@ class TestLinkPrediction(TestCase):
         )
         # result contains tuple of tuples of 2-dim arrays
         self.assertEqual(result[0][0].ndim, 2)
+
+    # The Ensmallen fit doesn't 
+    def test_grape_fit(self) -> None:
+        """Test grape's Ensmallen model fitting."""
+        model_object = self.grape_model
+        graph_in = Graph.from_csv(**self.training_graph_args)
+        fit_out = model_object.fit(graph_in)
+        self.assertEqual(type(fit_out), PerceptronEdgePrediction)

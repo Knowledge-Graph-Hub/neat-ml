@@ -123,6 +123,12 @@ ClassifierContainer:
                   min_delta: 0.001
                 - type: tensorflow.keras.callbacks.ReduceLROnPlateau
 
+    - classifier_id: pt_1
+      classifier_name: Perceptron
+      classifier_type: grape.edge_prediction.PerceptronEdgePrediction
+      edge_method: Average
+      outfile: "model_pt1_test_yaml.h5"
+
 ApplyTrainedModelsContainer:
   models:
     - model_id: lr_1
@@ -133,6 +139,14 @@ ApplyTrainedModelsContainer:
           - "biolink:Protein"
       cutoff: 0.9
       outfile: lr_protein_predictions_kgx.tsv
+    - model_id: pt_1
+      node_types:
+        source:
+          - "biolink:Protein"
+        destination:
+          - "biolink:Protein"
+      cutoff: 0.9
+      outfile: pt_protein_predictions_kgx.tsv
 
 Upload:
   s3_bucket: some_bucket
