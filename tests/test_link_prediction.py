@@ -157,10 +157,13 @@ class TestLinkPrediction(TestCase):
         # result contains tuple of tuples of 2-dim arrays
         self.assertEqual(result[0][0].ndim, 2)
 
-    # The Ensmallen fit doesn't 
+    # This test extends into classifier application in order
+    # to do model testing - that should be in test_run_classifier
     def test_grape_fit(self) -> None:
         """Test grape's Ensmallen model fitting."""
         model_object = self.grape_model
         graph_in = Graph.from_csv(**self.training_graph_args)
-        fit_out = model_object.fit(graph_in)
-        self.assertEqual(type(fit_out), PerceptronEdgePrediction)
+        model_object.fit(graph_in)
+        self.assertTrue(model_object._fitting_was_executed)
+        output = model_object.predict_proba(graph_in)
+        self.assertGreaterEqual(len(output), 470000)
