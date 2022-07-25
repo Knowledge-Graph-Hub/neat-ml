@@ -8,7 +8,6 @@ import pandas as pd
 
 try:
     from keras.engine.sequential import Sequential
-
     HAVE_KERAS = True
 except ModuleNotFoundError:
     print("Keras not found - will not test related functions.")
@@ -16,6 +15,7 @@ except ModuleNotFoundError:
 
 from neat_ml.link_prediction.mlp_model import MLPModel
 from neat_ml.link_prediction.sklearn_model import SklearnModel
+from neat_ml.link_prediction.grape_model import GrapeModel
 from neat_ml.run_classifier.run_classifier import get_custom_model_path
 from neat_ml.yaml_helper.yaml_helper import YamlHelper
 
