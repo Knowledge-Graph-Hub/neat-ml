@@ -5,9 +5,7 @@ from unittest import TestCase
 
 import numpy as np
 import pandas as pd
-
 from grape import Graph
-from grape.edge_prediction import PerceptronEdgePrediction
 
 try:
     from keras.engine.sequential import Sequential
