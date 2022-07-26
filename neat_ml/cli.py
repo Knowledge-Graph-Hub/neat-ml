@@ -107,20 +107,21 @@ def run(config: str) -> None:
                 if 'pos_edge_filepath' in yhelp.val_graph_args():
                     val_graph_obj = Graph.from_csv(node_path=yhelp.main_graph_args()['node_path'],
                                                     edge_path=yhelp.val_graph_args()['pos_edge_filepath'],
+                                                    nodes_column=yhelp.main_graph_args()['nodes_column'],
+                                                    node_list_node_types_column=yhelp.main_graph_args()['node_list_node_types_column'],
                                                     directed=graph_obj.is_directed())
                 else:
                     val_graph_obj = graph_obj
-                predicted_labels = model.predict(graph=val_graph_obj,
-                                        node_features=validation_data[0]
-                )
+                predicted = model.predict(graph=val_graph_obj)
+                predicted_labels = (predicted*1).tolist()
             elif type(model) == SklearnModel:
                 predicted_labels = model.predict(validation_data[0])
             else:
                 predicted_labels = np.concatenate(
                     np.around(model.predict(validation_data[0]), decimals=0)
                 )
-            actual_labels = validation_data[1]
-            correct_matches = sum(list(predicted_labels == actual_labels))
+            actual_labels = validation_data[1].tolist()
+            correct_matches = sum([1 if i==j else 0 for i, j in zip(predicted_labels,actual_labels)])
             total_data_points = len(validation_data[0])
             correct_label_match = (correct_matches / total_data_points) * 100
 
@@ -132,7 +133,8 @@ def run(config: str) -> None:
                 ) as f:  # noqa E501
                     json.dump(history_obj.history, f)
 
-            model.save()
+            if type(model) != GrapeModel:
+                model.save()
 
     if yhelp.do_apply_classifier():
         # take graph, classifier, biolink node types and cutoff
