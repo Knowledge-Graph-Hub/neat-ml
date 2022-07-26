@@ -28,25 +28,57 @@ class GrapeModel(Model):
             edge_features: Optional[Union[pd.DataFrame, np.ndarray, List[Union[pd.DataFrame, np.ndarray]]]] = None):
         """Fit model.
 
-        Based on the Ensmallen abstract 
+        Imported from the Ensmallen abstract 
         edge prediction model class.
         """
-        fit_model = self.model.fit(graph=graph,
-                                    support=support,
-                                    node_features=node_features,
-                                    node_type_features=node_type_features,
-                                    edge_features=None
-        )
         self.is_fit = True
-        return fit_model
+        return self.model.fit(graph, 
+                                support, 
+                                node_features, 
+                                node_type_features, 
+                                edge_features
+        )
 
-    def predict_proba(self, predict_data):
-        """Predict probability.
+    def predict(self, 
+            graph: Graph, 
+            support: Optional[Graph] = None,
+            node_features: Optional[Union[pd.DataFrame, np.ndarray, List[Union[pd.DataFrame, np.ndarray]]]] = None,
+            node_type_features: Optional[Union[pd.DataFrame, np.ndarray, List[Union[pd.DataFrame, np.ndarray]]]] = None,
+            edge_features: Optional[Union[pd.DataFrame, np.ndarray, List[Union[pd.DataFrame, np.ndarray]]]] = None,
+            return_predictions_dataframe: bool = False):
+        """Predict based on model fitted to graph.
 
-        The source method includes optional
-        parameters not implemented here.
+        Imported from the Ensmallen abstract 
+        edge prediction model class.
         """
-        return self.model.predict_proba(predict_data)
+        return self.model.predict(graph, 
+                                support, 
+                                node_features, 
+                                node_type_features, 
+                                edge_features, 
+                                return_predictions_dataframe
+        )
+
+    def predict_proba(self, 
+            graph: Graph, 
+            support: Optional[Graph] = None,
+            node_features: Optional[Union[pd.DataFrame, np.ndarray, List[Union[pd.DataFrame, np.ndarray]]]] = None,
+            node_type_features: Optional[Union[pd.DataFrame, np.ndarray, List[Union[pd.DataFrame, np.ndarray]]]] = None,
+            edge_features: Optional[Union[pd.DataFrame, np.ndarray, List[Union[pd.DataFrame, np.ndarray]]]] = None,
+            return_predictions_dataframe: bool = False):
+        """Predict based on model fitted to graph.
+
+        Provides probability values.
+        Imported from the Ensmallen abstract 
+        edge prediction model class.
+        """
+        return self.model.predict_proba(graph, 
+                                support, 
+                                node_features, 
+                                node_type_features, 
+                                edge_features, 
+                                return_predictions_dataframe
+        )
 
     # Grape methods don't currently support loading
     # classifiers.

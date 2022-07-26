@@ -94,13 +94,25 @@ def run(config: str) -> None:
             if type(model) in [SklearnModel, MLPModel]:
                 history_obj = model.fit(*train_data)
             else:
-                history_obj = model.fit(graph=Graph.from_csv(**(yhelp.main_graph_args())),
-                                        node_features=pd.read_csv((yhelp.embedding_outfile()), 
+                graph_obj = Graph.from_csv(**(yhelp.main_graph_args()))
+                embed_obj = pd.read_csv((yhelp.embedding_outfile()), 
                                                                 index_col=0,
-                                                                header=None)
+                                                                header=None
+                )
+                history_obj = model.fit(graph=graph_obj,
+                                        node_features=embed_obj
                 )
 
-            if type(model) == SklearnModel:
+            if type(model) == GrapeModel:
+                if 'pos_edge_filepath' in yhelp.val_graph_args():
+                    val_graph_obj = Graph.from_csv(yhelp.val_graph_args()['pos_edge_filepath'],
+                                                    directed=graph_obj.is_directed())
+                else:
+                    val_graph_obj = graph_obj
+                predicted_labels = model.predict(graph=val_graph_obj,
+                                        node_features=validation_data[0]
+                )
+            elif type(model) == SklearnModel:
                 predicted_labels = model.predict(validation_data[0])
             else:
                 predicted_labels = np.concatenate(
