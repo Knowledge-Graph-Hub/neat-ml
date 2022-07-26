@@ -105,7 +105,8 @@ def run(config: str) -> None:
 
             if type(model) == GrapeModel:
                 if 'pos_edge_filepath' in yhelp.val_graph_args():
-                    val_graph_obj = Graph.from_csv(yhelp.val_graph_args()['pos_edge_filepath'],
+                    val_graph_obj = Graph.from_csv(node_path=yhelp.main_graph_args()['node_path'],
+                                                    edge_path=yhelp.val_graph_args()['pos_edge_filepath'],
                                                     directed=graph_obj.is_directed())
                 else:
                     val_graph_obj = graph_obj
