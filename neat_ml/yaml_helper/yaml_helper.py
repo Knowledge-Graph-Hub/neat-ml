@@ -535,6 +535,11 @@ class YamlHelper:
                 ),
             )
 
+        elif (
+            self.get_classifier_from_id(cl_id)["classifier_type"].startswith("grape")
+        ):
+            # Workaround for grape save/load not implemented yet
+            classifier_args_dict["model"] = "grape"
         else:
             classifier_args_dict["model"] = pickle.load(
                 open(
