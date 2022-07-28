@@ -6,7 +6,8 @@ from typing import List, Union
 from warnings import warn
 
 import pandas as pd  # type: ignore
-from grape import Graph  # type: ignore
+from grape import Graph
+from neat_ml.link_prediction.grape_model import GrapeModel  # type: ignore
 
 from neat_ml.link_prediction.sklearn_model import SklearnModel
 
@@ -145,6 +146,13 @@ def predict_links(
         ]
         pred_proba_df = pd.DataFrame(pred_probas, columns=["score"])
         full_embed_df = pd.concat([embed_df, pred_proba_df], axis=1)
+    elif type(model) == GrapeModel:
+        nodemap = {value: key for key, value in graph.get_nodes_mapping()}
+        preds = model.predict_proba(graph=graph, return_predictions_dataframe=True)
+        preds = preds.rename(columns={'predictions': 'score'})
+        preds['source_node'] = df['sources'].map(lambda sources: nodemap[sources])
+        preds['destination_node'] = df['destinations'].map(lambda destinations: nodemap[destinations])
+        full_embed_df = preds
     else:
         preds = model.predict(edge_embedding_for_predict)  # type: ignore
         embed_df["score"] = preds
