@@ -138,7 +138,11 @@ def run(config: str) -> None:
     if yhelp.do_apply_classifier():
         # take graph, classifier, biolink node types and cutoff
         for clsfr_id in yhelp.get_classifier_id_for_prediction():
-            classifier_kwargs = yhelp.make_classifier_args(clsfr_id)
+            classifier = yhelp.get_classifier_from_id(clsfr_id)
+            if classifier["classifier_type"].startswith("grape"):
+                classifier_kwargs = yhelp.make_classifier_args(clsfr_id, model)
+            else:
+                classifier_kwargs = yhelp.make_classifier_args(clsfr_id)
             predict_links(**classifier_kwargs)
 
     if yhelp.do_upload():

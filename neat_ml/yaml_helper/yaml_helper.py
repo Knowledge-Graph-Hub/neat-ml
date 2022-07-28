@@ -503,10 +503,11 @@ class YamlHelper:
             if x["classifier_id"] == classifier_id
         ][0]
 
-    def make_classifier_args(self, cl_id: str) -> dict:
+    def make_classifier_args(self, cl_id: str, model_in: None) -> dict:
         """Make classifier arguments.
 
         :param cl_id: Classifier ID.
+        :param model_in: a pre-built model, if available
         :return: Classifier argument dictionary.
         """
         classifier_args = [
@@ -536,10 +537,11 @@ class YamlHelper:
             )
 
         elif (
-            self.get_classifier_from_id(cl_id)["classifier_type"].startswith("grape")
+            model_in != None
         ):
             # Workaround for grape save/load not implemented yet
-            classifier_args_dict["model"] = "grape"
+            # We just take the model object as an argument
+            classifier_args_dict["model"] = model_in
         else:
             classifier_args_dict["model"] = pickle.load(
                 open(
