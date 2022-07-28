@@ -132,9 +132,8 @@ def run(config: str) -> None:
                     yhelp.classifier_history_file_name(classifier), "w"
                 ) as f:  # noqa E501
                     json.dump(history_obj.history, f)
-
-            if type(model) != GrapeModel:
-                model.save()
+            
+            model.save()
 
     if yhelp.do_apply_classifier():
         # take graph, classifier, biolink node types and cutoff

@@ -87,6 +87,7 @@ def predict_links(
         ignore_existing_edges (bool): default True; do not output
         predictions for edges already in graph.
     """
+    print(f"Reading embeddings from {embeddings_file}...")
     embeddings = pd.read_csv(embeddings_file, sep=",", header=None)
 
     embedding_node_names = list(embeddings[0])
