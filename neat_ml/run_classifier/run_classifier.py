@@ -171,7 +171,11 @@ def predict_links(
 
     output_df.sort_values(by="score", inplace=True, ascending=False)
     output_df.to_csv(output_file, sep="\t", index=None)
-    print(f"Wrote predictions to {output_file}.")
+
+    if len(output_df) > 0:
+        print(f"Wrote predictions to {output_file}.")
+    else:
+        print(f"No edge predictions found meeting parameters.")
 
 # This may be moved if needed
 def get_custom_model_path(model_file_path: str) -> str:
