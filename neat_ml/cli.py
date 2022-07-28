@@ -95,7 +95,7 @@ def run(config: str) -> None:
                 history_obj = model.fit(*train_data)
             else:
                 graph_obj = Graph.from_csv(**(yhelp.main_graph_args()))
-                embed_obj = pd.read_csv((yhelp.embedding_outfile()), 
+                embed_obj = pd.read_csv((yhelp.embedding_outfile()),
                                                                 index_col=0,
                                                                 header=None
                 )
@@ -113,7 +113,7 @@ def run(config: str) -> None:
                 else:
                     val_graph_obj = graph_obj
                 predicted = model.predict(graph=val_graph_obj)
-                predicted_labels = (predicted*1).tolist()
+                predicted_labels = (predicted * 1).tolist()
             elif type(model) == SklearnModel:
                 predicted_labels = model.predict(validation_data[0])
             else:
@@ -121,7 +121,8 @@ def run(config: str) -> None:
                     np.around(model.predict(validation_data[0]), decimals=0)
                 )
             actual_labels = validation_data[1].tolist()
-            correct_matches = sum([1 if i==j else 0 for i, j in zip(predicted_labels,actual_labels)])
+            correct_matches = sum([1 if i==j else 0 for i,j in \
+                                zip(predicted_labels,actual_labels)])
             total_data_points = len(validation_data[0])
             correct_label_match = (correct_matches / total_data_points) * 100
 
@@ -132,7 +133,7 @@ def run(config: str) -> None:
                     yhelp.classifier_history_file_name(classifier), "w"
                 ) as f:  # noqa E501
                     json.dump(history_obj.history, f)
-            
+
             model.save()
 
     if yhelp.do_apply_classifier():
