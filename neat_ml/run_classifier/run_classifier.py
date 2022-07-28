@@ -147,11 +147,12 @@ def predict_links(
         pred_proba_df = pd.DataFrame(pred_probas, columns=["score"])
         full_embed_df = pd.concat([embed_df, pred_proba_df], axis=1)
     elif type(model) == GrapeModel:
-        nodemap = {value: key for key, value in graph.get_nodes_mapping()}
+        nodemap = graph.get_nodes_mapping()
+        inodemap = {value: key for key, value in nodemap.items()}
         preds = model.predict_proba(graph=graph, return_predictions_dataframe=True)
         preds = preds.rename(columns={'predictions': 'score'})
-        preds['source_node'] = df['sources'].map(lambda sources: nodemap[sources])
-        preds['destination_node'] = df['destinations'].map(lambda destinations: nodemap[destinations])
+        preds['source_node'] = preds['sources'].map(lambda sources: inodemap[sources])
+        preds['destination_node'] = preds['destinations'].map(lambda destinations: inodemap[destinations])
         full_embed_df = preds
     else:
         preds = model.predict(edge_embedding_for_predict)  # type: ignore
@@ -170,7 +171,7 @@ def predict_links(
 
     output_df.sort_values(by="score", inplace=True, ascending=False)
     output_df.to_csv(output_file, sep="\t", index=None)
-
+    print(f"Wrote predictions to {output_file}.")
 
 # This may be moved if needed
 def get_custom_model_path(model_file_path: str) -> str:
