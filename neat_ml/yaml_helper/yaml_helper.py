@@ -7,17 +7,17 @@ import string
 import sys
 import tarfile
 from pathlib import Path
-from typing import Union
+from typing import Optional, Union
 from urllib.request import Request, urlopen
 
 import pkg_resources  # type: ignore
 import validators  # type: ignore
 import yaml  # type: ignore
 from grape import Graph  # type: ignore
-from linkml_validator.validator import Validator
+from linkml_validator.validator import Validator # type: ignore
 
 from neat_ml.link_prediction.grape_model import GrapeModel  # type: ignore
-from neat_ml.run_classifier.run_classifier import get_custom_model_path
+from neat_ml.run_classifier.run_classifier import get_custom_model_path # type: ignore
 
 VALID_CHARS = "-_.() %s%s" % (string.ascii_letters, string.digits)
 INDIR_KEYS = ["node_path", "edge_path"]
@@ -505,7 +505,7 @@ class YamlHelper:
         ][0]
 
     def make_classifier_args(
-        self, cl_id: str, model_in: GrapeModel = None
+        self, cl_id: str, model_in: Optional[GrapeModel] = None
     ) -> dict:
         """Make classifier arguments.
 
