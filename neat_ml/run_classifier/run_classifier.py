@@ -95,6 +95,7 @@ def predict_links(
     src_dst_list = []
     no_embed_list = []
 
+    print("Generating potential edges...")
     for src, dst in gen_src_dst_pair(graph, ignore_existing_edges):
 
         src_name = graph.get_node_name_from_node_id(src)
@@ -140,6 +141,7 @@ def predict_links(
     #  as opposed to a Tensorflow(MLP) model where 0 and 1 are booleans
     # to a class (binary).
 
+    print("Running edge predictions...")
     if type(model) == SklearnModel:
         pred_probas = [
             y for x, y in model.predict_proba(edge_embedding_for_predict)
@@ -152,6 +154,19 @@ def predict_links(
         preds = \
             model.predict_proba(graph=graph,
                                 return_predictions_dataframe=True)
+        
+        # Ignore existing edges
+        if ignore_existing_edges:
+            print("Filtering existing edges...")
+            filtered_preds = preds.copy(deep=True)
+            i = 0
+            for index, row in preds.iterrows():
+                if graph.has_edge_from_node_ids(int(row['sources']),
+                                                int(row['destinations'])):
+                    filtered_preds.drop(filtered_preds.index[index], inplace=True)
+                    i = i + 1
+            print(f"Ignored {i} predicted edges already in graph.")
+                    
         preds = preds.rename(columns={'predictions': 'score'})
         preds['source_node'] = \
             preds['sources'].map(lambda sources: inodemap[sources])
