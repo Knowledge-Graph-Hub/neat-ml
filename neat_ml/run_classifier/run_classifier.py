@@ -154,18 +154,6 @@ def predict_links(
         preds = \
             model.predict_proba(graph=graph,
                                 return_predictions_dataframe=True)
-        
-        # Ignore existing edges
-        if ignore_existing_edges:
-            print("Filtering existing edges...")
-            filtered_preds = preds.copy(deep=True)
-            i = 0
-            for index, row in preds.iterrows():
-                if graph.has_edge_from_node_ids(int(row['sources']),
-                                                int(row['destinations'])):
-                    filtered_preds.drop(filtered_preds.index[index], inplace=True)
-                    i = i + 1
-            print(f"Ignored {i} predicted edges already in graph.")
                     
         preds = preds.rename(columns={'predictions': 'score'})
         preds['source_node'] = \
@@ -173,7 +161,14 @@ def predict_links(
         preds['destination_node'] = \
             preds['destinations'].map(lambda destinations: 
                 inodemap[destinations])
-        full_embed_df = preds
+
+        # Ignore existing edges
+        if ignore_existing_edges:
+            print("Filtering existing edges...")
+            full_embed_df = \
+                preds[~pd.Series(list(zip(preds['source_node'], 
+                    preds['destination_node']))).isin(src_dst_list)]
+
     else:
         preds = model.predict(edge_embedding_for_predict)  # type: ignore
         embed_df["score"] = preds
