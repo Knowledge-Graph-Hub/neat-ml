@@ -105,7 +105,7 @@ def run(config: str) -> None:
                 embed_obj = pd.read_csv(
                     (yhelp.embedding_outfile()), index_col=0, header=None
                 )
-                history_obj = model.fit(       # type: ignore
+                history_obj = model.fit(  # type: ignore
                     graph=graph_obj, node_features=embed_obj  # type: ignore
                 )
 
@@ -155,7 +155,9 @@ def run(config: str) -> None:
         for clsfr_id in yhelp.get_classifier_id_for_prediction():
             classifier = yhelp.get_classifier_from_id(clsfr_id)
             if classifier["classifier_type"].startswith("grape"):
-                classifier_kwargs = yhelp.make_classifier_args(clsfr_id, model) # type: ignore
+                classifier_kwargs = yhelp.make_classifier_args(
+                    clsfr_id, model
+                )  # type: ignore
             else:
                 classifier_kwargs = yhelp.make_classifier_args(clsfr_id)
             predict_links(**classifier_kwargs)
