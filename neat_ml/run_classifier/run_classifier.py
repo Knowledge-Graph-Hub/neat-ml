@@ -162,12 +162,14 @@ def predict_links(
             preds['destinations'].map(lambda destinations: 
                 inodemap[destinations])
 
-        # Ignore existing edges
+        # Ignore existing edges (i.e., only provide new edges)
         if ignore_existing_edges:
             print("Filtering existing edges...")
-            full_embed_df = \
-                preds[~pd.Series(list(zip(preds['source_node'], 
-                    preds['destination_node']))).isin(src_dst_list)]
+            preds = \
+                preds[preds[['source_node',
+                'destination_node']].apply(tuple, 1).isin(src_dst_list)]
+        
+        full_embed_df = preds
 
     else:
         preds = model.predict(edge_embedding_for_predict)  # type: ignore
