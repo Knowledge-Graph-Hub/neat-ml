@@ -106,7 +106,7 @@ def run(config: str) -> None:
                     (yhelp.embedding_outfile()), index_col=0, header=None
                 )
                 history_obj = model.fit(       # type: ignore
-                    graph=graph_obj, node_features=embed_obj # type: ignore
+                    graph=graph_obj, node_features=embed_obj  # type: ignore
                 )
 
             if type(model) == GrapeModel:

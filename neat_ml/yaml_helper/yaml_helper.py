@@ -15,8 +15,8 @@ import validators  # type: ignore
 import yaml  # type: ignore
 from grape import Graph  # type: ignore
 from linkml_validator.validator import Validator
-from neat_ml.link_prediction.grape_model import GrapeModel  # type: ignore
 
+from neat_ml.link_prediction.grape_model import GrapeModel  # type: ignore
 from neat_ml.run_classifier.run_classifier import get_custom_model_path
 
 VALID_CHARS = "-_.() %s%s" % (string.ascii_letters, string.digits)
@@ -504,7 +504,9 @@ class YamlHelper:
             if x["classifier_id"] == classifier_id
         ][0]
 
-    def make_classifier_args(self, cl_id: str, model_in: GrapeModel = None) -> dict:
+    def make_classifier_args(
+        self, cl_id: str, model_in: GrapeModel = None
+    ) -> dict:
         """Make classifier arguments.
 
         :param cl_id: Classifier ID.
