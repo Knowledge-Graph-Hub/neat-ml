@@ -536,9 +536,7 @@ class YamlHelper:
                 ),
             )
 
-        elif (
-            model_in != None
-        ):
+        elif model_in is not None:
             # Workaround for grape save/load not implemented yet
             # We just take the model object as an argument
             classifier_args_dict["model"] = model_in
