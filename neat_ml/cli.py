@@ -156,7 +156,7 @@ def run(config: str) -> None:
             classifier = yhelp.get_classifier_from_id(clsfr_id)
             if classifier["classifier_type"].startswith("grape"):
                 classifier_kwargs = yhelp.make_classifier_args(
-                    clsfr_id, model # type: ignore
+                    clsfr_id, model  # type: ignore
                 )
             else:
                 classifier_kwargs = yhelp.make_classifier_args(clsfr_id)
