@@ -8,7 +8,6 @@ from warnings import warn
 import pandas as pd  # type: ignore
 from grape import Graph
 from neat_ml.link_prediction.grape_model import GrapeModel  # type: ignore
-
 from neat_ml.link_prediction.sklearn_model import SklearnModel
 
 OUTPUT_COL_NAMES = ["source_node", "destination_node"]
@@ -149,10 +148,14 @@ def predict_links(
     elif type(model) == GrapeModel:
         nodemap = graph.get_nodes_mapping()
         inodemap = {value: key for key, value in nodemap.items()}
-        preds = model.predict_proba(graph=graph, return_predictions_dataframe=True)
+        preds = \
+            model.predict_proba(graph=graph, 
+                                return_predictions_dataframe=True)
         preds = preds.rename(columns={'predictions': 'score'})
-        preds['source_node'] = preds['sources'].map(lambda sources: inodemap[sources])
-        preds['destination_node'] = preds['destinations'].map(lambda destinations: inodemap[destinations])
+        preds['source_node'] = \
+            preds['sources'].map(lambda sources: inodemap[sources])
+        preds['destination_node'] = \
+            preds['destinations'].map(lambda destinations: inodemap[destinations])
         full_embed_df = preds
     else:
         preds = model.predict(edge_embedding_for_predict)  # type: ignore
@@ -175,13 +178,12 @@ def predict_links(
     if len(output_df) > 0:
         print(f"Wrote predictions to {output_file}.")
     else:
-        print(f"No edge predictions found meeting parameters.")
+        print("No edge predictions found meeting parameters.")
 
 # This may be moved if needed
 def get_custom_model_path(model_file_path: str) -> str:
-    """
-    Given the path to a sklearn or TF model,return the name of\
-        the corresponding custom model.
+    """Given the path to a sklearn or TF model,
+    return the name of the corresponding custom model.
 
     This allows a NEAT Model object to be
     created so we may access its methods.

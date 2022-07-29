@@ -22,18 +22,21 @@ class GrapeModel(Model):
         self.model = model_class()  # type: ignore
         self.is_fit = False
 
-    def fit(self, 
-            graph: Graph, 
+    def fit(self,
+            graph: Graph,
             support: Optional[Graph] = None,
-            node_features: Optional[Union[pd.DataFrame, 
-                           np.ndarray, 
-                           List[Union[pd.DataFrame, np.ndarray]]]] = None,
-            node_type_features: Optional[Union[pd.DataFrame, 
-                                np.ndarray, 
-                                List[Union[pd.DataFrame, np.ndarray]]]] = None,
-            edge_features: Optional[Union[pd.DataFrame, 
-                           np.ndarray, 
-                           List[Union[pd.DataFrame, np.ndarray]]]] = None):
+            node_features: Optional[Union[pd.DataFrame,
+                           np.ndarray,
+                           List[Union[pd.DataFrame,
+                           np.ndarray]]]] = None,
+            node_type_features: Optional[Union[pd.DataFrame,
+                                np.ndarray,
+                                List[Union[pd.DataFrame,
+                                np.ndarray]]]] = None,
+            edge_features: Optional[Union[pd.DataFrame,
+                           np.ndarray,
+                           List[Union[pd.DataFrame,
+                           np.ndarray]]]] = None):
         """Fit model.
 
         Imported from the Ensmallen abstract
@@ -45,20 +48,23 @@ class GrapeModel(Model):
                               node_features,
                               node_type_features,
                               edge_features
-                             )
+                              )
 
     def predict(self,
                 graph: Graph,
                 support: Optional[Graph] = None,
-                node_features: Optional[Union[pd.DataFrame, 
-                                np.ndarray, 
-                                List[Union[pd.DataFrame, np.ndarray]]]] = None,
-                node_type_features: Optional[Union[pd.DataFrame, 
-                                    np.ndarray, 
-                                    List[Union[pd.DataFrame, np.ndarray]]]] = None,
-                edge_features: Optional[Union[pd.DataFrame, 
-                               np.ndarray, 
-                               List[Union[pd.DataFrame, np.ndarray]]]] = None,
+                node_features: Optional[Union[pd.DataFrame,
+                               np.ndarray,
+                               List[Union[pd.DataFrame,
+                               np.ndarray]]]] = None,
+                node_type_features: Optional[Union[pd.DataFrame,
+                                    np.ndarray,
+                                    List[Union[pd.DataFrame,
+                                    np.ndarray]]]] = None,
+                edge_features: Optional[Union[pd.DataFrame,
+                               np.ndarray,
+                               List[Union[pd.DataFrame,
+                               np.ndarray]]]] = None,
                 return_predictions_dataframe: bool = False):
         """Predict based on model fitted to graph.
 
@@ -71,21 +77,24 @@ class GrapeModel(Model):
                                   node_type_features,
                                   edge_features,
                                   return_predictions_dataframe
-                                 )
+                                  )
 
     def predict_proba(self,
-                graph: Graph,
-                support: Optional[Graph] = None,
-                node_features: Optional[Union[pd.DataFrame, 
-                            np.ndarray, 
-                            List[Union[pd.DataFrame, np.ndarray]]]] = None,
-                node_type_features: Optional[Union[pd.DataFrame, 
-                            np.ndarray, 
-                            List[Union[pd.DataFrame, np.ndarray]]]] = None,
-                edge_features: Optional[Union[pd.DataFrame, 
-                            np.ndarray, 
-                            List[Union[pd.DataFrame, np.ndarray]]]] = None,
-                return_predictions_dataframe: bool = False):
+                      graph: Graph,
+                      support: Optional[Graph] = None,
+                      node_features: Optional[Union[pd.DataFrame,
+                                np.ndarray,
+                                List[Union[pd.DataFrame,
+                                np.ndarray]]]] = None,
+                      node_type_features: Optional[Union[pd.DataFrame,
+                                        np.ndarray,
+                                        List[Union[pd.DataFrame,
+                                        np.ndarray]]]] = None,
+                      edge_features: Optional[Union[pd.DataFrame,
+                                np.ndarray,
+                                List[Union[pd.DataFrame,
+                                np.ndarray]]]] = None,
+                      return_predictions_dataframe: bool = False):
         """Predict based on model fitted to graph.
 
         Provides probability values.
