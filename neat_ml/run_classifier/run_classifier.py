@@ -25,7 +25,7 @@ def gen_src_dst_pair(
     :yield: Source-destination pair generation.
     """
     # Get all node ids
-    node_ids = graph.get_node_ids().tolist()[:100]
+    node_ids = graph.get_node_ids().tolist()
     # Yield only the (src, dst) combo
     # that does NOT exist in the graph.
     for combo in list(combinations(node_ids, 2)):
