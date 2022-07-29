@@ -151,24 +151,27 @@ def predict_links(
     elif type(model) == GrapeModel:
         nodemap = graph.get_nodes_mapping()
         inodemap = {value: key for key, value in nodemap.items()}
-        preds = \
-            model.predict_proba(graph=graph,
-                                return_predictions_dataframe=True)
-                    
-        preds = preds.rename(columns={'predictions': 'score'})
-        preds['source_node'] = \
-            preds['sources'].map(lambda sources: inodemap[sources])
-        preds['destination_node'] = \
-            preds['destinations'].map(lambda destinations: 
-                inodemap[destinations])
+        preds = model.predict_proba(
+            graph=graph, return_predictions_dataframe=True
+        )
+
+        preds = preds.rename(columns={"predictions": "score"})
+        preds["source_node"] = preds["sources"].map(
+            lambda sources: inodemap[sources]
+        )
+        preds["destination_node"] = preds["destinations"].map(
+            lambda destinations: inodemap[destinations]
+        )
 
         # Ignore existing edges (i.e., only provide new edges)
         if ignore_existing_edges:
             print("Filtering existing edges...")
-            preds = \
-                preds[preds[['source_node',
-                'destination_node']].apply(tuple, 1).isin(src_dst_list)]
-        
+            preds = preds[
+                preds[["source_node", "destination_node"]]
+                .apply(tuple, 1)
+                .isin(src_dst_list)
+            ]
+
         full_embed_df = preds
 
     else:

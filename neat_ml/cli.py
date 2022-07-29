@@ -69,18 +69,21 @@ def run(config: str) -> None:
                 continue
 
             model: object = None
-            gmodels = \
-                (grape.get_available_models_for_edge_prediction()["model_name"]).tolist()
+            gmodels = (
+                grape.get_available_models_for_edge_prediction()["model_name"]
+            ).tolist()
             gmodels = [mname.lower() for mname in gmodels]
             if classifier["classifier_name"].lower() == "neural network":
                 model = MLPModel(classifier, outdir=yhelp.outdir())
-            elif classifier["classifier_name"].lower() == \
-                "logistic regression":
+            elif (
+                classifier["classifier_name"].lower() == "logistic regression"
+            ):
                 model = SklearnModel(classifier, outdir=yhelp.outdir())
-            elif classifier["classifier_name"].lower() \
-                in gmodels or \
-                classifier["classifier_name"].lower() + \
-                " classifier" in gmodels:
+            elif (
+                classifier["classifier_name"].lower() in gmodels
+                or classifier["classifier_name"].lower() + " classifier"
+                in gmodels
+            ):
                 model = GrapeModel(classifier, outdir=yhelp.outdir())
             else:
                 raise NotImplementedError(f"{model} isn't implemented yet")
@@ -99,23 +102,24 @@ def run(config: str) -> None:
                 history_obj = model.fit(*train_data)
             else:
                 graph_obj = Graph.from_csv(**(yhelp.main_graph_args()))
-                embed_obj = pd.read_csv((yhelp.embedding_outfile()),
-                                        index_col=0,
-                                        header=None
-                                        )
-                history_obj = model.fit(graph=graph_obj,
-                                        node_features=embed_obj
-                                        )
+                embed_obj = pd.read_csv(
+                    (yhelp.embedding_outfile()), index_col=0, header=None
+                )
+                history_obj = model.fit(
+                    graph=graph_obj, node_features=embed_obj
+                )
 
             if type(model) == GrapeModel:
-                if 'pos_edge_filepath' in yhelp.val_graph_args():
-                    val_graph_obj = \
-                        Graph.from_csv(node_path=yhelp.main_graph_args()['node_path'],
-                                       edge_path=yhelp.val_graph_args()['pos_edge_filepath'],
-                                       nodes_column=yhelp.main_graph_args()['nodes_column'],
-                                       node_list_node_types_column= 
-                                        yhelp.main_graph_args()['node_list_node_types_column'],
-                                       directed=graph_obj.is_directed())
+                if "pos_edge_filepath" in yhelp.val_graph_args():
+                    val_graph_obj = Graph.from_csv(
+                        node_path=yhelp.main_graph_args()["node_path"],
+                        edge_path=yhelp.val_graph_args()["pos_edge_filepath"],
+                        nodes_column=yhelp.main_graph_args()["nodes_column"],
+                        node_list_node_types_column=yhelp.main_graph_args()[
+                            "node_list_node_types_column"
+                        ],
+                        directed=graph_obj.is_directed(),
+                    )
                 else:
                     val_graph_obj = graph_obj
                 predicted = model.predict(graph=val_graph_obj)
@@ -127,8 +131,12 @@ def run(config: str) -> None:
                     np.around(model.predict(validation_data[0]), decimals=0)
                 )
             actual_labels = validation_data[1].tolist()
-            correct_matches = sum([1 if i == j else 0 for i, j in
-                              zip(predicted_labels, actual_labels)])
+            correct_matches = sum(
+                [
+                    1 if i == j else 0
+                    for i, j in zip(predicted_labels, actual_labels)
+                ]
+            )
             total_data_points = len(validation_data[0])
             correct_label_match = (correct_matches / total_data_points) * 100
 
@@ -181,10 +189,9 @@ def updateyaml(input_path, keys, values) -> None:
     Will not replace keys found multiple times in the YAML.
     Ignores keys in lists, even if they're dicts in lists.
 
-    #TODO: Add param descriptions.
-    :param input_path: _description_
-    :param keys: _description_
-    :param values: _description_
+    :param input_path: str, path to the yaml to edit
+    :param keys: list of strs of keys to modify
+    :param values: list of new values, in order of keys
     :return: None
 
     """
