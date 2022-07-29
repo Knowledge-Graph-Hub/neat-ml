@@ -100,13 +100,13 @@ def run(config: str) -> None:
 
             if type(model) in [SklearnModel, MLPModel]:
                 history_obj = model.fit(*train_data)
-            else:
+            elif type(model) == GrapeModel:
                 graph_obj = Graph.from_csv(**(yhelp.main_graph_args()))
                 embed_obj = pd.read_csv(
                     (yhelp.embedding_outfile()), index_col=0, header=None
                 )
-                history_obj = model.fit(
-                    graph=graph_obj, node_features=embed_obj
+                history_obj = model.fit(       # type: ignore
+                    graph=graph_obj, node_features=embed_obj # type: ignore
                 )
 
             if type(model) == GrapeModel:
