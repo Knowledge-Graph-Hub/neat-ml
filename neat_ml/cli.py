@@ -75,11 +75,12 @@ def run(config: str) -> None:
             if classifier["classifier_name"].lower() == "neural network":
                 model = MLPModel(classifier, outdir=yhelp.outdir())
             elif classifier["classifier_name"].lower() == \
-                 "logistic regression":
+                "logistic regression":
                 model = SklearnModel(classifier, outdir=yhelp.outdir())
-            elif classifier["classifier_name"].lower() in gmodels or \
-                 classifier["classifier_name"].lower() + \
-                 " classifier" in gmodels:
+            elif classifier["classifier_name"].lower() \
+                in gmodels or \
+                classifier["classifier_name"].lower() + \
+                " classifier" in gmodels:
                 model = GrapeModel(classifier, outdir=yhelp.outdir())
             else:
                 raise NotImplementedError(f"{model} isn't implemented yet")
@@ -101,10 +102,10 @@ def run(config: str) -> None:
                 embed_obj = pd.read_csv((yhelp.embedding_outfile()),
                                         index_col=0,
                                         header=None
-                                       )
+                                        )
                 history_obj = model.fit(graph=graph_obj,
                                         node_features=embed_obj
-                                       )
+                                        )
 
             if type(model) == GrapeModel:
                 if 'pos_edge_filepath' in yhelp.val_graph_args():
@@ -112,7 +113,7 @@ def run(config: str) -> None:
                         Graph.from_csv(node_path=yhelp.main_graph_args()['node_path'],
                                        edge_path=yhelp.val_graph_args()['pos_edge_filepath'],
                                        nodes_column=yhelp.main_graph_args()['nodes_column'],
-                                       node_list_node_types_column= \
+                                       node_list_node_types_column= 
                                         yhelp.main_graph_args()['node_list_node_types_column'],
                                        directed=graph_obj.is_directed())
                 else:
@@ -126,7 +127,7 @@ def run(config: str) -> None:
                     np.around(model.predict(validation_data[0]), decimals=0)
                 )
             actual_labels = validation_data[1].tolist()
-            correct_matches = sum([1 if i==j else 0 for i, j in
+            correct_matches = sum([1 if i == j else 0 for i, j in
                               zip(predicted_labels, actual_labels)])
             total_data_points = len(validation_data[0])
             correct_label_match = (correct_matches / total_data_points) * 100
