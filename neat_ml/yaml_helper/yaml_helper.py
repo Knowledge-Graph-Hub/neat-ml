@@ -18,7 +18,7 @@ from linkml_validator.validator import Validator  # type: ignore
 
 from neat_ml.link_prediction.grape_model import GrapeModel
 from neat_ml.run_classifier.run_classifier import \
-    get_custom_model_path
+    get_custom_model_path  # type: ignore # noqa I001
 
 VALID_CHARS = "-_.() %s%s" % (string.ascii_letters, string.digits)
 INDIR_KEYS = ["node_path", "edge_path"]
@@ -344,25 +344,6 @@ class YamlHelper:
             self.outdir(),
             self.yaml["EmbeddingsConfig"]["history_filename"],
         )
-
-    # def make_embeddings_metrics_class_list(self) -> list:
-    #     metrics_class_list = []
-
-    #     metrics = (
-    #         self.yaml["EmbeddingsConfig"]["metrics"]
-    #         if "metrics" in self.yaml["embeddings"]
-    #         else None
-    #     )
-    #     if metrics:
-    #         for m in metrics:
-    #             if m["type"].startswith("tensorflow.keras"):
-    #                 m_class = Model.dynamically_import_class(m["type"])
-    #                 m_parameters = m["parameters"]
-    #                 m_instance = m_class(**m_parameters)  # type: ignore
-    #                 metrics_class_list.append(m_instance)
-    #             else:
-    #                 metrics_class_list.append([m["type"]])
-    #     return metrics_class_list
 
     def make_node_embeddings_args(self) -> dict:
         """Prepare a dict of parameters for node embeddings."""
