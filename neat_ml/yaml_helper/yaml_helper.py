@@ -18,7 +18,7 @@ from linkml_validator.validator import Validator  # type: ignore
 
 from neat_ml.link_prediction.grape_model import GrapeModel
 from neat_ml.run_classifier.run_classifier import \
-     get_custom_model_path
+    get_custom_model_path
 
 VALID_CHARS = "-_.() %s%s" % (string.ascii_letters, string.digits)
 INDIR_KEYS = ["node_path", "edge_path"]
