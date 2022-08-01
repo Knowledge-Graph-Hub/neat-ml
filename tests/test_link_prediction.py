@@ -9,6 +9,7 @@ from grape import Graph
 
 try:
     from keras.engine.sequential import Sequential
+
     HAVE_KERAS = True
 except ModuleNotFoundError:
     print("Keras not found - will not test related functions.")
@@ -48,16 +49,12 @@ class TestLinkPrediction(TestCase):
             (self.yhelp.classifiers())[2], self.test_model_path
         )
 
-        self.sklearn_outfile = ((self.yhelp.classifiers())[0])[
-            "outfile"
-        ]
+        self.sklearn_outfile = ((self.yhelp.classifiers())[0])["outfile"]
 
         self.generic_tf_outfile = ((self.yhelp.classifiers())[1])["outfile"]
         self.custom_tf_outfile = get_custom_model_path(self.generic_tf_outfile)
 
-        self.grape_outfile = ((self.yhelp.classifiers())[2])[
-            "outfile"
-        ]
+        self.grape_outfile = ((self.yhelp.classifiers())[2])["outfile"]
 
         self.training_graph_args = {
             "directed": False,

@@ -19,12 +19,12 @@ from linkml_validator.validator import Validator  # type: ignore
 import neat_ml.yaml_helper.config_fields as cf
 from neat_ml.link_prediction.grape_model import GrapeModel
 from neat_ml.method_names import NN_NAMES
-from neat_ml.run_classifier.run_classifier import (  
-    get_custom_model_path # type: ignore # noqa I001
-)
+from neat_ml.run_classifier.run_classifier import \
+    get_custom_model_path  # type: ignore # noqa I001
 
 VALID_CHARS = "-_.() %s%s" % (string.ascii_letters, string.digits)
 INDIR_KEYS = ["node_path", "edge_path"]
+
 
 def validate_config(
     config: dict, neat_schema_file: str = "neat_ml_schema.yaml"
@@ -546,7 +546,9 @@ class YamlHelper:
                 classifier_args[cf.NODE_TYPES][cf.DESTINATION],
             ]
         else:
-            classifier_args_dict[cf.NODE_TYPES] = classifier_args[cf.NODE_TYPES]
+            classifier_args_dict[cf.NODE_TYPES] = classifier_args[
+                cf.NODE_TYPES
+            ]
 
         classifier_args_dict[cf.CUTOFF] = classifier_args[cf.CUTOFF]
         classifier_args_dict[cf.OUTPUT_FILE] = os.path.join(

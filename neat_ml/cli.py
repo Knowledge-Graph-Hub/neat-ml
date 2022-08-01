@@ -72,9 +72,7 @@ def run(config: str) -> None:
             model: object = None
             if classifier[cf.CLASSIFIER_NAME].lower() in NN_NAMES:
                 model = MLPModel(classifier, outdir=yhelp.outdir())
-            elif (
-                classifier[cf.CLASSIFIER_NAME].lower() in LR_NAMES
-            ):
+            elif classifier[cf.CLASSIFIER_NAME].lower() in LR_NAMES:
                 model = SklearnModel(classifier, outdir=yhelp.outdir())
             elif (
                 classifier[cf.CLASSIFIER_NAME].lower() in GRAPE_LP_CLASS_NAMES
