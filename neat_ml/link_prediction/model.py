@@ -35,6 +35,7 @@ class Model:
 
     def save(self):
         """Save a pickled model, as a generic class method."""
+        print("Saving model...")
         with open(
             os.path.join(self.outdir, self.config["outfile"]), "wb"
         ) as f:

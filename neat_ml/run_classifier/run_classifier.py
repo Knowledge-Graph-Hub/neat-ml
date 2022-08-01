@@ -6,8 +6,9 @@ from typing import List, Union
 from warnings import warn
 
 import pandas as pd  # type: ignore
-from grape import Graph  # type: ignore
+from grape import Graph
 
+from neat_ml.link_prediction.grape_model import GrapeModel  # type: ignore
 from neat_ml.link_prediction.sklearn_model import SklearnModel
 
 OUTPUT_COL_NAMES = ["source_node", "destination_node"]
@@ -24,7 +25,7 @@ def gen_src_dst_pair(
     :yield: Source-destination pair generation.
     """
     # Get all node ids
-    node_ids = graph.get_node_ids().tolist()[:100]
+    node_ids = graph.get_node_ids().tolist()[:1000]
     # Yield only the (src, dst) combo
     # that does NOT exist in the graph.
     for combo in list(combinations(node_ids, 2)):
@@ -87,12 +88,14 @@ def predict_links(
         ignore_existing_edges (bool): default True; do not output
         predictions for edges already in graph.
     """
+    print(f"Reading embeddings from {embeddings_file}...")
     embeddings = pd.read_csv(embeddings_file, sep=",", header=None)
 
     embedding_node_names = list(embeddings[0])
     src_dst_list = []
     no_embed_list = []
 
+    print("Generating potential edges...")
     for src, dst in gen_src_dst_pair(graph, ignore_existing_edges):
 
         src_name = graph.get_node_name_from_node_id(src)
@@ -138,12 +141,39 @@ def predict_links(
     #  as opposed to a Tensorflow(MLP) model where 0 and 1 are booleans
     # to a class (binary).
 
+    print("Running edge predictions...")
     if type(model) == SklearnModel:
         pred_probas = [
             y for x, y in model.predict_proba(edge_embedding_for_predict)
         ]
         pred_proba_df = pd.DataFrame(pred_probas, columns=["score"])
         full_embed_df = pd.concat([embed_df, pred_proba_df], axis=1)
+    elif type(model) == GrapeModel:
+        nodemap = graph.get_nodes_mapping()
+        inodemap = {value: key for key, value in nodemap.items()}
+        preds = model.predict_proba(
+            graph=graph, return_predictions_dataframe=True
+        )
+
+        preds = preds.rename(columns={"predictions": "score"})
+        preds["source_node"] = preds["sources"].map(
+            lambda sources: inodemap[sources]
+        )
+        preds["destination_node"] = preds["destinations"].map(
+            lambda destinations: inodemap[destinations]
+        )
+
+        # Ignore existing edges (i.e., only provide new edges)
+        if ignore_existing_edges:
+            print("Filtering existing edges...")
+            preds = preds[
+                preds[["source_node", "destination_node"]]
+                .apply(tuple, 1)
+                .isin(src_dst_list)
+            ]
+
+        full_embed_df = preds
+
     else:
         preds = model.predict(edge_embedding_for_predict)  # type: ignore
         embed_df["score"] = preds
@@ -162,12 +192,15 @@ def predict_links(
     output_df.sort_values(by="score", inplace=True, ascending=False)
     output_df.to_csv(output_file, sep="\t", index=None)
 
+    if len(output_df) > 0:
+        print(f"Wrote predictions to {output_file}.")
+    else:
+        print("No edge predictions found meeting parameters.")
+
 
 # This may be moved if needed
 def get_custom_model_path(model_file_path: str) -> str:
-    """
-    Given the path to a sklearn or TF model,return the name of\
-        the corresponding custom model.
+    """Return the name of a custom model for TF/sklearn.
 
     This allows a NEAT Model object to be
     created so we may access its methods.

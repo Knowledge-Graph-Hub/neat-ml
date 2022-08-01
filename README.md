@@ -5,10 +5,11 @@
 NEAT is a flexible pipeline for:
 
 - Parsing a graph serialization
-- Generating embeddings
-- Training Classifiers
+- Generating node and edge embeddings
+- Training classifiers for link prediction and label expansion
 - Making predictions
 - Creating well formatted output and metrics for the predictions
+- Doing all of the above reproducibly, with cloud compute (or locally, if preferred)
 
 ## Quick Start
 
@@ -23,11 +24,11 @@ NEAT will write graph embeddings to a new `quickstart_output` directory.
 
 This pipeline has [grape](https://github.com/AnacletoLAB/grape) as a major dependency.
 
-Methods from [tensorflow](https://github.com/tensorflow/tensorflow) are supported, but are not installed as dependencies to avoid version conflicts.
+Methods from [tensorflow](https://github.com/tensorflow/tensorflow) and are supported, but are not installed as dependencies to avoid version conflicts.
 
-Please install the versions of `tensorflow`, `CUDA`, and `cudnn` compatible with your system and with each other prior to installing NEAT if you wish to use these methods.
+Please install the versions of `tensorflow`, `scikit-learn`, `CUDA`, and `cudnn` compatible with your system and with each other prior to installing NEAT if you wish to use these methods.
 
-On Linux, this may be easiest using `conda` as follows:
+On Linux, the tensorflow installation may be easiest using `conda` as follows:
 
 ```
 wget https://repo.anaconda.com/archive/Anaconda3-2020.02-Linux-x86_64.sh -O anaconda.sh

@@ -5,6 +5,7 @@ from unittest import TestCase
 
 import numpy as np
 import pandas as pd
+from grape import Graph
 
 try:
     from keras.engine.sequential import Sequential
@@ -14,6 +15,7 @@ except ModuleNotFoundError:
     print("Keras not found - will not test related functions.")
     HAVE_KERAS = False
 
+from neat_ml.link_prediction.grape_model import GrapeModel
 from neat_ml.link_prediction.mlp_model import MLPModel
 from neat_ml.link_prediction.sklearn_model import SklearnModel
 from neat_ml.run_classifier.run_classifier import get_custom_model_path
@@ -30,25 +32,30 @@ class TestLinkPrediction(TestCase):
 
     def setUp(self) -> None:
         """Set up."""
-        self.yaml_file_sklearn = "tests/resources/test.yaml"
-        self.yaml_file_tf = "tests/resources/test.yaml"
+        self.yaml_file = "tests/resources/test.yaml"
         self.embed_file = "tests/resources/test_link_prediction/test_embeddings_test_yaml.csv"  # noqa E501
         self.embed_snippet_file = "tests/resources/test_link_prediction/test_embeddings_test_yaml_SNIPPET.csv"  # noqa E501
-        self.yhelp_sklearn = YamlHelper(self.yaml_file_sklearn)
-        self.yhelp_tf = YamlHelper(self.yaml_file_tf)
+        self.yhelp = YamlHelper(self.yaml_file)
         self.test_model_path = "tests/resources/test_output_data_dir/"
         self.test_load_path = "tests/resources/test_link_prediction/"
+
         self.sklearn_model = SklearnModel(
-            (self.yhelp_sklearn.classifiers())[0], self.test_model_path
+            (self.yhelp.classifiers())[0], self.test_model_path
         )
         self.tf_model = MLPModel(
-            (self.yhelp_tf.classifiers())[1], self.test_model_path
+            (self.yhelp.classifiers())[1], self.test_model_path
         )
-        self.sklearn_outfile = ((self.yhelp_sklearn.classifiers())[0])[
-            "outfile"
-        ]
-        self.generic_tf_outfile = ((self.yhelp_tf.classifiers())[1])["outfile"]
+        self.grape_model = GrapeModel(
+            (self.yhelp.classifiers())[2], self.test_model_path
+        )
+
+        self.sklearn_outfile = ((self.yhelp.classifiers())[0])["outfile"]
+
+        self.generic_tf_outfile = ((self.yhelp.classifiers())[1])["outfile"]
         self.custom_tf_outfile = get_custom_model_path(self.generic_tf_outfile)
+
+        self.grape_outfile = ((self.yhelp.classifiers())[2])["outfile"]
+
         self.training_graph_args = {
             "directed": False,
             "node_path": "tests/resources/test_graphs/pos_train_nodes.tsv",
@@ -144,3 +151,12 @@ class TestLinkPrediction(TestCase):
         )
         # result contains tuple of tuples of 2-dim arrays
         self.assertEqual(result[0][0].ndim, 2)
+
+    def test_grape_fit(self) -> None:
+        """Test grape's Ensmallen model fitting."""
+        model_object = self.grape_model
+        graph_in = Graph.from_csv(**self.training_graph_args)
+        model_object.fit(graph_in)
+        self.assertTrue(model_object.is_fit)
+        output = model_object.predict_proba(graph_in)
+        self.assertGreaterEqual(len(output), 470000)
