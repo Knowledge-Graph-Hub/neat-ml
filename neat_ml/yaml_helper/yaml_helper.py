@@ -354,7 +354,7 @@ class YamlHelper:
             cf.EMBEDDING_HISTORY_OUTFILE: self.embedding_history_outfile(),
             cf.MAIN_GRAPH_ARGS: self.main_graph_args(),
             cf.NODE_EMBEDDING_PARAMS: self.yaml[cf.EMBEDDINGSCONFIG][
-                cf.NODE_EMBEDDING_PARAMS
+                cf.NODE_EMBEDDINGS_PARAMS
             ],
             cf.BERT_COLUMNS: self.yaml[cf.EMBEDDINGSCONFIG][cf.BERT_PARAMS][
                 cf.NODE_COLUMNS
