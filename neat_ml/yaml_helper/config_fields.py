@@ -53,5 +53,5 @@ TARGET_PATH = "target_path"
 TRAIN_DATA = "train_data"
 TSNE_FILENAME = "tsne_filename"  # redundant
 TSNE_OUTFILE = "tsne_outfile"  # redundant
-UPLOAD = "upload"
+UPLOAD = "Upload"
 VALID_DATA = "valid_data"
