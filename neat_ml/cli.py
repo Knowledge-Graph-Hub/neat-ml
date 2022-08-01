@@ -13,6 +13,7 @@ from neat_ml.graph_embedding.graph_embedding import make_node_embeddings
 from neat_ml.link_prediction.grape_model import GrapeModel
 from neat_ml.link_prediction.mlp_model import MLPModel
 from neat_ml.link_prediction.sklearn_model import SklearnModel
+from neat_ml.method_names import GRAPE_LP_CLASS_NAMES, LR_NAMES, NN_NAMES
 from neat_ml.pre_run_checks.pre_run_checks import pre_run_checks
 from neat_ml.run_classifier.run_classifier import predict_links
 from neat_ml.update_yaml.update_yaml import do_update_yaml
@@ -69,20 +70,14 @@ def run(config: str) -> None:
                 continue
 
             model: object = None
-            gmodels = (
-                grape.get_available_models_for_edge_prediction()["model_name"]
-            ).tolist()
-            gmodels = [mname.lower() for mname in gmodels]
-            if classifier["classifier_name"].lower() == "neural network":
+            if classifier["classifier_name"].lower() in NN_NAMES:
                 model = MLPModel(classifier, outdir=yhelp.outdir())
             elif (
-                classifier["classifier_name"].lower() == "logistic regression"
+                classifier["classifier_name"].lower() in LR_NAMES
             ):
                 model = SklearnModel(classifier, outdir=yhelp.outdir())
             elif (
-                classifier["classifier_name"].lower() in gmodels
-                or classifier["classifier_name"].lower() + " classifier"
-                in gmodels
+                classifier["classifier_name"].lower() in GRAPE_LP_CLASS_NAMES
             ):
                 model = GrapeModel(classifier, outdir=yhelp.outdir())
             else:
@@ -154,7 +149,7 @@ def run(config: str) -> None:
         # take graph, classifier, biolink node types and cutoff
         for clsfr_id in yhelp.get_classifier_id_for_prediction():
             classifier = yhelp.get_classifier_from_id(clsfr_id)
-            if classifier["classifier_type"].startswith("grape"):
+            if classifier["classifier_name"].lower in GRAPE_LP_CLASS_NAMES:
                 classifier_kwargs = yhelp.make_classifier_args(
                     clsfr_id, model  # type: ignore
                 )
