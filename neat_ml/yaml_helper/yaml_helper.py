@@ -18,7 +18,7 @@ from linkml_validator.validator import Validator  # type: ignore
 
 import neat_ml.yaml_helper.config_fields as cf
 from neat_ml.link_prediction.grape_model import GrapeModel
-from neat_ml.method_names import GRAPE_LP_CLASS_NAMES, LR_NAMES, NN_NAMES
+from neat_ml.method_names import NN_NAMES
 from neat_ml.run_classifier.run_classifier import (  
     get_custom_model_path # type: ignore # noqa I001
 )
