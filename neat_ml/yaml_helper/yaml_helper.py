@@ -16,9 +16,12 @@ import yaml  # type: ignore
 from grape import Graph  # type: ignore
 from linkml_validator.validator import Validator  # type: ignore
 
+import neat_ml.yaml_helper.config_fields as cf
 from neat_ml.link_prediction.grape_model import GrapeModel
-from neat_ml.run_classifier.run_classifier import \
-    get_custom_model_path  # type: ignore # noqa I001
+from neat_ml.method_names import GRAPE_LP_CLASS_NAMES, LR_NAMES, NN_NAMES
+from neat_ml.run_classifier.run_classifier import (  
+    get_custom_model_path # type: ignore # noqa I001
+)
 
 VALID_CHARS = "-_.() %s%s" % (string.ascii_letters, string.digits)
 INDIR_KEYS = ["node_path", "edge_path"]
@@ -187,8 +190,8 @@ class YamlHelper:
 
         """
         outdir = (
-            self.yaml["Target"]["target_path"]
-            if "Target" in self.yaml
+            self.yaml[cf.TARGET][cf.TARGET_PATH]
+            if cf.TARGET in self.yaml
             else self.default_outdir
         )
         if not os.path.exists(outdir):
@@ -204,14 +207,14 @@ class YamlHelper:
         in graph_data will still need to
         refer to the node/edge filenames.
         """
-        if "GraphDataConfiguration" in self.yaml:
-            if "source_data" in self.yaml["GraphDataConfiguration"]:
-                for entry in self.yaml["GraphDataConfiguration"][
-                    "source_data"
-                ]["files"]:
-                    filepath = entry["path"]
-                    if "desc" in entry:
-                        desc = entry["desc"]
+        if cf.GRAPHDATACONFIGURATION in self.yaml:
+            if cf.SOURCE_DATA in self.yaml[cf.GRAPHDATACONFIGURATION]:
+                for entry in self.yaml[cf.GRAPHDATACONFIGURATION][
+                    cf.SOURCE_DATA
+                ][cf.FILES]:
+                    filepath = entry[cf.PATH]
+                    if cf.DESC in entry:
+                        desc = entry[cf.DESC]
                         print(f"Retrieving {filepath}: {desc}")
                     else:
                         print(f"Retrieving {filepath}")
@@ -274,7 +277,7 @@ class YamlHelper:
 
         graph_args_with_indir = self.main_graph_args()
 
-        for pathtype in ["node_path", "edge_path"]:
+        for pathtype in [cf.NODE_PATH, cf.EDGE_PATH]:
             filepath = graph_args_with_indir[pathtype]
             if is_url(filepath):
                 url_as_filename = "".join(
@@ -294,15 +297,15 @@ class YamlHelper:
     def main_graph_args(self) -> dict:
         """Graph arguments."""
         return self.add_indir_to_graph_data(
-            self.yaml["GraphDataConfiguration"]["graph"]
+            self.yaml[cf.GRAPHDATACONFIGURATION][cf.GRAPH]
         )
 
     @catch_keyerror
     def val_graph_args(self) -> dict:
         """Assemble dictionary of validation graph parameters."""
         return self.add_indir_to_graph_data(
-            self.yaml["GraphDataConfiguration"]["evaluation_data"][
-                "valid_data"
+            self.yaml[cf.GRAPHDATACONFIGURATION][cf.EVALUATION_DATA][
+                cf.VALID_DATA
             ]
         )
 
@@ -310,8 +313,8 @@ class YamlHelper:
     def train_graph_args(self) -> dict:
         """Assemble dictionary of training graph parameters."""
         return self.add_indir_to_graph_data(
-            self.yaml["GraphDataConfiguration"]["evaluation_data"][
-                "train_data"
+            self.yaml[cf.GRAPHDATACONFIGURATION][cf.EVALUATION_DATA][
+                cf.TRAIN_DATA
             ]
         )
 
@@ -321,11 +324,11 @@ class YamlHelper:
 
     def do_embeddings(self) -> bool:
         """Check if the config includes embedding generation."""
-        return "EmbeddingsConfig" in self.yaml
+        return cf.EMBEDDINGSCONFIG in self.yaml
 
     def embedding_outfile(self) -> str:
         """Return full path to embedding file."""
-        filepath = self.yaml["EmbeddingsConfig"]["filename"]
+        filepath = self.yaml[cf.EMBEDDINGSCONFIG][cf.FILENAME]
         if is_url(filepath):
             url_as_filename = "".join(
                 c if c in VALID_CHARS else "_" for c in filepath
@@ -341,22 +344,22 @@ class YamlHelper:
         """Return full path to embedding history file."""
         return os.path.join(
             self.outdir(),
-            self.yaml["EmbeddingsConfig"]["history_filename"],
+            self.yaml[cf.EMBEDDINGSCONFIG][cf.HISTORY_FILENAME],
         )
 
     def make_node_embeddings_args(self) -> dict:
         """Prepare a dict of parameters for node embeddings."""
         node_embedding_args = {
-            "embedding_outfile": self.embedding_outfile(),
-            "embedding_history_outfile": self.embedding_history_outfile(),
-            "main_graph_args": self.main_graph_args(),
-            "node_embedding_params": self.yaml["EmbeddingsConfig"][
-                "node_embeddings_params"
+            cf.EMBEDDING_OUTFILE: self.embedding_outfile(),
+            cf.EMBEDDING_HISTORY_OUTFILE: self.embedding_history_outfile(),
+            cf.MAIN_GRAPH_ARGS: self.main_graph_args(),
+            cf.NODE_EMBEDDING_PARAMS: self.yaml[cf.EMBEDDINGSCONFIG][
+                cf.NODE_EMBEDDING_PARAMS
             ],
-            "bert_columns": self.yaml["EmbeddingsConfig"]["bert_params"][
-                "node_columns"
+            cf.BERT_COLUMNS: self.yaml[cf.EMBEDDINGSCONFIG][cf.BERT_PARAMS][
+                cf.NODE_COLUMNS
             ]
-            if "bert_params" in self.yaml["EmbeddingsConfig"]
+            if cf.BERT_PARAMS in self.yaml[cf.EMBEDDINGSCONFIG]
             else None,
         }
         return node_embedding_args
@@ -367,21 +370,21 @@ class YamlHelper:
 
     def do_tsne(self) -> bool:
         """Check if the config includes tSNE plotting."""
-        return "tsne_filename" in self.yaml["EmbeddingsConfig"]
+        return cf.TSNE_FILENAME in self.yaml[cf.EMBEDDINGSCONFIG]
 
     def make_tsne_args(self, graph: Graph) -> dict:
         """Assemble provided parametes for tSNE plotting."""
         make_tsne_args = {
-            "graph": graph,
-            "tsne_outfile": self.tsne_outfile(),
-            "embedding_file": self.embedding_outfile(),
+            cf.GRAPH: graph,
+            cf.TSNE_OUTFILE: self.tsne_outfile(),
+            cf.EMBEDDING_FILE: self.embedding_outfile(),
         }
         return make_tsne_args
 
     def tsne_outfile(self) -> str:
         """Return full path to tSNE plot."""
         return os.path.join(
-            self.outdir(), self.yaml["EmbeddingsConfig"]["tsne_filename"]
+            self.outdir(), self.yaml[cf.EMBEDDINGSCONFIG][cf.TSNE_FILENAME]
         )
 
     #
@@ -390,12 +393,12 @@ class YamlHelper:
 
     def do_classifier(self) -> bool:
         """Check if the config includes classifiers."""
-        return "ClassifierContainer" in self.yaml
+        return cf.CLASSIFIERCONTAINER in self.yaml
 
     def classifier_type(self) -> str:
         """Return the type (i.e., name) of classifier."""
-        return self.yaml["ClassifierContainer"]["classifiers"][
-            "classifier_name"
+        return self.yaml[cf.CLASSIFIERCONTAINER][cf.CLASSIFIERS][
+            cf.CLASSIFIER_NAME
         ]
 
     @catch_keyerror
@@ -404,30 +407,30 @@ class YamlHelper:
 
         :return: list of classifiers to be trained
         """
-        return self.yaml["ClassifierContainer"]["classifiers"]
+        return self.yaml[cf.CLASSIFIERCONTAINER][cf.CLASSIFIERS]
 
     def get_all_classifier_ids(self) -> list:
         """Return list of classifier ids."""
         return [
-            c["classifier_id"]
-            for c in self.yaml["ClassifierContainer"]["classifiers"]
+            c[cf.CLASSIFIER_ID]
+            for c in self.yaml[cf.CLASSIFIERCONTAINER][cf.CLASSIFIERS]
         ]
 
     def get_edge_embedding_method(self, classifier: dict) -> str:
         """Return value for edge method for classifier."""
-        return classifier["edge_method"]
+        return classifier[cf.EDGE_METHOD]
 
     def classifier_history_file_name(self, classifier: dict) -> str:
         """Return full path to classifier history file."""
         return (
-            classifier["history_filename"]
-            if "history_filename" in classifier
+            classifier[cf.HISTORY_FILENAME]
+            if cf.HISTORY_FILENAME in classifier
             else None
         )
 
     def classifier_outfile(self, classifier: dict) -> str:
         """Return full path to classifier file."""
-        return os.path.join(self.outdir(), classifier["outfile"])
+        return os.path.join(self.outdir(), classifier[cf.OUTFILE])
 
     #
     # upload stuff
@@ -435,7 +438,7 @@ class YamlHelper:
 
     def do_upload(self) -> bool:
         """Upload."""
-        return "Upload" in self.yaml
+        return cf.UPLOAD in self.yaml
 
     def make_upload_args(self) -> dict:
         """Get upload arguments.
@@ -444,10 +447,10 @@ class YamlHelper:
         """
         make_upload_args = {
             "local_directory": self.outdir(),
-            "s3_bucket": self.yaml["Upload"]["s3_bucket"],
-            "s3_bucket_dir": self.yaml["Upload"]["s3_bucket_dir"],
-            "extra_args": self.yaml["Upload"]["extra_args"]
-            if "extra_args" in self.yaml["Upload"]
+            "s3_bucket": self.yaml[cf.UPLOAD][cf.S3_BUCKET],
+            "s3_bucket_dir": self.yaml[cf.UPLOAD][cf.S3_BUCKET_DIR],
+            "extra_args": self.yaml[cf.UPLOAD][cf.EXTRA_ARGS]
+            if cf.EXTRA_ARGS in self.yaml[cf.UPLOAD]
             else None,
         }
         return make_upload_args
@@ -460,17 +463,17 @@ class YamlHelper:
 
         :return: bool, True if should apply
         """
-        return "ApplyTrainedModelsContainer" in self.yaml
+        return cf.APPLYTRAINEDMODELSCONTAINER in self.yaml
 
     def get_classifier_id_for_prediction(self):
         """Get classifier ID for prediction.
 
         :return: List of classifier IDs.
         """
-        classifier_applications = self.yaml["ApplyTrainedModelsContainer"][
-            "models"
+        classifier_applications = self.yaml[cf.APPLYTRAINEDMODELSCONTAINER][
+            cf.MODELS
         ]
-        list_of_ids = [cl["model_id"] for cl in classifier_applications]
+        list_of_ids = [cl[cf.MODEL_ID] for cl in classifier_applications]
         return list_of_ids
 
     def get_classifier_from_id(self, classifier_id: str):
@@ -482,7 +485,7 @@ class YamlHelper:
         return [
             x
             for x in self.classifiers()
-            if x["classifier_id"] == classifier_id
+            if x[cf.CLASSIFIER_ID] == classifier_id
         ][0]
 
     def make_classifier_args(
@@ -496,25 +499,25 @@ class YamlHelper:
         """
         classifier_args = [
             arg
-            for arg in self.yaml["ApplyTrainedModelsContainer"]["models"]
-            if cl_id == arg["model_id"]
+            for arg in self.yaml[cf.APPLYTRAINEDMODELSCONTAINER][cf.MODELS]
+            if cl_id == arg[cf.MODEL_ID]
         ][0]
         model = self.get_classifier_from_id(cl_id)
 
         classifier_args_dict = {}
-        classifier_args_dict["graph"] = Graph.from_csv(
+        classifier_args_dict[cf.GRAPH] = Graph.from_csv(
             **self.main_graph_args()
         )
 
         if (
-            self.get_classifier_from_id(cl_id)["classifier_name"]
-            == "neural network"
+            self.get_classifier_from_id(cl_id)[cf.CLASSIFIER_NAME].lower()
+            in NN_NAMES
         ):
-            classifier_args_dict["model"] = pickle.load(
+            classifier_args_dict[cf.MODEL] = pickle.load(
                 open(
                     os.path.join(
                         self.outdir(),
-                        get_custom_model_path(model["outfile"]),
+                        get_custom_model_path(model[cf.OUTFILE]),
                     ),
                     "rb",
                 ),
@@ -523,11 +526,11 @@ class YamlHelper:
         elif model_in is not None:
             # Workaround for grape save/load not implemented yet
             # We just take the model object as an argument
-            classifier_args_dict["model"] = model_in
+            classifier_args_dict[cf.MODEL] = model_in
         else:
-            classifier_args_dict["model"] = pickle.load(
+            classifier_args_dict[cf.MODEL] = pickle.load(
                 open(
-                    os.path.join(self.outdir(), model["outfile"]),
+                    os.path.join(self.outdir(), model[cf.OUTFILE]),
                     "rb",
                 ),
             )
@@ -535,22 +538,22 @@ class YamlHelper:
         # YAML may specify node_types as dict with 'source' and 'destination'
         # or as a list of lists
         if (
-            "source" in classifier_args["node_types"]
-            or "destination" in classifier_args["node_types"]
+            cf.SOURCE in classifier_args[cf.NODE_TYPES]
+            or cf.DESTINATION in classifier_args[cf.NODE_TYPES]
         ):
-            classifier_args_dict["node_types"] = [
-                classifier_args["node_types"]["source"],
-                classifier_args["node_types"]["destination"],
+            classifier_args_dict[cf.NODE_TYPES] = [
+                classifier_args[cf.NODE_TYPES][cf.SOURCE],
+                classifier_args[cf.NODE_TYPES][cf.DESTINATION],
             ]
         else:
-            classifier_args_dict["node_types"] = classifier_args["node_types"]
+            classifier_args_dict[cf.NODE_TYPES] = classifier_args[cf.NODE_TYPES]
 
-        classifier_args_dict["cutoff"] = classifier_args["cutoff"]
-        classifier_args_dict["output_file"] = os.path.join(
-            self.outdir(), classifier_args["outfile"]
+        classifier_args_dict[cf.CUTOFF] = classifier_args[cf.CUTOFF]
+        classifier_args_dict[cf.OUTPUT_FILE] = os.path.join(
+            self.outdir(), classifier_args[cf.OUTFILE]
         )
 
-        classifier_args_dict["embeddings_file"] = self.embedding_outfile()
-        classifier_args_dict["edge_method"] = model["edge_method"]
+        classifier_args_dict[cf.EMBEDDINGS_FILE] = self.embedding_outfile()
+        classifier_args_dict[cf.EDGE_METHOD] = model[cf.EDGE_METHOD]
 
         return classifier_args_dict
