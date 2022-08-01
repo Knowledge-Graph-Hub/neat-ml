@@ -3,12 +3,12 @@ import json
 import os
 
 import click
-import grape  # type: ignore
 import numpy as np  # type: ignore
 import pandas as pd  # type: ignore
 from grape import Graph  # type: ignore
 from tqdm import tqdm  # type: ignore
 
+import neat_ml.yaml_helper.config_fields as cf
 from neat_ml.graph_embedding.graph_embedding import make_node_embeddings
 from neat_ml.link_prediction.grape_model import GrapeModel
 from neat_ml.link_prediction.mlp_model import MLPModel
@@ -65,19 +65,19 @@ def run(config: str) -> None:
 
             # Check if classifier already exists
             if os.path.exists(yhelp.classifier_outfile(classifier)):
-                classifier_id = classifier["classifier_id"]
+                classifier_id = classifier[cf.CLASSIFIER_ID]
                 print(f"Found existing classifier: {classifier_id}")
                 continue
 
             model: object = None
-            if classifier["classifier_name"].lower() in NN_NAMES:
+            if classifier[cf.CLASSIFIER_NAME].lower() in NN_NAMES:
                 model = MLPModel(classifier, outdir=yhelp.outdir())
             elif (
-                classifier["classifier_name"].lower() in LR_NAMES
+                classifier[cf.CLASSIFIER_NAME].lower() in LR_NAMES
             ):
                 model = SklearnModel(classifier, outdir=yhelp.outdir())
             elif (
-                classifier["classifier_name"].lower() in GRAPE_LP_CLASS_NAMES
+                classifier[cf.CLASSIFIER_NAME].lower() in GRAPE_LP_CLASS_NAMES
             ):
                 model = GrapeModel(classifier, outdir=yhelp.outdir())
             else:
@@ -105,13 +105,13 @@ def run(config: str) -> None:
                 )
 
             if type(model) == GrapeModel:
-                if "pos_edge_filepath" in yhelp.val_graph_args():
+                if cf.POS_EDGE_FILEPATH in yhelp.val_graph_args():
                     val_graph_obj = Graph.from_csv(
-                        node_path=yhelp.main_graph_args()["node_path"],
-                        edge_path=yhelp.val_graph_args()["pos_edge_filepath"],
-                        nodes_column=yhelp.main_graph_args()["nodes_column"],
+                        node_path=yhelp.main_graph_args()[cf.NODE_PATH],
+                        edge_path=yhelp.val_graph_args()[cf.POS_EDGE_FILEPATH],
+                        nodes_column=yhelp.main_graph_args()[cf.NODES_COLUMN],
                         node_list_node_types_column=yhelp.main_graph_args()[
-                            "node_list_node_types_column"
+                            cf.NODE_LIST_NODE_TYPES_COLUMN
                         ],
                         directed=graph_obj.is_directed(),
                     )
@@ -149,7 +149,7 @@ def run(config: str) -> None:
         # take graph, classifier, biolink node types and cutoff
         for clsfr_id in yhelp.get_classifier_id_for_prediction():
             classifier = yhelp.get_classifier_from_id(clsfr_id)
-            if classifier["classifier_name"].lower in GRAPE_LP_CLASS_NAMES:
+            if classifier[cf.CLASSIFIER_NAME].lower in GRAPE_LP_CLASS_NAMES:
                 classifier_kwargs = yhelp.make_classifier_args(
                     clsfr_id, model  # type: ignore
                 )

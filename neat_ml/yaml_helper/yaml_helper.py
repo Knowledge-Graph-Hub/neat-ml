@@ -23,7 +23,6 @@ from neat_ml.run_classifier.run_classifier import \
 VALID_CHARS = "-_.() %s%s" % (string.ascii_letters, string.digits)
 INDIR_KEYS = ["node_path", "edge_path"]
 
-
 def validate_config(
     config: dict, neat_schema_file: str = "neat_ml_schema.yaml"
 ) -> bool:
