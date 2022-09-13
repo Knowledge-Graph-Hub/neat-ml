@@ -66,7 +66,6 @@ def parse_yaml(file: str) -> dict:
     :param file: YAML file path.
     :return: YAML file as a dict.
     """
-
     with open(file, "r") as stream:
         return yaml.load(stream, Loader=yaml.FullLoader)
 
