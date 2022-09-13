@@ -1,6 +1,7 @@
 """CLI for neat-ml."""
 import json
 import os
+import sys
 
 import click
 import numpy as np  # type: ignore
@@ -19,7 +20,7 @@ from neat_ml.run_classifier.run_classifier import predict_links
 from neat_ml.update_yaml.update_yaml import do_update_yaml
 from neat_ml.upload.upload import upload_dir_to_s3
 from neat_ml.visualization.visualization import make_tsne
-from neat_ml.yaml_helper.yaml_helper import YamlHelper
+from neat_ml.yaml_helper.yaml_helper import YamlHelper, validate_config
 
 
 @click.group()
@@ -45,6 +46,10 @@ def run(config: str) -> None:
     :return: None
     """
     yhelp = YamlHelper(config)
+
+    # Validate the config against the NEAT schema
+    if not validate_config(yhelp.yaml):
+        sys.exit("Invalid config file.")
 
     # pre run checks for failing early
     if not pre_run_checks(yhelp=yhelp, check_s3_credentials=yhelp.do_upload()):
