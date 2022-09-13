@@ -15,7 +15,7 @@ NEAT is a flexible pipeline for:
 
 ```
 pip install neat-ml
-neat run --config neat_quickstart.yaml
+neat run --config neat_quickstart.yaml # This example file is in the repo here
 ```
 
 NEAT will write graph embeddings to a new `quickstart_output` directory.
