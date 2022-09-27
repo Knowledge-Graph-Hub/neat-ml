@@ -46,7 +46,7 @@ test = [
     ]
 
 [tool.poetry.scripts]
-neat = "neat_ml.cli:main"
+neat = "neat_ml.cli:cli"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
