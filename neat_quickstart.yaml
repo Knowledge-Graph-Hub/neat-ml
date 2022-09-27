@@ -21,12 +21,7 @@ EmbeddingsConfig:
   filename: quickstart_embedding.csv
   history_filename: quickstart_embedding_history.json
   node_embeddings_params:
-    method_name: CBOW
-    walk_length: 10
-    batch_size: 128
-    window_size: 4
-    return_weight: 1.0
-    explore_weight: 1.0
+    method_name: "First-order LINE"
     iterations: 5
   tsne_filename: tsne_quickstart.png
 
@@ -50,5 +45,5 @@ ApplyTrainedModelsContainer:
           - "biolink:Protein"
         destination:
           - "biolink:Protein"
-      cutoff: 0.9
+      cutoff: 0.5
       outfile: lr_protein_predictions.tsv
