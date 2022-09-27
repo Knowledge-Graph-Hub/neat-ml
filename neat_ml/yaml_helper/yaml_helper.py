@@ -4,7 +4,6 @@ import logging
 import os
 import pickle
 import string
-import sys
 import tarfile
 from pathlib import Path
 from typing import Optional, Union
@@ -161,9 +160,6 @@ class YamlHelper:
         self.default_outdir = "output_data"
         self.default_indir = ""
         self.yaml: dict = parse_yaml(config)
-
-        if not validate_config(self.yaml):
-            sys.exit("Please check config file! Exiting...")
 
     def indir(self):
         """Get input directory.
