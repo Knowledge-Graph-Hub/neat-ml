@@ -101,7 +101,6 @@ def predict_links(
 
         full_embed_df = preds
 
-
     output_df = full_embed_df
 
     if cutoff:
