@@ -42,7 +42,6 @@ def predict_links(
     embeddings = pd.read_csv(embeddings_file, sep=",", header=None)
 
     embedding_node_names = list(embeddings[0])
-    no_embed_list = []
 
     print("Generating potential edges...")
     candidate_graph = graph.sample_negative_graph(
@@ -56,9 +55,14 @@ def predict_links(
         )
 
     # Remove nodes if they aren't in the provided embedding
+    count_before = candidate_graph.get_nodes_number()
     candidate_graph = candidate_graph.filter_from_names(
         node_names_to_keep=embedding_node_names
     )
+    count_after = candidate_graph.get_nodes_number()
+    count_diff = count_before - count_after
+    if count_diff > 0:
+        print(f"Removed {count_diff} nodes not in provided embeddings.")
 
     if (
         candidate_graph.get_nodes_number() == 0
@@ -97,11 +101,8 @@ def predict_links(
 
         full_embed_df = preds
 
-    if no_embed_list:
-        no_embed_df = pd.DataFrame(no_embed_list, columns=OUTPUT_COL_NAMES)
-        output_df = pd.concat([full_embed_df, no_embed_df], axis=1)
-    else:
-        output_df = full_embed_df
+
+    output_df = full_embed_df
 
     if cutoff:
         filtered_output = output_df[output_df["score"] > cutoff]
